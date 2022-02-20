@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Service
+X-KDE-ServiceTypes=KCModule
+
+X-KDE-Library=kwin_effect_shaders_config
+X-KDE-ParentComponents=kwin_effect_shaders
+
+Name=Shaders
+Name[en_GB]=Shaders
