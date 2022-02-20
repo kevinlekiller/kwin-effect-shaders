@@ -8,7 +8,7 @@ This project was initially created because some games do not support vkBasalt or
 
 This desktop effect is a fork of these projects: https://github.com/natask/kwin-effect-smart-invert https://github.com/KDE/kwin/tree/master/src/effects/invert
 
-Most of the included shaders included are from libretro / mpv / SweetFX, you can find the license for those shaders in the shader file (data/shader.frag).
+Most of the included shaders are from libretro / mpv / SweetFX, you can find the license for those shaders in the shader file (data/shader.frag).
 
 I'm not an expert on OpenGL or glsl, if you are, if you can, please optimize the shaders, or add more.
 
