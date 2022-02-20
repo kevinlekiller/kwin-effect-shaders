@@ -21,13 +21,15 @@
 #version 140
 //------------ Deband configuration section ------------
 // https://github.com/haasn/gentoo-conf/blob/xor/home/nand/.mpv/shaders/deband.glsl
+// Reduces color banding - see https://en.wikipedia.org/wiki/Colour_banding
+// Set to 1 to enable.
 #define DEBAND_ENABLED 0
 // The threshold of difference below which a pixel is considered to be part of
 // a gradient. Higher = more debanding, but setting it too high diminishes image
 // details.
 // haasn default : 64
 //   mpv default : 32
-#define DEBAND_THRESHOLD 96
+#define DEBAND_THRESHOLD 32
 // The range (in source pixels) at which to sample for neighbours. Higher values
 // will find more gradients, but lower values will deband more aggressively.
 // haasn default : 8
@@ -48,8 +50,9 @@
 //   mpv default : 48
 #define DEBAND_GRAIN 48
 //------------ Fake HDR configuration section ------------
-#define FAKEHDR_ENABLED 1
 // https://github.com/CeeJayDK/SweetFX/blob/master/Shaders/FakeHDR.fx
+// Set to 1 to enable.
+#define FAKEHDR_ENABLED 0
 // Power
 // Default 1.30
 #define FHDR_POWER   1.30
@@ -62,19 +65,21 @@
 #define FHDR_RADIUS2 0.87
 //------------ Fast Sharpen configuration section ------------
 // https://github.com/libretro/glsl-shaders/blob/master/sharpen/shaders/fast-sharpen.glsl
+// Set to 1 to enable.
 #define FAST_SHARPEN_ENABLED 0
 // Sharpen strength
 // Default 1.2
-#define FS_SHARPEN   1.14
+#define FS_SHARPEN   1.2
 // Amount of sharpening
 // Default 0.08
-#define FS_CONTR     0.01
+#define FS_CONTR     0.08
 // Details sharpened
 // Default 1.0
 #define FS_DETAILS   1.0
 //------------ Levels configuration section ------------
 // https://github.com/CeeJayDK/SweetFX/blob/master/Shaders/Levels.fx
-#define LEVELS_ENABLED 1
+// Set to 1 to enable.
+#define LEVELS_ENABLED 0
 // The black point is the new black - literally. Everything darker than this will become completely black.
 // Default 16
 // 0 to 255
@@ -85,6 +90,7 @@
 #define LVLS_WHITE_POINT 235
 //------------ Techicolor 2 configuration section ------------
 // https://github.com/CeeJayDK/SweetFX/blob/master/Shaders/Technicolor2.fx
+// Set to 1 to enable.
 #define TECHNICOLOR2_ENABLED 0
 // Higher means darker and more intense colors.
 // Default 0.2 0.2 0.2
@@ -122,6 +128,7 @@ vec3 VIB_RGB_BALANCE = vec3(1.0, 1.0, 1.0);
 //------------ Adaptive Sharpen configuration section ------------
 // NOTE: This shader can be slow, consider using fast sharpen if you're experience framedrops.
 // https://gist.github.com/igv/8a77e4eb8276753b54bb94c1c50c317e
+// Set to 1 to enable.
 #define ADAPTIVE_SHARPEN_ENABLED 0
 // Main control of sharpening strength [>0]
 // 0.3 <-> 2.0 is a reasonable range of values
