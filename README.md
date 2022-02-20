@@ -56,7 +56,7 @@ Toggle on/off whole screen (all applications): `CTRL + META + R`
 
 The shortcuts might be disabled by default, see "Custom Shortcuts".
 
-You can edit the shaders.frag file (`/usr/share/kwin/shaders/1.40/shaders.frag`), then toggle off/on to reload.
+You can edit the shaders.frag file (`/usr/share/kwin/shaders/1.40/shaders.frag`), then use the keyboard shortcut to toggle off/on and the shader file we be reloaded.
 
 ## Custom shortcuts
 
