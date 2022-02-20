@@ -27,7 +27,7 @@ ShadersEffect::ShadersEffect()
     :   m_inited(false),
         m_valid(true),
         m_shader(nullptr),
-        m_allWindows(true)
+        m_allWindows(false)
 {
     initConfig<ShadersConfig>();
     QAction* a = new QAction(this);
