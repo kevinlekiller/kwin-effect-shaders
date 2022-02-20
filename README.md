@@ -42,13 +42,17 @@ Log out / in of the session.
 
 System Settings -> Workspace -> Workspace Behavior -> Desktop Effects -> Appearance -> Shaders
 
+Put a checkmark in the box and click accept.
+
 The default shortcuts are:
 
 META is the Super key (between CTRL and ALT).
 
-Toggle on/off whole screen (all applications): `CTRL + META + R`
+Toggle on/off active application (this is what you probably want to use): `CTRL + META + Z`
 
-Toggle on/off active application: `CTRL + META + Z`
+You can use this on any program, not just a game, the "System Settings" window for example.
+
+Toggle on/off whole screen (all applications): `CTRL + META + R`
 
 The shortcuts might be disabled by default, see "Custom Shortcuts".
 
