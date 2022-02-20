@@ -30,7 +30,9 @@
 //------------ Deband configuration section ----------------------
 //----------------------------------------------------------------
 // https://github.com/haasn/gentoo-conf/blob/xor/home/nand/.mpv/shaders/deband.glsl
+
 // Reduces color banding - see https://en.wikipedia.org/wiki/Colour_banding
+
 // Set to 1 to enable.
 #define DEBAND_ENABLED 0
 // The threshold of difference below which a pixel is considered to be part of
@@ -63,6 +65,9 @@
 //------------ Fake HDR configuration section --------------------
 //----------------------------------------------------------------
 // https://github.com/CeeJayDK/SweetFX/blob/master/Shaders/FakeHDR.fx
+
+// Not actual HDR - It just tries to mimic an HDR look (relatively high performance cost)
+
 // Set to 1 to enable.
 #define FAKEHDR_ENABLED 0
 // Power
@@ -80,6 +85,9 @@
 //------------ Fast Sharpen configuration section ----------------
 //----------------------------------------------------------------
 // https://github.com/libretro/glsl-shaders/blob/master/sharpen/shaders/fast-sharpen.glsl
+
+// Doesn't produce as nice results as adaptive-sharpen but much less intensive to process.
+
 // Set to 1 to enable.
 #define FAST_SHARPEN_ENABLED 0
 // Sharpen strength
@@ -97,6 +105,14 @@
 //------------ Levels configuration section ----------------------
 //----------------------------------------------------------------
 // https://github.com/CeeJayDK/SweetFX/blob/master/Shaders/Levels.fx
+
+// Allows you to set a new black and a white level.
+// This increases contrast, but clips any colors outside the new range to either black or white
+// and so some details in the shadows or highlights can be lost.
+// The shader is very useful for expanding the 16-235 TV range to 0-255 PC range.
+// You might need it if you're playing a game meant to display on a TV with an emulator that does not do this.
+// But it's also a quick and easy way to uniformly increase the contrast of an image.
+
 // Set to 1 to enable.
 #define LEVELS_ENABLED 0
 // The black point is the new black - literally. Everything darker than this will become completely black.
@@ -112,6 +128,7 @@
 //------------ Techicolor 2 configuration section ----------------
 //----------------------------------------------------------------
 // https://github.com/CeeJayDK/SweetFX/blob/master/Shaders/Technicolor2.fx
+
 // Set to 1 to enable.
 #define TECHNICOLOR2_ENABLED 0
 // Higher means darker and more intense colors.
@@ -134,6 +151,10 @@ vec3 TC2_COLORSTRENGTH = vec3(0.2, 0.2, 0.2);
 //------------ Vibrance configuration section --------------------
 //----------------------------------------------------------------
 // https://github.com/CeeJayDK/SweetFX/blob/master/Shaders/Vibrance.fx
+
+// Vibrance intelligently boosts the saturation of pixels so pixels that had little color get a larger boost than pixels that had a lot.
+// This avoids oversaturation of pixels that were already very saturated.
+
 // Set to 1 to enable.
 #define VIBRANCE_ENABLED 0
 // Intelligently saturates (or desaturates if you use negative values) the pixels depending on their original saturation.
@@ -157,6 +178,7 @@ vec3 VIB_RGB_BALANCE = vec3(1.0, 1.0, 1.0);
 //----------------------------------------------------------------
 // NOTE: This shader can be slow, consider using fast sharpen if you're experience framedrops.
 // https://gist.github.com/igv/8a77e4eb8276753b54bb94c1c50c317e
+
 // Set to 1 to enable.
 #define ADAPTIVE_SHARPEN_ENABLED 0
 // Main control of sharpening strength [>0]
