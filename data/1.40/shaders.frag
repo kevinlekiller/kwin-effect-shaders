@@ -32,7 +32,7 @@
 // https://github.com/DadSchoorse/vkBasalt/blob/master/src/shader/cas.frag.glsl
 
 // Set to 1 to enable.
-#define CAS_ENABLED 1
+#define CAS_ENABLED 0
 
 // Default 0.4
 #define CAS_SHARPNESS 0.4
@@ -45,7 +45,7 @@
 // Reduces color banding - see https://en.wikipedia.org/wiki/Colour_banding
 
 // Set to 1 to enable.
-#define DEBAND_ENABLED 1
+#define DEBAND_ENABLED 0
 
 // The threshold of difference below which a pixel is considered to be part of
 // a gradient. Higher = more debanding, but setting it too high diminishes image
@@ -84,11 +84,11 @@
 // Not actual HDR - It just tries to mimic an HDR look (relatively high performance cost)
 
 // Set to 1 to enable.
-#define FAKEHDR_ENABLED 1
+#define FAKEHDR_ENABLED 0
 
 // Power
 // Default 1.30
-#define FHDR_POWER   1.2
+#define FHDR_POWER   1.3
 
 // Radius 1
 // Default 0.793
