@@ -22,7 +22,7 @@ See https://github.com/natask/kwin-effect-smart-invert#dependencies
 ## Building
 git clone https://github.com/kevinlekiller/kwin-effect-shaders
 
-Edit the `data/shader.frag` file, enabling shaders / setting the options how you want.
+Edit the `data/shader.frag` file, enabling shaders / setting the options how you want, by default no shaders are enabled.
 
 cd kwin-effect-shaders
 
