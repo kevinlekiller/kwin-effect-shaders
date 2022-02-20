@@ -32,7 +32,7 @@
 // https://github.com/DadSchoorse/vkBasalt/blob/master/src/shader/cas.frag.glsl
 
 // Set to 1 to enable.
-#define CAS_ENABLED 0
+#define CAS_ENABLED 1
 
 // Default 0.4
 #define CAS_SHARPNESS 0.4
@@ -45,18 +45,21 @@
 // Reduces color banding - see https://en.wikipedia.org/wiki/Colour_banding
 
 // Set to 1 to enable.
-#define DEBAND_ENABLED 0
+#define DEBAND_ENABLED 1
+
 // The threshold of difference below which a pixel is considered to be part of
 // a gradient. Higher = more debanding, but setting it too high diminishes image
 // details.
 // haasn default : 64
 //   mpv default : 32
 #define DEBAND_THRESHOLD 32
+
 // The range (in source pixels) at which to sample for neighbours. Higher values
 // will find more gradients, but lower values will deband more aggressively.
 // haasn default : 8
 //   mpv default : 16
 #define DEBAND_RANGE 16
+
 // The number of debanding iterations to perform. Each iteration samples from
 // random positions, so increasing the number of iterations is likely to
 // increase the debanding quality. Conversely, it slows the shader down.
@@ -65,6 +68,7 @@
 // haasn default : 4
 //   mpv default : 1
 #define DEBAND_ITERATIONS 1
+
 // (Optional) Add some extra noise to the image. This significantly helps cover
 // up remaining banding and blocking artifacts, at comparatively little visual
 // quality. Higher = more grain. Setting it to 0 disables the effect.
@@ -80,13 +84,16 @@
 // Not actual HDR - It just tries to mimic an HDR look (relatively high performance cost)
 
 // Set to 1 to enable.
-#define FAKEHDR_ENABLED 0
+#define FAKEHDR_ENABLED 1
+
 // Power
 // Default 1.30
 #define FHDR_POWER   1.2
+
 // Radius 1
 // Default 0.793
 #define FHDR_RADIUS1 0.793
+
 // Radius 2
 // Raising this seems to make the effect stronger and also brighter.
 // Default 0.87
@@ -101,13 +108,16 @@
 
 // Set to 1 to enable.
 #define FAST_SHARPEN_ENABLED 0
+
 // Sharpen strength
 // Default 1.2
 #define FS_SHARPEN   1.2
+
 // Amount of sharpening
 // Default 0.08
 // Reducing this to around 0.01 helps not making everything look white.
 #define FS_CONTR     0.08
+
 // Details sharpened
 // Default 1.0
 #define FS_DETAILS   1.0
@@ -126,10 +136,12 @@
 
 // Set to 1 to enable.
 #define LEVELS_ENABLED 0
+
 // The black point is the new black - literally. Everything darker than this will become completely black.
 // Default 16
 // 0 to 255
 #define LVLS_BLACK_POINT 16
+
 // The new white point. Everything brighter than this becomes completely white.
 // Default 235
 // 0 to 255
@@ -156,17 +168,21 @@
 
 // Set to 1 to enable.
 #define TECHNICOLOR2_ENABLED 0
+
 // Higher means darker and more intense colors.
 // Default 0.2 0.2 0.2
 vec3 TC2_COLORSTRENGTH = vec3(0.2, 0.2, 0.2);
+
 // Higher means brighter image.
 // Default 1.0
 // 0.5 to 1.5
 #define TC2_BRIGHTNESS 1.0
+
 // Additional saturation control since this effect tends to oversaturate the image.
 // Default 1.0
 // 0.0 to 1.5
 #define TC2_SATURATION 1.0
+
 // Adjust the strength of the effect.
 // Default 1.0
 // 0.0 to 1.0
@@ -182,16 +198,19 @@ vec3 TC2_COLORSTRENGTH = vec3(0.2, 0.2, 0.2);
 
 // Set to 1 to enable.
 #define VIBRANCE_ENABLED 0
+
 // Intelligently saturates (or desaturates if you use negative values) the pixels depending on their original saturation.
 // -1.0 to 1.0
 // Default 0.15
 #define VIB_VIBRANCE 0.15
+
 // A per channel multiplier to the Vibrance strength so you can give more boost to certain colors over others.
 // This is handy if you are colorblind and less sensitive to a specific color.
 // You can then boost that color more than the others.
 // 0.0 to 10.0
 // Default 1.0, 1.0, 1.0
 vec3 VIB_RGB_BALANCE = vec3(1.0, 1.0, 1.0);
+
 // Luma type
 // 0 -> Perceptual
 // 1 -> Even
@@ -201,11 +220,12 @@ vec3 VIB_RGB_BALANCE = vec3(1.0, 1.0, 1.0);
 //----------------------------------------------------------------
 //------------ Adaptive Sharpen configuration section ------------
 //----------------------------------------------------------------
-// NOTE: This shader can be slow, consider using fast sharpen if you're experience framedrops.
+// NOTE: This shader can be slow, consider using CAS, DLS or Fast Sharpen if you experience framedrops.
 // https://gist.github.com/igv/8a77e4eb8276753b54bb94c1c50c317e
 
 // Set to 1 to enable.
 #define ADAPTIVE_SHARPEN_ENABLED 0
+
 // Main control of sharpening strength [>0]
 // 0.3 <-> 2.0 is a reasonable range of values
 // Optimal sharpening strength (according to objective metrics) - 0.5.
