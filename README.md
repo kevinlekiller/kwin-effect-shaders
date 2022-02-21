@@ -66,8 +66,4 @@ System Settings -> Workspace -> Shortcuts -> Shortcuts -> System Services -> Kwi
 
 [Debanding](https://cdn.knightlab.com/libs/juxtapose/latest/embed/index.html?uid=ff817972-92b2-11ec-a554-13fc6baea232)
 
-
-
-
-
-
+[FakeHDR](https://cdn.knightlab.com/libs/juxtapose/latest/embed/index.html?uid=07c3c256-92b4-11ec-a554-13fc6baea232)
