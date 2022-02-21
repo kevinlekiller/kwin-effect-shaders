@@ -62,6 +62,9 @@ You can edit the shaders.frag file (`/usr/share/kwin/shaders/1.40/shaders.frag`)
 
 System Settings -> Workspace -> Shortcuts -> Shortcuts -> System Services -> Kwin -> Toggle Shaders Effect
 
+## Screenshots
+
+[Debanding](https://cdn.knightlab.com/libs/juxtapose/latest/embed/index.html?uid=ff817972-92b2-11ec-a554-13fc6baea232)
 
 
 
