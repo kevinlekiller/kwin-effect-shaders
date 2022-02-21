@@ -52,7 +52,7 @@
 // details.
 // haasn default : 64
 //   mpv default : 32
-#define DEBAND_THRESHOLD 32
+#define DEBAND_THRESHOLD 64
 
 // The range (in source pixels) at which to sample for neighbours. Higher values
 // will find more gradients, but lower values will deband more aggressively.
@@ -547,32 +547,32 @@ void amd_cas() {
 
 // Wide usage friendly PRNG, shamelessly stolen from a GLSL tricks forum post
 float mod289(float x) {
-    return x - floor(x / 289.0) * 289.0;
+    return x - floor(x / 1.0 / 289.0) * 289.0;
 }
 
 float permute(float x) {
-    return mod289((34.0 * x + 1.0) * x);
+    return mod289((mod289(34.0) * x + 1.0) * (fract(x) + 1.0));
 }
 
 float rand(float x) {
-    return fract(x / 41.0);
+    return fract(x * 1.0 / 41.0);
 }
 
 // Helper: Calculate a stochastic approximation of the avg color around a pixel
-vec4 average(sampler2D tex, vec2 pos, float range, inout float h, vec2 tSize) {
+vec4 average(float range, inout float h) {
     // Compute a random rangle and distance
     float dist = rand(h) * range;
     h = permute(h);
     float dir = rand(h) * 6.2831853;
     h = permute(h);
-    vec2 pt = dist / tSize;
+    vec2 pt = dist / TextureSize;
     vec2 o = vec2(cos(dir), sin(dir));
     // Sample at quarter-turn intervals around the source pixel
     vec4 ref[4];
-    ref[0] = texture(tex, pos + pt * vec2( o.x, o.y));
-    ref[1] = texture(tex, pos + pt * vec2(-o.y, o.x));
-    ref[2] = texture(tex, pos + pt * vec2(-o.x,-o.y));
-    ref[3] = texture(tex, pos + pt * vec2( o.y,-o.x));
+    ref[0] = texture(sampler, texcoord0 + pt * vec2( o.x, o.y));
+    ref[1] = texture(sampler, texcoord0 + pt * vec2(-o.y, o.x));
+    ref[2] = texture(sampler, texcoord0 + pt * vec2(-o.x,-o.y));
+    ref[3] = texture(sampler, texcoord0 + pt * vec2( o.y,-o.x));
     // Return the (normalized) average
     return (ref[0] + ref[1] + ref[2] + ref[3]) / 4.0;
 }
@@ -589,17 +589,9 @@ void deband() {
     for (int i = 1; i <= int(DEBAND_ITERATIONS); i++) {
         // Sample the average pixel and use it instead of the original if
         // the difference is below the given threshold
-        avg = average(sampler, texcoord0, float(i) * DEBAND_RANGE, h_d, TextureSize);
+        avg = average(float(i) * DEBAND_RANGE, h_d);
         diff = abs(col - avg);
-        col = mix(
-            avg,
-            col,
-            float(
-                greaterThan(
-                    diff, vec4(DEBAND_THRESHOLD / (float(i) * 16384.0))
-                )
-            )
-        );
+        col = mix(avg, col, greaterThan(diff, vec4(DEBAND_THRESHOLD / (i * 16384.0))));
     }
     if (DEBAND_GRAIN > 0.0) {
         vec3 noise;
