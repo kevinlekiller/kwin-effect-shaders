@@ -6,7 +6,7 @@
 - [Uninstall](#uninstall)
 - [Enabling / Disabling the effect](#enabling--disabling-the-effect)
 - [Custom Keyboard shortcuts](#custom-keyboard-shortcuts)
-- [Copying the shader files to your home directory](copying-the-shader-files-to-your-home-directory)
+- [Copying the shader files to your home directory](#copying-the-shader-files-to-your-home-directory)
 - [Modifying the shader files](#modifying-the-shader-files)
 - [Toggling on/off the shaders](#toggling-onoff-the-shaders)
 - [TODO](#todo)
