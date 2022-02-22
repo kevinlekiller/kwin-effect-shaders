@@ -49,9 +49,13 @@ Put a checkmark in the box and click accept.
 
 By default all shaders are disabled, see "Modifying the shader files".
 
+![Alt text](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/settings1.png)
+
 ## Custom Keyboard shortcuts
 
 System Settings -> Workspace -> Shortcuts -> Shortcuts -> System Services -> Kwin -> Toggle Shaders Effect
+
+![Alt text](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shortcuts.png)
 
 ## Modifying the shader files
 
@@ -64,6 +68,8 @@ Set the `Shader Path` setting in `System Settings -> Workspace -> Workspace Beha
 For example `/home/kevin/.local/share/shaders`
 
 Modify the `shaders.frag` file in that directory.
+
+![Alt text](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/settings2.png)
 
 ## Toggling on /off the shaders
 
