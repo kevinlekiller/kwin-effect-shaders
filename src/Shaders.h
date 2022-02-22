@@ -36,7 +36,8 @@ class ShadersEffect
     : public Effect
 {
     Q_OBJECT
-    Q_PROPERTY(QStringList blocklist READ blocklist);
+    Q_PROPERTY(QStringList blacklist READ blacklist);
+    Q_PROPERTY(QString shaderPath READ shaderPath);
 public:
     ShadersEffect();
     ~ShadersEffect() override;
@@ -52,14 +53,14 @@ public:
 
     static bool supported();
 
-    QStringList blocklist() const;
+    QStringList blacklist() const;
+    QString shaderPath() const;
 public Q_SLOTS:
     void toggleScreenShaders();
     void toggleWindow();
     void slotWindowClosed(KWin::EffectWindow *w);
 
 protected:
-    GLShader* readShader();
     bool loadData();
 
 private:
@@ -67,14 +68,20 @@ private:
     bool m_valid;
     GLShader* m_shader;
     bool m_allWindows;
-    QStringList m_blocklist;
+    QStringList m_blacklist;
     QList<EffectWindow*> m_windows;
     QMap<EffectWindow*,GLShader*> m_windows_shader;
+    QString m_shaderPath;
 };
 
-inline QStringList ShadersEffect::blocklist() const
+inline QStringList ShadersEffect::blacklist() const
 {
-        return m_blocklist;
+        return m_blacklist;
+}
+
+inline QString ShadersEffect::shaderPath() const
+{
+        return m_shaderPath;
 }
 
 inline int ShadersEffect::requestedEffectChainPosition() const

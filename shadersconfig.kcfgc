@@ -1,6 +1,0 @@
-File=shaders.kcfg
-ClassName=ShadersConfig
-NameSpace=KWin
-Singleton=true
-Mutators=true
-IncludeFiles=kwinglobals.h

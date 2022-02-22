@@ -3,11 +3,13 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
                           http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
-    <kcfgfile arg="true"/>
+    <kcfgfile name="kwinrc"/>
     <group name="Effect-Shaders">
-        <entry name="Blocklist" type="String">
-            <label>The windows (by class) that should not be processed.</label>
-            <default>discord,freecad</default>
+        <entry name="ShaderPath" type="String">
+            <default></default>
+        </entry>
+        <entry name="Blacklist" type="String">
+            <default></default>
         </entry>
     </group>
 </kcfg>

@@ -6,9 +6,10 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
-#include "shaders.h"
-#include "shadersconfig.h"
+#include "Shaders.h"
+#include "ShadersConfig.h"
 #include <QAction>
+#include <QDir>
 #include <QFile>
 #include <kwinglutils.h>
 #include <kwinglplatform.h>
@@ -18,7 +19,7 @@
 
 #include <QMatrix4x4>
 
-Q_LOGGING_CATEGORY(KWIN_SHADERS, "kwin_effect_shaders", QtWarningMsg)
+Q_LOGGING_CATEGORY(KWIN_SHADERS, "kwin4_effect_shaders", QtWarningMsg)
 
 namespace KWin
 {
@@ -29,7 +30,7 @@ ShadersEffect::ShadersEffect()
         m_shader(nullptr),
         m_allWindows(false)
 {
-    initConfig<ShadersConfig>();
+    reconfigure(ReconfigureAll);
     QAction* a = new QAction(this);
     a->setObjectName(QStringLiteral("Shaders"));
     a->setText(i18n("Toggle Shaders Effect"));
@@ -49,7 +50,6 @@ ShadersEffect::ShadersEffect()
 
     connect(b, &QAction::triggered, this, &ShadersEffect::toggleWindow);
 
-    reconfigure(ReconfigureAll);
     connect(effects, &EffectsHandler::windowClosed, this, &ShadersEffect::slotWindowClosed);
 }
 
@@ -60,99 +60,62 @@ ShadersEffect::~ShadersEffect()
 
 void ShadersEffect::reconfigure(ReconfigureFlags) {
     ShadersConfig::self()->read();
-    m_blocklist = ShadersConfig::blocklist().toLower().split(",");
+    m_blacklist = ShadersConfig::blacklist().toLower().split(",");
+    QString shaderPath = ShadersConfig::shaderPath().trimmed();
+    bool foundPath = false;
+    if (!shaderPath.isEmpty()) {
+        QDir dir = QDir(shaderPath);
+        if (dir.exists() && dir.isReadable() && !dir.isEmpty()) {
+            m_shaderPath = shaderPath;
+            foundPath = true;
+        }
+    }
+    if (!foundPath) {
+        m_shaderPath = QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("kwin/shaders"), QStandardPaths::LocateDirectory);
+    }
+    if (!m_shaderPath.endsWith("/")) {
+        m_shaderPath.append("/");
+    }
 }
 
 bool ShadersEffect::supported()
 {
+    // Shaders are version 140
+#ifdef KWIN_HAVE_OPENGLES
+    return false;
+#endif
     return effects->compositingType() == OpenGLCompositing;
 }
 
-/*GLShader* ShadersEffect::readShader() {
-    auto shader = m_shader;
-    if (KWin::GLPlatform::instance()->glslVersion() != KWin::kVersionNumber(1, 40)) {
-        return nullptr;
-    }
-    const QString fragmentshader = QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("kwin/shaders/1.40/shaders.frag"));
-    QFile file(fragmentshader);
-    if (!file.open(QFile::ReadOnly)) {
-        return nullptr;
-    }
-    QByteArray frag = file.readAll();
-    shader = KWin::ShaderManager::instance()->generateCustomShader(KWin::ShaderTrait::MapTexture, QByteArray(), frag);
-    file.close();
-    return shader;
-}
-
 bool ShadersEffect::loadData()
 {
+    reconfigure(ReconfigureAll);
     m_inited = true;
-    m_shader = readShader();
-    return m_shader->isValid();
-}*/
 
-bool ShadersEffect::loadData()
-{
-  m_inited = true;
-
-  QString shadersDir(QStringLiteral("kwin/shaders/1.10/"));
-#ifdef KWIN_HAVE_OPENGLES
-  const qint64 coreVersionNumber = kVersionNumber(3, 0);
-#else
-  const qint64 version = KWin::kVersionNumber(1, 40);
-#endif
-  if (KWin::GLPlatform::instance()->glslVersion() >= version)
-    shadersDir = QStringLiteral("kwin/shaders/1.40/");
-
-  const QString fragmentshader = QStandardPaths::locate(QStandardPaths::GenericDataLocation, shadersDir + QStringLiteral("shaders.frag"));
-
-
-  QFile file(fragmentshader);
-  if (file.open(QFile::ReadOnly))
-  {
-    QByteArray frag = file.readAll();
-    m_shader = KWin::ShaderManager::instance()->generateCustomShader(KWin::ShaderTrait::MapTexture, QByteArray(), frag);
-    file.close();
-
-    if (!m_shader->isValid()) {
-      //qCCritical(KWINEFFECTS) << "The shader failed to load!";
-      return false;
+    QString fragmentShader("shaders.frag");
+    fragmentShader.prepend(shaderPath());
+    QFile ffile(fragmentShader);
+    if (!ffile.exists() || !ffile.open(QFile::ReadOnly)) {
+        return false;
     }
-    return true;
-  }
-  else {
-    deleteLater();
+
+    QString vertexShader("shaders.vert");
+    vertexShader.prepend(shaderPath());
+    QFile vfile(vertexShader);
+    if (!vfile.exists() || !vfile.open(QFile::ReadOnly)) {
+        ffile.close();
+        return false;
+    }
+
+    m_shader = KWin::ShaderManager::instance()->generateCustomShader(KWin::ShaderTrait::MapTexture, /*vfile.readAll()*/QByteArray(), ffile.readAll());
+    ffile.close();
+    vfile.close();
+
+    if (m_shader->isValid()) {
+        return true;
+    }
     return false;
-  }
 }
-
-/**
- * Returns shader from package kwin/shaders/1.40/.
- * **/
-GLShader* ShadersEffect::readShader()
-{
-  auto shader = m_shader;
-  QString shadersDir(QStringLiteral("kwin/shaders/1.10/"));
-#ifdef KWIN_HAVE_OPENGLES
-  const qint64 coreVersionNumber = kVersionNumber(3, 0);
-#else
-  const qint64 version = KWin::kVersionNumber(1, 40);
-#endif
-  if (KWin::GLPlatform::instance()->glslVersion() >= version)
-    shadersDir = QStringLiteral("kwin/shaders/1.40/");
-
-  const QString fragmentshader = QStandardPaths::locate(QStandardPaths::GenericDataLocation, shadersDir + QStringLiteral("shaders.frag"));
-
-
-  QFile file(fragmentshader);
-  if (file.open(QFile::ReadOnly))
-  {
-    QByteArray frag = file.readAll();
-    shader = KWin::ShaderManager::instance()->generateCustomShader(KWin::ShaderTrait::MapTexture, QByteArray(), frag);
-    file.close();}
-  return shader;
-}
-
 
 QString ShadersEffect::getWindowApplicationName(EffectWindow * w) {
     auto windowClass = w->windowClass();
@@ -162,15 +125,22 @@ QString ShadersEffect::getWindowApplicationName(EffectWindow * w) {
 void ShadersEffect::drawWindow(EffectWindow* w, int mask, const QRegion &region, WindowPaintData& data)
 {
     // Load if we haven't already
-    if (m_valid && !m_inited)
+    if (m_valid && !m_inited) {
         m_valid = loadData();
+    }
+    if (!m_valid) {
+        return;
+    }
 
-    bool useShader = m_valid && (m_allWindows != m_windows.contains(w)) && !m_blocklist.contains(getWindowApplicationName(w));
-    auto shader = m_windows_shader.value(w, m_shader);
+    bool useShader =
+        m_valid &&
+        (m_allWindows != m_windows.contains(w)) &&
+        !m_blacklist.contains(getWindowApplicationName(w)
+    );
     if (useShader) {
+        auto shader = m_windows_shader.value(w, m_shader);
         ShaderManager *shaderManager = ShaderManager::instance();
         shaderManager->pushShader(shader);
-
         data.shader = shader;
     }
 
@@ -201,6 +171,9 @@ void ShadersEffect::slotWindowClosed(EffectWindow* w)
 void ShadersEffect::toggleScreenShaders()
 {
     m_valid = loadData(); //hotswap
+    if (!m_valid) {
+        return;
+    }
     m_windows_shader.clear();
     m_allWindows = !m_allWindows;
     effects->addRepaintFull();
@@ -211,11 +184,16 @@ void ShadersEffect::toggleWindow()
     if (!effects->activeWindow()) {
         return;
     }
-    m_windows_shader.insert(effects->activeWindow(), readShader());
-    if (!m_windows.contains(effects->activeWindow()))
+    m_valid = loadData();
+    if (!m_valid) {
+        return;
+    }
+    m_windows_shader.insert(effects->activeWindow(), m_shader);
+    if (!m_windows.contains(effects->activeWindow())) {
         m_windows.append(effects->activeWindow());
-    else
+    } else {
         m_windows.removeOne(effects->activeWindow());
+    }
     effects->activeWindow()->addRepaintFull();
 }
 
@@ -226,7 +204,7 @@ bool ShadersEffect::isActive() const
 
 bool ShadersEffect::provides(Feature f)
 {
-    return (f == ScreenInversion || f != ScreenInversion);
+    return f == Nothing;
 }
 
 } // namespace

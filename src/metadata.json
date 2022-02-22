@@ -1,0 +1,21 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "kevinlekiller@github.com",
+                "Name": "kevinlekiller"
+            }
+        ],
+        "Category": "Appearance",
+        "Description": "Processes shaders on applications",
+        "EnabledByDefault": false,
+        "Icon": "preferences-system-windows-effect-shaders",
+        "Id": "kwin4_effect_shaders",
+        "License": "GPL",
+        "Name": "Shaders",
+        "ServiceTypes": [
+            "KWin/Effect"
+        ]
+    },
+    "X-KDE-ConfigModule": "kwin_shaders_config"
+}

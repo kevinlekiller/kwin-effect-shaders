@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ShadersEffectKCM</class>
+ <widget class="QWidget" name="ShadersEffectKCM">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>455</width>
+    <height>120</height>
+   </rect>
+  </property>
+  <layout class="QFormLayout" name="formLayout">
+   <item row="0" column="0">
+    <widget class="QLabel" name="label_ShaderPath">
+     <property name="text">
+      <string>Shader Path</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="kcfg_ShaderPath"/>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_Blacklist">
+     <property name="text">
+      <string>Blacklist</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QTextEdit" name="kcfg_Blacklist"/>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

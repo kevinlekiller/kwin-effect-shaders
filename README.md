@@ -6,47 +6,70 @@ While this might support X11 (not tested), it requires KWin to be compositing, a
 
 This project was initially created because some games do not support vkBasalt or ReShade.
 
-This desktop effect is a fork of these projects: https://github.com/natask/kwin-effect-smart-invert https://github.com/KDE/kwin/tree/master/src/effects/invert
+This desktop effect is a fork of these projects: [kwin-effect-smart-invert](https://github.com/natask/kwin-effect-smart-invert), [invert](https://github.com/KDE/kwin/tree/master/src/effects/invert) [kwin-effects-yet-another-magic-lamp](https://github.com/zzag/kwin-effects-yet-another-magic-lamp)
 
-Most of the included shaders are from libretro / mpv / SweetFX, you can find the license for those shaders in the shader file (data/shader.frag).
+Most of the included shaders are from libretro / mpv / SweetFX / vkBasalt, you can find the license for those shaders in the shader file (src/shaders/shader.frag).
 
 I'm not an expert on OpenGL or glsl, if you are, if you can, please optimize the shaders, or add more.
 
-This was written in a few hours, so it's not very cleanly done, ideally there would be support for OpenGL's version 110 to be more compatible, also ideally the shaders should be split into individual files ; Maybe a project for me or someone in the future.
+## Requirements (not tested)
+Arch Based: `sudo pacman -Syu extra-cmake-modules kwin kf5`
 
-Also, more shortcuts for enabling / disabling effects instead of editing shaders.frag
+Debian Based: `sudo apt install git cmake g++ gettext extra-cmake-modules qttools5-dev libqt5x11extras5-dev libkf5configwidgets-dev libkf5crash-dev libkf5globalaccel-dev libkf5kio-dev libkf5notifications-dev kinit-dev kwin-de`
 
-## Requirements
-See https://github.com/natask/kwin-effect-smart-invert#dependencies
+Fedora Based: `sudo dnf install git cmake gcc-c++ extra-cmake-modules qt5-qttools-devel qt5-qttools-static qt5-qtx11extras-devel kf5-kconfigwidgets-devel kf5-kcrash-devel kf5-kguiaddons-devel kf5-kglobalaccel-devel kf5-kio-devel kf5-ki18n-devel kf5-knotifications-devel kf5-kinit-devel kwin-devel qt5-qtbase-devel libepoxy-devel`
 
-## Building
-git clone https://github.com/kevinlekiller/kwin-effect-shaders
+## Installing
 
-Edit the `data/shader.frag` file, enabling shaders / setting the options how you want, by default no shaders are enabled.
+After installing, log out / in of the session to load the effect.
 
-cd kwin-effect-shaders
+### From source:
 
-mkdir -p build
+`git clone https://github.com/kevinlekiller/kwin-effect-shaders`
 
-cd build
+`cd kwin-effect-shader`
 
-cmake ..
+`# Use the install.sh script:`
 
-make
+`./install.sh`
 
-sudo make install
+### Arch (AUR):
 
-Log out / in of the session.
+https://aur.archlinux.org/packages/kwin-effect-shaders-git
 
-## Enabling / Disabling
+## Uninstall
+
+`./install.sh UNINSTALL`
+
+## Enabling / Disabling the effect
 
 System Settings -> Workspace -> Workspace Behavior -> Desktop Effects -> Appearance -> Shaders
 
 Put a checkmark in the box and click accept.
 
-The default shortcuts are:
+By default all shaders are disabled, see "Modifying the shader files".
 
-META is the Super key (between CTRL and ALT).
+## Custom Keyboard shortcuts
+
+System Settings -> Workspace -> Shortcuts -> Shortcuts -> System Services -> Kwin -> Toggle Shaders Effect
+
+# Modifying the shader files
+
+Copy the shader files to somewhere in your home directory:
+
+`cp -r /usr/share/kwin/shaders ~/.local/share/`
+
+Set the `Shader Path` setting in `System Settings -> Workspace -> Workspace Behavior -> Desktop Effects -> Appearance -> Shaders` (there's a button to the right you can click to change the settings) to the directory you copied the shaders to (use the real path).
+
+For example `/home/kevin/.local/share/shaders`
+
+Modify the `shaders.frag` file in that directory.
+
+## Toggling on /off the shaders
+
+The default shortcuts are (META is the SUPER key):
+
+The shortcuts might be disabled by default, see "Custom Keyboard Shortcuts".
 
 Toggle on/off active application (this is what you probably want to use): `CTRL + META + Z`
 
@@ -54,13 +77,17 @@ You can use this on any program, not just a game, the "System Settings" window f
 
 Toggle on/off whole screen (all applications): `CTRL + META + R`
 
-The shortcuts might be disabled by default, see "Custom Shortcuts".
+## TODO
 
-You can edit the shaders.frag file (`/usr/share/kwin/shaders/1.40/shaders.frag`), then use the keyboard shortcut to toggle off/on and the shader file we be reloaded.
+Get the blacklist working.
 
-## Custom shortcuts
+Get the vertex shader working (all it does currently is remove window decorations).
 
-System Settings -> Workspace -> Shortcuts -> Shortcuts -> System Services -> Kwin -> Toggle Shaders Effect
+Implement a whitelist system, where a program which matches the whitelist the shader processing will be automatically enabled.
+
+Seperate shaders into their own files, instead of all in 1 file.
+
+Add more shaders.
 
 ## Screenshots
 
