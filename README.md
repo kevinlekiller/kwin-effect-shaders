@@ -1,4 +1,16 @@
 # KWin Shader Effects
+## Index
+- [Intro](#intro)
+- [Requirements](#requirements-not-tested)
+- [Install](#install)
+- [Uninstall](#uninstall)
+- [Enabling / Disabling the effect](#enabling--disabling-the-effect)
+- [Custom Keyboard shortcuts](#custom-keyboard-shortcuts)
+- [Modifying the shader files](#modifying-the-shader-files)
+- [Toggling on/off the shaders](#toggling-onoff-the-shaders)
+- [TODO](#todo)
+- [Screenshots](#screenshots)
+
 ## Intro
 KDE Plasma / KWin desktop effect aimed at adding post processing effects to video games.
 
@@ -19,7 +31,7 @@ Debian Based: `sudo apt install git cmake g++ gettext extra-cmake-modules qttool
 
 Fedora Based: `sudo dnf install git cmake gcc-c++ extra-cmake-modules qt5-qttools-devel qt5-qttools-static qt5-qtx11extras-devel kf5-kconfigwidgets-devel kf5-kcrash-devel kf5-kguiaddons-devel kf5-kglobalaccel-devel kf5-kio-devel kf5-ki18n-devel kf5-knotifications-devel kf5-kinit-devel kwin-devel qt5-qtbase-devel libepoxy-devel`
 
-## Installing
+## Install
 
 After installing, log out / in of the session to load the effect.
 
