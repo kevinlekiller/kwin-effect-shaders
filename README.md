@@ -53,7 +53,7 @@ By default all shaders are disabled, see "Modifying the shader files".
 
 System Settings -> Workspace -> Shortcuts -> Shortcuts -> System Services -> Kwin -> Toggle Shaders Effect
 
-# Modifying the shader files
+## Modifying the shader files
 
 Copy the shader files to somewhere in your home directory:
 
