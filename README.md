@@ -71,7 +71,7 @@ Modify the `shaders.frag` file in that directory.
 
 ![Alt text](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/settings2.png)
 
-## Toggling on /off the shaders
+## Toggling on/off the shaders
 
 The default shortcuts are (META is the SUPER key):
 
@@ -96,6 +96,8 @@ Seperate shaders into their own files, instead of all in 1 file.
 Add more shaders.
 
 ## Screenshots
+
+[Debanding](https://cdn.knightlab.com/libs/juxtapose/latest/embed/index.html?uid=ae7aca12-941d-11ec-a554-13fc6baea232)
 
 [Debanding](https://cdn.knightlab.com/libs/juxtapose/latest/embed/index.html?uid=ff817972-92b2-11ec-a554-13fc6baea232)
 
