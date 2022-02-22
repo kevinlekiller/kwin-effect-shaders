@@ -107,7 +107,7 @@ bool ShadersEffect::loadData()
         return false;
     }
 
-    m_shader = KWin::ShaderManager::instance()->generateCustomShader(KWin::ShaderTrait::MapTexture, /*vfile.readAll()*/QByteArray(), ffile.readAll());
+    m_shader = KWin::ShaderManager::instance()->generateCustomShader(KWin::ShaderTrait::MapTexture, vfile.readAll(), ffile.readAll());
     ffile.close();
     vfile.close();
 

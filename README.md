@@ -6,6 +6,7 @@
 - [Uninstall](#uninstall)
 - [Enabling / Disabling the effect](#enabling--disabling-the-effect)
 - [Custom Keyboard shortcuts](#custom-keyboard-shortcuts)
+- [Copying the shader files to your home directory](copying-the-shader-files-to-your-home-directory)
 - [Modifying the shader files](#modifying-the-shader-files)
 - [Toggling on/off the shaders](#toggling-onoff-the-shaders)
 - [TODO](#todo)
@@ -69,7 +70,9 @@ System Settings -> Workspace -> Shortcuts -> Shortcuts -> System Services -> Kwi
 
 ![Keyboard Shortcuts](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shortcuts.png)
 
-## Modifying the shader files
+## Copying the shader files to your home directory
+
+If you have ran the `install.sh` script, the following steps are done automatically.
 
 Copy the shader files to somewhere in your home directory:
 
@@ -79,9 +82,13 @@ Set the `Shader Path` setting in `System Settings -> Workspace -> Workspace Beha
 
 For example `/home/kevin/.local/share/shaders`
 
-Modify the `shaders.frag` file in that directory.
-
 ![Shaders path directory](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/settings2.png)
+
+## Modifying the shader files
+
+Go to the directory where your shader files are, by default `~/.local/share/shaders`
+
+Modify the `shaders.frag` file in that directory.
 
 ![shader.frag edit](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shader_file.png)
 
@@ -100,8 +107,6 @@ Toggle on/off whole screen (all applications): `CTRL + META + R`
 ## TODO
 
 Get the blacklist working.
-
-Get the vertex shader working (all it does currently is remove window decorations).
 
 Implement a whitelist system, where a program which matches the whitelist the shader processing will be automatically enabled.
 

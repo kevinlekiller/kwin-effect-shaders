@@ -1,3 +1,4 @@
+#version 140
 /**
  *  Please see the original licenses / copyright information for the included shaders by scrolling down this file.
  *
@@ -16,12 +17,15 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *  https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html
  */
-#version 140
 
-in vec4 iTexCoord;
-out vec4 oTexCoord;
+// https://github.com/KDE/kwin/blob/Plasma/5.24/src/libkwineffects/kwinglutils.cpp
 
+in vec4 position;
+in vec4 texcoord;
+out vec2 texcoord0;
+uniform mat4 modelViewProjectionMatrix;
 
 void main() {
-    oTexCoord = iTexCoord;
+    texcoord0 = texcoord.st;
+    gl_Position = modelViewProjectionMatrix * position;
 }
