@@ -31,10 +31,12 @@
 
 // Set to 1 to enable.
 #define CAS_ENABLED 0
+#if CAS_ENABLED == 1 // Don't change this line.
 
-// Default 0.4
+// Default: 0.4
 #define CAS_SHARPNESS 0.4
 
+#endif
 //----------------------------------------------------------------
 //------------ Deband configuration section ----------------------
 //----------------------------------------------------------------
@@ -44,6 +46,7 @@
 
 // Set to 1 to enable.
 #define DEBAND_ENABLED 0
+#if DEBAND_ENABLED == 1 // Don't change this line.
 
 // The threshold of difference below which a pixel is considered to be part of
 // a gradient. Higher = more debanding, but setting it too high diminishes image
@@ -74,6 +77,7 @@
 //   mpv default : 48
 #define DEBAND_GRAIN 48
 
+#endif
 //----------------------------------------------------------------
 //------------ Fake HDR configuration section --------------------
 //----------------------------------------------------------------
@@ -83,20 +87,22 @@
 
 // Set to 1 to enable.
 #define FAKEHDR_ENABLED 0
+#if FAKEHDR_ENABLED == 1 // Don't change this line.
 
 // Power
-// Default 1.30
+// Default: 1.30
 #define FHDR_POWER   1.3
 
 // Radius 1
-// Default 0.793
+// Default: 0.793
 #define FHDR_RADIUS1 0.793
 
 // Radius 2
 // Raising this seems to make the effect stronger and also brighter.
-// Default 0.87
+// Default: 0.87
 #define FHDR_RADIUS2 0.87
 
+#endif
 //----------------------------------------------------------------
 //------------ Fast Sharpen configuration section ----------------
 //----------------------------------------------------------------
@@ -106,20 +112,86 @@
 
 // Set to 1 to enable.
 #define FAST_SHARPEN_ENABLED 0
+#if FAST_SHARPEN_ENABLED == 1 // Don't change this line.
 
 // Sharpen strength
-// Default 1.2
+// Default: 1.2
 #define FS_SHARPEN   1.2
 
 // Amount of sharpening
-// Default 0.08
+// Default: 0.08
 // Reducing this to around 0.01 helps not making everything look white.
 #define FS_CONTR     0.08
 
 // Details sharpened
-// Default 1.0
+// Default: 1.0
 #define FS_DETAILS   1.0
 
+#endif
+//----------------------------------------------------------------
+//-------------- FXAA configuration section ----------------------
+//----------------------------------------------------------------
+// NOTE: This shader causes issues with window decorations.
+// https://github.com/libretro/glsl-shaders/blob/master/anti-aliasing/shaders/fxaa.glsl
+
+// Set to 1 to enable.
+#define FXAA_ENABLED 0
+#if FXAA_ENABLED == 1 // Don't change this line.
+
+// Set the pre-defined FXAA preset.
+// Higher presets try to anti-alias more agressively.
+// Valid: 3, 4 or 5
+// Default: 5
+// Set to 0 to disable
+#define FXAA_PRESET 5
+
+// Values below are ignored if FXAA_PRESET is not 0
+
+// The minimum amount of local contrast required
+// to apply algorithm.
+// 1.0/3.0  - too little
+// 1.0/4.0  - good start
+// 1.0/8.0  - applies to more edges
+// 1.0/16.0 - overkill
+// Default: 1.0/8.0
+#define FXAA_EDGE_THRESHOLD      (1.0/8.0)
+
+// Trims the algorithm from processing darks.
+// Perf optimization.
+// 1.0/32.0 - visible limit (smaller isn't visible)
+// 1.0/16.0 - good compromise
+// 1.0/12.0 - upper limit (seeing artifacts)
+// Default: 1.0/24
+#define FXAA_EDGE_THRESHOLD_MIN  (1.0/24.0)
+
+// Maximum number of search steps for end of span.
+// Default: 32
+#define FXAA_SEARCH_STEPS        32
+
+// Controls when to stop searching.
+// 1.0/4.0 - seems to be the best quality wise
+// Default: 1.0/4.0
+#define FXAA_SEARCH_THRESHOLD    (1.0/4.0)
+
+// Controls sub-pixel aliasing removal.
+// 1.0/2.0 - low removal
+// 1.0/3.0 - medium removal
+// 1.0/4.0 - default removal
+// 1.0/8.0 - high removal
+// 0.0 - complete removal
+// Default: 3.0/4.0
+#define FXAA_SUBPIX_CAP          (3.0/4.0)
+
+// Insures fine detail is not completely removed.
+// This is important for the transition of sub-pixel detail,
+// like fences and wires.
+// 3.0/4.0 - default (medium amount of filtering)
+// 7.0/8.0 - high amount of filtering
+// 1.0 - no capping of sub-pixel aliasing removal
+// Default: 1.0/4.0
+#define FXAA_SUBPIX_TRIM         (1.0/4.0)
+
+#endif
 //----------------------------------------------------------------
 //------------ Levels configuration section ----------------------
 //----------------------------------------------------------------
@@ -134,17 +206,19 @@
 
 // Set to 1 to enable.
 #define LEVELS_ENABLED 0
+#if LEVELS_ENABLED == 1 // Don't change this line.
 
 // The black point is the new black - literally. Everything darker than this will become completely black.
-// Default 16
+// Default: 16
 // 0 to 255
 #define LVLS_BLACK_POINT 16
 
 // The new white point. Everything brighter than this becomes completely white.
-// Default 235
+// Default: 235
 // 0 to 255
 #define LVLS_WHITE_POINT 235
 
+#endif
 //----------------------------------------------------------------
 //-------- Nvidia DLS (sharpening) configuration section ---------
 //----------------------------------------------------------------
@@ -152,13 +226,15 @@
 
 // Set to 1 to enable.
 #define NVIDIA_DLS_ENABLED 0
+#if NVIDIA_DLS_ENABLED == 1 // Don't change this line.
 
-// Default 0.5
+// Default: 0.5
 #define DLS_SHARPEN 0.5
 
-// Default 0.17
+// Default: 0.17
 #define DLS_DENOISE 0.17
 
+#endif
 //----------------------------------------------------------------
 //------------ Techicolor 2 configuration section ----------------
 //----------------------------------------------------------------
@@ -166,26 +242,28 @@
 
 // Set to 1 to enable.
 #define TECHNICOLOR2_ENABLED 0
+#if TECHNICOLOR2_ENABLED == 1 // Don't change this line.
 
 // Higher means darker and more intense colors.
-// Default 0.2 0.2 0.2
+// Default: 0.2 0.2 0.2
 vec3 TC2_COLORSTRENGTH = vec3(0.2, 0.2, 0.2);
 
 // Higher means brighter image.
-// Default 1.0
+// Default: 1.0
 // 0.5 to 1.5
 #define TC2_BRIGHTNESS 1.0
 
 // Additional saturation control since this effect tends to oversaturate the image.
-// Default 1.0
+// Default: 1.0
 // 0.0 to 1.5
 #define TC2_SATURATION 1.0
 
 // Adjust the strength of the effect.
-// Default 1.0
+// Default: 1.0
 // 0.0 to 1.0
 #define TC2_STRENGTH 1.0
 
+#endif
 //----------------------------------------------------------------
 //------------ Vibrance configuration section --------------------
 //----------------------------------------------------------------
@@ -196,25 +274,27 @@ vec3 TC2_COLORSTRENGTH = vec3(0.2, 0.2, 0.2);
 
 // Set to 1 to enable.
 #define VIBRANCE_ENABLED 0
+#if VIBRANCE_ENABLED == 1 // Don't change this line.
 
 // Intelligently saturates (or desaturates if you use negative values) the pixels depending on their original saturation.
 // -1.0 to 1.0
-// Default 0.15
+// Default: 0.15
 #define VIB_VIBRANCE 0.15
 
 // A per channel multiplier to the Vibrance strength so you can give more boost to certain colors over others.
 // This is handy if you are colorblind and less sensitive to a specific color.
 // You can then boost that color more than the others.
 // 0.0 to 10.0
-// Default 1.0, 1.0, 1.0
+// Default: 1.0, 1.0, 1.0
 vec3 VIB_RGB_BALANCE = vec3(1.0, 1.0, 1.0);
 
 // Luma type
 // 0 -> Perceptual
 // 1 -> Even
-// Default 0
+// Default: 0
 #define VIB_LUMA 0
 
+#endif
 //----------------------------------------------------------------
 //------------ Adaptive Sharpen configuration section ------------
 //----------------------------------------------------------------
@@ -223,24 +303,27 @@ vec3 VIB_RGB_BALANCE = vec3(1.0, 1.0, 1.0);
 
 // Set to 1 to enable.
 #define ADAPTIVE_SHARPEN_ENABLED 0
+#if ADAPTIVE_SHARPEN_ENABLED == 1 // Don't change this line.
 
 // Main control of sharpening strength [>0]
 // 0.3 <-> 2.0 is a reasonable range of values
 // Optimal sharpening strength (according to objective metrics) - 0.5.
+// Default: 0.5
 #define AS_CURVE_HEIGHT    0.5
 
+#endif
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 //------------------------ End of user configuration -------------
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 
-uniform sampler2D sampler;
-in vec2 texcoord0;
-out vec4 fragColor;
-vec4 col;
-vec2 TextureSize;
-vec4 SourceSize;
+uniform sampler2D g_Texture;
+in vec2 g_oTexcoord;
+out vec4 g_FragColor;
+vec4 g_Color;
+vec4 g_SourceSize;
+vec2 g_TextureSize;
 
 #if ADAPTIVE_SHARPEN_ENABLED == 1
 // Copyright (c) 2015-2021, bacondither
@@ -271,31 +354,31 @@ vec4 SourceSize;
 // Tuned for use post-resize, EXPECTS FULL RANGE GAMMA LIGHT (requires ps >= 3.0)
 // Defined values under this row are "optimal" DO NOT CHANGE IF YOU DO NOT KNOW WHAT YOU ARE DOING!
 
-#define curveslope      0.5                  // Sharpening curve slope, high edge values
-#define L_overshoot     0.003                // Max light overshoot before compression [>0.001]
-#define L_compr_low     0.167                // Light compression, default (0.167=~6x)
-#define L_compr_high    0.334                // Light compression, surrounded by edges (0.334=~3x)
-#define D_overshoot     0.003                // Max dark overshoot before compression [>0.001]
-#define D_compr_low     0.250                // Dark compression, default (0.250=4x)
-#define D_compr_high    0.500                // Dark compression, surrounded by edges (0.500=2x)
-#define scale_lim       0.1                  // Abs max change before compression [>0.01]
-#define scale_cs        0.056                // Compression slope above scale_lim
-#define pm_p            1.0                  // Power mean p-value [>0-1.0]
-#define max4(a,b,c,d)  ( max(max(a, b), max(c, d)) )
+#define AS_curveslope      0.5                  // Sharpening curve slope, high edge values
+#define AS_L_overshoot     0.003                // Max light overshoot before compression [>0.001]
+#define AS_L_compr_low     0.167                // Light compression, default (0.167=~6x)
+#define AS_L_compr_high    0.334                // Light compression, surrounded by edges (0.334=~3x)
+#define AS_D_overshoot     0.003                // Max dark overshoot before compression [>0.001]
+#define AS_D_compr_low     0.250                // Dark compression, default (0.250=4x)
+#define AS_D_compr_high    0.500                // Dark compression, surrounded by edges (0.500=2x)
+#define AS_scale_lim       0.1                  // Abs max change before compression [>0.01]
+#define AS_scale_cs        0.056                // Compression slope above scale_lim
+#define AS_pm_p            1.0                  // Power mean p-value [>0-1.0]
+#define AS_max4(a,b,c,d)  ( max(max(a, b), max(c, d)) )
 // Soft if, fast linear approx
-#define soft_if(a,b,c) ( sat((a + b + c + 0.056/2.5)/(maxedge + 0.03/2.5) - 0.85) )
+#define AF_soft_if(a,b,c) ( AF_sat((a + b + c + 0.056/2.5)/(maxedge + 0.03/2.5) - 0.85) )
 // Soft limit, modified tanh approx
-#define soft_lim(v,s)  ( sat(abs(v/s)*(27.0 + pow(v/s, 2.0))/(27.0 + 9.0*pow(v/s, 2.0)))*s )
+#define AF_soft_lim(v,s)  ( AF_sat(abs(v/s)*(27.0 + pow(v/s, 2.0))/(27.0 + 9.0*pow(v/s, 2.0)))*s )
 // Weighted power mean
-#define wpmean(a,b,w)  ( pow(w*pow(abs(a), pm_p) + abs(1.0-w)*pow(abs(b), pm_p), (1.0/pm_p)) )
+#define AF_wpmean(a,b,w)  ( pow(w*pow(abs(a), AS_pm_p) + abs(1.0-w)*pow(abs(b), AS_pm_p), (1.0/AS_pm_p)) )
 // Get destination pixel values
-#define sat(x)         ( clamp(x, 0.0, 1.0) )
-#define dxdy(val)      ( length(fwidth(val)) ) // =~1/2.5 hq edge without c_comp
-#define CtL(RGB)       ( sqrt(dot(RGB*RGB, vec3(0.2126, 0.7152, 0.0722))) )
+#define AF_sat(x)         ( clamp(x, 0.0, 1.0) )
+#define AF_dxdy(val)      ( length(fwidth(val)) ) // =~1/2.5 hq edge without c_comp
+#define AF_CtL(RGB)       ( sqrt(dot(RGB*RGB, vec3(0.2126, 0.7152, 0.0722))) )
 
-void adaptive_sharpen() {
-    float px = SourceSize.z;
-    float py = SourceSize.w;
+void shader_adaptive_sharpen() {
+    float px = g_SourceSize.z;
+    float py = g_SourceSize.w;
     // Get points and saturate out of range values (BTB & WTW)
     // [                c22               ]
     // [           c24, c9,  c23          ]
@@ -304,40 +387,40 @@ void adaptive_sharpen() {
     // [      c20, c6,  c7,  c8, c17      ]
     // [           c15, c12, c14          ]
     // [                c13               ]
-    vec3 c19 = clamp(texture(sampler, texcoord0 + vec2(-3.*px,    0.)).rgb, 0.0, 1.0);
-    vec3 c21 = clamp(texture(sampler, texcoord0 + vec2(-2.*px,   -py)).rgb, 0.0, 1.0);
-    vec3 c10 = clamp(texture(sampler, texcoord0 + vec2(-2.*px,    0.)).rgb, 0.0, 1.0);
-    vec3 c20 = clamp(texture(sampler, texcoord0 + vec2(-2.*px,    py)).rgb, 0.0, 1.0);
-    vec3 c24 = clamp(texture(sampler, texcoord0 + vec2(  -px, -2.*py)).rgb, 0.0, 1.0);
-    vec3 c1  = clamp(texture(sampler, texcoord0 + vec2(  -px,    -py)).rgb, 0.0, 1.0);
-    vec3 c4  = clamp(texture(sampler, texcoord0 + vec2(  -px,     0.)).rgb, 0.0, 1.0);
-    vec3 c6  = clamp(texture(sampler, texcoord0 + vec2(  -px,     py)).rgb, 0.0, 1.0);
-    vec3 c15 = clamp(texture(sampler, texcoord0 + vec2(  -px,  2.*py)).rgb, 0.0, 1.0);
-    vec3 c22 = clamp(texture(sampler, texcoord0 + vec2(   0., -3.*py)).rgb, 0.0, 1.0);
-    vec3 c9  = clamp(texture(sampler, texcoord0 + vec2(   0., -2.*py)).rgb, 0.0, 1.0);
-    vec3 c2  = clamp(texture(sampler, texcoord0 + vec2(   0.,    -py)).rgb, 0.0, 1.0);
-    vec3 c0  = clamp(col.rgb,   0.0,                     1.0);
-    vec3 c7  = clamp(texture(sampler, texcoord0 + vec2(   0.,     py)).rgb, 0.0, 1.0);
-    vec3 c12 = clamp(texture(sampler, texcoord0 + vec2(   0.,  2.*py)).rgb, 0.0, 1.0);
-    vec3 c13 = clamp(texture(sampler, texcoord0 + vec2(   0.,  3.*py)).rgb, 0.0, 1.0);
-    vec3 c23 = clamp(texture(sampler, texcoord0 + vec2(   px, -2.*py)).rgb, 0.0, 1.0);
-    vec3 c3  = clamp(texture(sampler, texcoord0 + vec2(   px,    -py)).rgb, 0.0, 1.0);
-    vec3 c5  = clamp(texture(sampler, texcoord0 + vec2(   px,     0.)).rgb, 0.0, 1.0);
-    vec3 c8  = clamp(texture(sampler, texcoord0 + vec2(   px,     py)).rgb, 0.0, 1.0);
-    vec3 c14 = clamp(texture(sampler, texcoord0 + vec2(   px,  2.*py)).rgb, 0.0, 1.0);
-    vec3 c18 = clamp(texture(sampler, texcoord0 + vec2( 2.*px,   -py)).rgb, 0.0, 1.0);
-    vec3 c11 = clamp(texture(sampler, texcoord0 + vec2( 2.*px,    0.)).rgb, 0.0, 1.0);
-    vec3 c17 = clamp(texture(sampler, texcoord0 + vec2( 2.*px,    py)).rgb, 0.0, 1.0);
-    vec3 c16 = clamp(texture(sampler, texcoord0 + vec2( 3.*px,    0.)).rgb, 0.0, 1.0 );
+    vec3 c19 = clamp(texture(g_Texture, g_oTexcoord + vec2(-3.*px,    0.)).rgb, 0.0, 1.0);
+    vec3 c21 = clamp(texture(g_Texture, g_oTexcoord + vec2(-2.*px,   -py)).rgb, 0.0, 1.0);
+    vec3 c10 = clamp(texture(g_Texture, g_oTexcoord + vec2(-2.*px,    0.)).rgb, 0.0, 1.0);
+    vec3 c20 = clamp(texture(g_Texture, g_oTexcoord + vec2(-2.*px,    py)).rgb, 0.0, 1.0);
+    vec3 c24 = clamp(texture(g_Texture, g_oTexcoord + vec2(  -px, -2.*py)).rgb, 0.0, 1.0);
+    vec3 c1  = clamp(texture(g_Texture, g_oTexcoord + vec2(  -px,    -py)).rgb, 0.0, 1.0);
+    vec3 c4  = clamp(texture(g_Texture, g_oTexcoord + vec2(  -px,     0.)).rgb, 0.0, 1.0);
+    vec3 c6  = clamp(texture(g_Texture, g_oTexcoord + vec2(  -px,     py)).rgb, 0.0, 1.0);
+    vec3 c15 = clamp(texture(g_Texture, g_oTexcoord + vec2(  -px,  2.*py)).rgb, 0.0, 1.0);
+    vec3 c22 = clamp(texture(g_Texture, g_oTexcoord + vec2(   0., -3.*py)).rgb, 0.0, 1.0);
+    vec3 c9  = clamp(texture(g_Texture, g_oTexcoord + vec2(   0., -2.*py)).rgb, 0.0, 1.0);
+    vec3 c2  = clamp(texture(g_Texture, g_oTexcoord + vec2(   0.,    -py)).rgb, 0.0, 1.0);
+    vec3 c0  = clamp(g_Color.rgb,   0.0,                     1.0);
+    vec3 c7  = clamp(texture(g_Texture, g_oTexcoord + vec2(   0.,     py)).rgb, 0.0, 1.0);
+    vec3 c12 = clamp(texture(g_Texture, g_oTexcoord + vec2(   0.,  2.*py)).rgb, 0.0, 1.0);
+    vec3 c13 = clamp(texture(g_Texture, g_oTexcoord + vec2(   0.,  3.*py)).rgb, 0.0, 1.0);
+    vec3 c23 = clamp(texture(g_Texture, g_oTexcoord + vec2(   px, -2.*py)).rgb, 0.0, 1.0);
+    vec3 c3  = clamp(texture(g_Texture, g_oTexcoord + vec2(   px,    -py)).rgb, 0.0, 1.0);
+    vec3 c5  = clamp(texture(g_Texture, g_oTexcoord + vec2(   px,     0.)).rgb, 0.0, 1.0);
+    vec3 c8  = clamp(texture(g_Texture, g_oTexcoord + vec2(   px,     py)).rgb, 0.0, 1.0);
+    vec3 c14 = clamp(texture(g_Texture, g_oTexcoord + vec2(   px,  2.*py)).rgb, 0.0, 1.0);
+    vec3 c18 = clamp(texture(g_Texture, g_oTexcoord + vec2( 2.*px,   -py)).rgb, 0.0, 1.0);
+    vec3 c11 = clamp(texture(g_Texture, g_oTexcoord + vec2( 2.*px,    0.)).rgb, 0.0, 1.0);
+    vec3 c17 = clamp(texture(g_Texture, g_oTexcoord + vec2( 2.*px,    py)).rgb, 0.0, 1.0);
+    vec3 c16 = clamp(texture(g_Texture, g_oTexcoord + vec2( 3.*px,    0.)).rgb, 0.0, 1.0 );
     float e[13] = float[] (
-        dxdy(c0),  dxdy(c1),  dxdy(c2),  dxdy(c3),  dxdy(c4),
-        dxdy(c5),  dxdy(c6),  dxdy(c7),  dxdy(c8),  dxdy(c9),
-        dxdy(c10), dxdy(c11), dxdy(c12)
+        AF_dxdy(c0),  AF_dxdy(c1),  AF_dxdy(c2),  AF_dxdy(c3),  AF_dxdy(c4),
+        AF_dxdy(c5),  AF_dxdy(c6),  AF_dxdy(c7),  AF_dxdy(c8),  AF_dxdy(c9),
+        AF_dxdy(c10), AF_dxdy(c11), AF_dxdy(c12)
     );
     // Blur, gauss 3x3
     vec3 blur = (2.0 * (c2 + c4 + c5 + c7) + (c1 + c3 + c6 +c8) + 4.0 * c0) / 16.0;
     // Contrast compression, center = 0.5, scaled to 1/3
-    float c_comp = sat(0.266666681f + 0.9 * exp2(dot(blur, vec3(-7.4 / 3.0))));
+    float c_comp = AF_sat(0.266666681f + 0.9 * exp2(dot(blur, vec3(-7.4 / 3.0))));
     // Edge detection
     // Matrix, relative weights
     // [           1          ]
@@ -353,18 +436,18 @@ void adaptive_sharpen() {
             0.23 * (abs(blur - c9) + abs(blur - c10) + abs(blur - c11) + abs(blur - c12))
         ) * c_comp
     );
-    vec2 cs = vec2(L_compr_low,  D_compr_low);
+    vec2 cs = vec2(AS_L_compr_low,  AS_D_compr_low);
     float luma[25] = float[] (
-        CtL(c0),  CtL(c1),  CtL(c2),  CtL(c3),  CtL(c4),  CtL(c5),  CtL(c6),  CtL(c7), CtL(c8),
-        CtL(c9),  CtL(c10), CtL(c11), CtL(c12), CtL(c13), CtL(c14), CtL(c15), CtL(c16),
-        CtL(c17), CtL(c18), CtL(c19), CtL(c20), CtL(c21), CtL(c22), CtL(c23), CtL(c24)
+        AF_CtL(c0),  AF_CtL(c1),  AF_CtL(c2),  AF_CtL(c3),  AF_CtL(c4),  AF_CtL(c5),  AF_CtL(c6),  AF_CtL(c7), AF_CtL(c8),
+        AF_CtL(c9),  AF_CtL(c10), AF_CtL(c11), AF_CtL(c12), AF_CtL(c13), AF_CtL(c14), AF_CtL(c15), AF_CtL(c16),
+        AF_CtL(c17), AF_CtL(c18), AF_CtL(c19), AF_CtL(c20), AF_CtL(c21), AF_CtL(c22), AF_CtL(c23), AF_CtL(c24)
     );
     float c0_Y = luma[0];
     // Precalculated default squared kernel weights
     const vec3 w1 = vec3(0.5,           1.0, 1.41421356237); // 0.25, 1.0, 2.0
     const vec3 w2 = vec3(0.86602540378, 1.0, 0.54772255751); // 0.75, 1.0, 0.3
     // Transition to a concave kernel if the center edge val is above thr
-    vec3 dW = pow(mix( w1, w2, sat(2.4 * edge - 0.82)), vec3(2.0));
+    vec3 dW = pow(mix( w1, w2, AF_sat(2.4 * edge - 0.82)), vec3(2.0));
     // Use lower weights for pixels in a more active area relative to center pixel area
     // This results in narrower and less visible overshoots around sharp edges
     float modif_e0 = 3.0 * e[0] + 0.02 / 2.5;
@@ -398,7 +481,7 @@ void adaptive_sharpen() {
     }
     neg_laplace = neg_laplace / weightsum;
     // Compute sharpening magnitude function
-    float sharpen_val = AS_CURVE_HEIGHT / (AS_CURVE_HEIGHT * curveslope * pow(edge, 3.5) + 0.625);
+    float sharpen_val = AS_CURVE_HEIGHT / (AS_CURVE_HEIGHT * AS_curveslope * pow(edge, 3.5) + 0.625);
     // Calculate sharpening diff and scale
     float sharpdiff = (c0_Y - neg_laplace) * (lowthrsum*sharpen_val + 0.01);
     // Calculate local near min & max, partial sort
@@ -432,15 +515,15 @@ void adaptive_sharpen() {
     float nmax = (max(luma[23], c0_Y) * 3.0 + luma[24]) / 4.0;
     float nmin = (min(luma[1],  c0_Y) * 3.0 + luma[0]) / 4.0;
     float min_dist  = min(abs(nmax - c0_Y), abs(c0_Y - nmin));
-    vec2 pn_scale = vec2(L_overshoot, D_overshoot) + min_dist;
-    pn_scale = min(pn_scale, scale_lim * (1.0 - scale_cs) + pn_scale * scale_cs);
+    vec2 pn_scale = vec2(AS_L_overshoot, AS_D_overshoot) + min_dist;
+    pn_scale = min(pn_scale, AS_scale_lim * (1.0 - AS_scale_cs) + pn_scale * AS_scale_cs);
     // Soft limited anti-ringing with tanh, wpmean to control compression slope
-    sharpdiff = wpmean(max(sharpdiff, 0.0), soft_lim(max(sharpdiff, 0.0), pn_scale.x), cs.x ) -
-        wpmean(min(sharpdiff, 0.0), soft_lim( min(sharpdiff, 0.0), pn_scale.y ), cs.y)
+    sharpdiff = AF_wpmean(max(sharpdiff, 0.0), AF_soft_lim(max(sharpdiff, 0.0), pn_scale.x), cs.x ) -
+        AF_wpmean(min(sharpdiff, 0.0), AF_soft_lim( min(sharpdiff, 0.0), pn_scale.y ), cs.y)
     ;
-    float sharpdiff_lim = sat(c0_Y + sharpdiff) - c0_Y;
+    float sharpdiff_lim = AF_sat(c0_Y + sharpdiff) - c0_Y;
     float satmul = (c0_Y + max(sharpdiff_lim * 0.9, sharpdiff_lim) * 1.03 + 0.03) / (c0_Y + 0.03);
-    col.rgb = c0_Y + (sharpdiff_lim *  3.0 + sharpdiff) / 4.0 + (c0 - c0_Y) * satmul;
+    g_Color.rgb = c0_Y + (sharpdiff_lim *  3.0 + sharpdiff) / 4.0 + (c0 - c0_Y) * satmul;
 }
 #endif // ADAPTIVE_SHARPEN_ENABLED
 
@@ -466,21 +549,21 @@ void adaptive_sharpen() {
 #define textureLod0Offset(img, coord, offset) textureLodOffset(img, coord, 0.0f, offset)
 #endif
 
-void amd_cas() {
+void shader_amd_cas() {
     // fetch a 3x3 neighborhood around the pixel 'e',
     //  a b c
     //  d(e)f
     //  g h i
 
-    vec3 a = textureLod0Offset(sampler, texcoord0, ivec2(-1,-1)).rgb;
-    vec3 b = textureLod0Offset(sampler, texcoord0, ivec2( 0,-1)).rgb;
-    vec3 c = textureLod0Offset(sampler, texcoord0, ivec2( 1,-1)).rgb;
-    vec3 d = textureLod0Offset(sampler, texcoord0, ivec2(-1, 0)).rgb;
-    vec3 e = col.rgb;
-    vec3 f = textureLod0Offset(sampler, texcoord0, ivec2( 1, 0)).rgb;
-    vec3 g = textureLod0Offset(sampler, texcoord0, ivec2(-1, 1)).rgb;
-    vec3 h = textureLod0Offset(sampler, texcoord0, ivec2( 0, 1)).rgb;
-    vec3 i = textureLod0Offset(sampler, texcoord0, ivec2( 1, 1)).rgb;
+    vec3 a = textureLod0Offset(g_Texture, g_oTexcoord, ivec2(-1,-1)).rgb;
+    vec3 b = textureLod0Offset(g_Texture, g_oTexcoord, ivec2( 0,-1)).rgb;
+    vec3 c = textureLod0Offset(g_Texture, g_oTexcoord, ivec2( 1,-1)).rgb;
+    vec3 d = textureLod0Offset(g_Texture, g_oTexcoord, ivec2(-1, 0)).rgb;
+    vec3 e = g_Color.rgb;
+    vec3 f = textureLod0Offset(g_Texture, g_oTexcoord, ivec2( 1, 0)).rgb;
+    vec3 g = textureLod0Offset(g_Texture, g_oTexcoord, ivec2(-1, 1)).rgb;
+    vec3 h = textureLod0Offset(g_Texture, g_oTexcoord, ivec2( 0, 1)).rgb;
+    vec3 i = textureLod0Offset(g_Texture, g_oTexcoord, ivec2( 1, 1)).rgb;
 
     // Soft min and max.
     //  a b c             b
@@ -512,7 +595,7 @@ void amd_cas() {
     //                          0 w 0
 
     vec3 window = (b + d) + (f + h);
-    col.rgb = clamp((window * wRGB + e) * rcpWeightRGB,0,1);
+    g_Color.rgb = clamp((window * wRGB + e) * rcpWeightRGB,0,1);
 }
 #endif // CAS_ENABLED
 
@@ -543,62 +626,62 @@ void amd_cas() {
 */
 
 // Wide usage friendly PRNG, shamelessly stolen from a GLSL tricks forum post
-float mod289(float x) {
+float DB_mod289(float x) {
     return x - floor(x / 1.0 / 289.0) * 289.0;
 }
 
-float permute(float x) {
-    return mod289((mod289(34.0) * x + 1.0) * (fract(x) + 1.0));
+float DB_permute(float x) {
+    return DB_mod289((DB_mod289(34.0) * x + 1.0) * (fract(x) + 1.0));
 }
 
-float rand(float x) {
+float DB_rand(float x) {
     return fract(x * 1.0 / 41.0);
 }
 
 // Helper: Calculate a stochastic approximation of the avg color around a pixel
-vec4 average(float range, inout float h) {
+vec4 DB_average(float range, inout float h) {
     // Compute a random rangle and distance
-    float dist = rand(h) * range;
-    h = permute(h);
-    float dir = rand(h) * 6.2831853;
-    h = permute(h);
-    vec2 pt = dist / TextureSize;
+    float dist = DB_rand(h) * range;
+    h = DB_permute(h);
+    float dir = DB_rand(h) * 6.2831853;
+    h = DB_permute(h);
+    vec2 pt = dist / g_TextureSize;
     vec2 o = vec2(cos(dir), sin(dir));
     // Sample at quarter-turn intervals around the source pixel
     vec4 ref[4];
-    ref[0] = texture(sampler, texcoord0 + pt * vec2( o.x, o.y));
-    ref[1] = texture(sampler, texcoord0 + pt * vec2(-o.y, o.x));
-    ref[2] = texture(sampler, texcoord0 + pt * vec2(-o.x,-o.y));
-    ref[3] = texture(sampler, texcoord0 + pt * vec2( o.y,-o.x));
+    ref[0] = texture(g_Texture, g_oTexcoord + pt * vec2( o.x, o.y));
+    ref[1] = texture(g_Texture, g_oTexcoord + pt * vec2(-o.y, o.x));
+    ref[2] = texture(g_Texture, g_oTexcoord + pt * vec2(-o.x,-o.y));
+    ref[3] = texture(g_Texture, g_oTexcoord + pt * vec2( o.y,-o.x));
     // Return the (normalized) average
     return (ref[0] + ref[1] + ref[2] + ref[3]) / 4.0;
 }
 
-void deband() {
+void shader_deband() {
     // Initialize the PRNG by hashing the position + a random uniform
     vec3 m_d = vec3(
-        texcoord0,
+        g_oTexcoord,
         // https://stackoverflow.com/a/28095165
-        fract(tan(distance(TextureSize * 1.61803398874989484820459, TextureSize) * col.r) * TextureSize.x)
+        fract(tan(distance(g_TextureSize * 1.61803398874989484820459, g_TextureSize) * g_Color.r) * g_TextureSize.x)
     ) + vec3(1.0);
-    float h_d = permute(permute(permute(m_d.x) + m_d.y) + m_d.z);
+    float h_d = DB_permute(DB_permute(DB_permute(m_d.x) + m_d.y) + m_d.z);
     vec4 avg, diff;
     for (int i = 1; i <= int(DEBAND_ITERATIONS); i++) {
         // Sample the average pixel and use it instead of the original if
         // the difference is below the given threshold
-        avg = average(float(i) * DEBAND_RANGE, h_d);
-        diff = abs(col - avg);
-        col = mix(avg, col, greaterThan(diff, vec4(DEBAND_THRESHOLD / (i * 16384.0))));
+        avg = DB_average(float(i) * DEBAND_RANGE, h_d);
+        diff = abs(g_Color - avg);
+        g_Color = mix(avg, g_Color, greaterThan(diff, vec4(DEBAND_THRESHOLD / (i * 16384.0))));
     }
     if (DEBAND_GRAIN > 0.0) {
         vec3 noise;
-        noise.x = rand(h_d);
-        h_d = permute(h_d);
-        noise.y = rand(h_d);
-        h_d = permute(h_d);
-        noise.z = rand(h_d);
-        h_d = permute(h_d);
-        col.rgb += (DEBAND_GRAIN / 8192.0) * (noise - vec3(0.5));
+        noise.x = DB_rand(h_d);
+        h_d = DB_permute(h_d);
+        noise.y = DB_rand(h_d);
+        h_d = DB_permute(h_d);
+        noise.z = DB_rand(h_d);
+        h_d = DB_permute(h_d);
+        g_Color.rgb += (DEBAND_GRAIN / 8192.0) * (noise - vec3(0.5));
     }
 }
 #endif // DEBAND_ENABLED
@@ -630,58 +713,58 @@ void deband() {
 #define textureLod0Offset(img, coord, offset) textureLodOffset(img, coord, 0.0f, offset)
 #endif
 
-float GetLumaComponents(float r, float g, float b)
+float DLS_GetLumaComponents(float r, float g, float b)
 {
     // Y from JPEG spec
     return 0.299 * r + 0.587 * g + 0.114 * b;
 }
 
-float GetLuma(vec4 p)
+float DLS_GetLuma(vec4 p)
 {
-    return GetLumaComponents(p.x, p.y, p.z);
+    return DLS_GetLumaComponents(p.x, p.y, p.z);
 }
 
-float Square(float v)
+float DLS_Square(float v)
 {
     return v * v;
 }
 
 // highlight fall-off start (prevents halos and noise in bright areas)
-#define kHighBlock 0.65
+#define DLS_kHighBlock 0.65
 // offset reducing sharpening in the shadows
-#define kLowBlock (1.0 / 256.0)
-#define kSharpnessMin (-1.0 / 14.0)
-#define kSharpnessMax (-1.0 / 6.5)
-#define kDenoiseMin (0.001)
-#define kDenoiseMax (-0.1)
+#define DLS_kLowBlock (1.0 / 256.0)
+#define DLS_kSharpnessMin (-1.0 / 14.0)
+#define DLS_kSharpnessMax (-1.0 / 6.5)
+#define DLS_kDenoiseMin (0.001)
+#define DLS_kDenoiseMax (-0.1)
 
-void nvidia_dls()
+void shader_nvidia_dls()
 {
     //  e  d  h
     //  a (x) b
     //  g  c  f
 
-    vec4 a = textureLod0Offset(sampler, texcoord0, ivec2(-1,  0));
-    vec4 b = textureLod0Offset(sampler, texcoord0, ivec2( 1,  0));
-    vec4 c = textureLod0Offset(sampler, texcoord0, ivec2( 0,  1));
-    vec4 d = textureLod0Offset(sampler, texcoord0, ivec2( 0, -1));
+    vec4 a = textureLod0Offset(g_Texture, g_oTexcoord, ivec2(-1,  0));
+    vec4 b = textureLod0Offset(g_Texture, g_oTexcoord, ivec2( 1,  0));
+    vec4 c = textureLod0Offset(g_Texture, g_oTexcoord, ivec2( 0,  1));
+    vec4 d = textureLod0Offset(g_Texture, g_oTexcoord, ivec2( 0, -1));
 
-    vec4 e = textureLod0Offset(sampler, texcoord0, ivec2(-1, -1));
-    vec4 f = textureLod0Offset(sampler, texcoord0, ivec2( 1,  1));
-    vec4 g = textureLod0Offset(sampler, texcoord0, ivec2(-1,  1));
-    vec4 h = textureLod0Offset(sampler, texcoord0, ivec2( 1, -1));
+    vec4 e = textureLod0Offset(g_Texture, g_oTexcoord, ivec2(-1, -1));
+    vec4 f = textureLod0Offset(g_Texture, g_oTexcoord, ivec2( 1,  1));
+    vec4 g = textureLod0Offset(g_Texture, g_oTexcoord, ivec2(-1,  1));
+    vec4 h = textureLod0Offset(g_Texture, g_oTexcoord, ivec2( 1, -1));
 
-    float lx = GetLuma(col);
+    float lx = DLS_GetLuma(g_Color);
 
-    float la = GetLuma(a);
-    float lb = GetLuma(b);
-    float lc = GetLuma(c);
-    float ld = GetLuma(d);
+    float la = DLS_GetLuma(a);
+    float lb = DLS_GetLuma(b);
+    float lc = DLS_GetLuma(c);
+    float ld = DLS_GetLuma(d);
 
-    float le = GetLuma(e);
-    float lf = GetLuma(f);
-    float lg = GetLuma(g);
-    float lh = GetLuma(h);
+    float le = DLS_GetLuma(e);
+    float lf = DLS_GetLuma(f);
+    float lg = DLS_GetLuma(g);
+    float lh = DLS_GetLuma(h);
 
     // cross min/max
     float ncmin = min(min(le, lf), min(lg, lh));
@@ -696,8 +779,8 @@ void nvidia_dls()
     float lmax = 0.5 * max(ncmax, npmax) + 0.5 * npmax;
 
     // compute local contrast enhancement kernel
-    float lw = lmin / (lmax + kLowBlock);
-    float hw = Square(1.0 - Square(max(lmax - kHighBlock, 0.0) / ((1.0 - kHighBlock))));
+    float lw = lmin / (lmax + DLS_kLowBlock);
+    float hw = DLS_Square(1.0 - DLS_Square(max(lmax - DLS_kHighBlock, 0.0) / ((1.0 - DLS_kHighBlock))));
 
     // noise suppression
     // Note: Ensure that the denoiseFactor is in the range of (10, 1000) on the CPU-side prior to launching this shader.
@@ -707,8 +790,8 @@ void nvidia_dls()
     //      float kernelDenoise = 1.0 / (kDenoiseMin + (kDenoiseMax - kDenoiseMin) * min(max(denoise, 0.0), 1.0));
     // where kernelDenoise is the value to be passed in to this shader (the amount of noise suppression is inversely proportional to this value),
     //       denoise is the value chosen by the user, in the range (0, 1)
-    float kernelDenoise = 1.0 / (kDenoiseMin + (kDenoiseMax - kDenoiseMin) * DLS_DENOISE);
-    float nw = Square((lmax - lmin) * kernelDenoise);
+    float kernelDenoise = 1.0 / (DLS_kDenoiseMin + (DLS_kDenoiseMax - DLS_kDenoiseMin) * DLS_DENOISE);
+    float nw = DLS_Square((lmax - lmin) * kernelDenoise);
 
     // pick conservative boost
     float boost = min(min(lw, hw), nw);
@@ -721,7 +804,7 @@ void nvidia_dls()
     //      float kernelSharpness = kSharpnessMin + (kSharpnessMax - kSharpnessMin) * min(max(sharpen, 0.0), 1.0);
     // where kernelSharpness is the value to be passed in to this shader,
     //       sharpen is the value chosen by the user, in the range (0, 1)
-    float kernelSharpness = kSharpnessMin + (kSharpnessMax - kSharpnessMin) * DLS_SHARPEN;
+    float kernelSharpness = DLS_kSharpnessMin + (DLS_kSharpnessMax - DLS_kSharpnessMin) * DLS_SHARPEN;
     float k = boost * kernelSharpness;
 
     float accum = lx;
@@ -739,9 +822,9 @@ void nvidia_dls()
 
     // accumulator is in linear light space
     float delta = accum - lx;
-    col.x += delta;
-    col.y += delta;
-    col.z += delta;
+    g_Color.x += delta;
+    g_Color.y += delta;
+    g_Color.z += delta;
 }
 #endif // NVIDIA_DLS_ENABLED
 
@@ -780,27 +863,27 @@ void nvidia_dls()
 
 float FHDR_DIST = FHDR_RADIUS2 - FHDR_RADIUS1;
 
-void fakeHDR() {
-    vec3 bloom_sum1 = texture(sampler, texcoord0 + vec2(1.5, -1.5) * FHDR_RADIUS1 * TextureSize).rgb;
-    bloom_sum1 += texture(sampler, texcoord0 + vec2(-1.5, -1.5) * FHDR_RADIUS1 * TextureSize).rgb;
-    bloom_sum1 += texture(sampler, texcoord0 + vec2( 1.5,  1.5) * FHDR_RADIUS1 * TextureSize).rgb;
-    bloom_sum1 += texture(sampler, texcoord0 + vec2(-1.5,  1.5) * FHDR_RADIUS1 * TextureSize).rgb;
-    bloom_sum1 += texture(sampler, texcoord0 + vec2( 0.0, -2.5) * FHDR_RADIUS1 * TextureSize).rgb;
-    bloom_sum1 += texture(sampler, texcoord0 + vec2( 0.0,  2.5) * FHDR_RADIUS1 * TextureSize).rgb;
-    bloom_sum1 += texture(sampler, texcoord0 + vec2(-2.5,  0.0) * FHDR_RADIUS1 * TextureSize).rgb;
-    bloom_sum1 += texture(sampler, texcoord0 + vec2( 2.5,  0.0) * FHDR_RADIUS1 * TextureSize).rgb;
-    vec3 bloom_sum2 = texture(sampler, texcoord0 + vec2(1.5, -1.5) * FHDR_RADIUS2 * TextureSize).rgb;
-    bloom_sum2 += texture(sampler, texcoord0 + vec2(-1.5, -1.5) * FHDR_RADIUS2 * TextureSize).rgb;
-    bloom_sum2 += texture(sampler, texcoord0 + vec2( 1.5,  1.5) * FHDR_RADIUS2 * TextureSize).rgb;
-    bloom_sum2 += texture(sampler, texcoord0 + vec2(-1.5,  1.5) * FHDR_RADIUS2 * TextureSize).rgb;
-    bloom_sum2 += texture(sampler, texcoord0 + vec2( 0.0, -2.5) * FHDR_RADIUS2 * TextureSize).rgb;
-    bloom_sum2 += texture(sampler, texcoord0 + vec2( 0.0,  2.5) * FHDR_RADIUS2 * TextureSize).rgb;
-    bloom_sum2 += texture(sampler, texcoord0 + vec2(-2.5,  0.0) * FHDR_RADIUS2 * TextureSize).rgb;
-    bloom_sum2 += texture(sampler, texcoord0 + vec2( 2.5,  0.0) * FHDR_RADIUS2 * TextureSize).rgb;
-    vec3 HDR = (col.rgb + (bloom_sum2 * 0.01 - bloom_sum1 * 0.005)) * FHDR_DIST;
-    col.r = pow(abs(HDR.r + col.r), FHDR_POWER) + HDR.r;
-    col.g = pow(abs(HDR.g + col.g), FHDR_POWER) + HDR.g;
-    col.b = pow(abs(HDR.b + col.b), FHDR_POWER) + HDR.b;
+void shader_fake_hdr() {
+    vec3 bloom_sum1 = texture(g_Texture, g_oTexcoord + vec2(1.5, -1.5) * FHDR_RADIUS1 * g_TextureSize).rgb;
+    bloom_sum1 += texture(g_Texture, g_oTexcoord + vec2(-1.5, -1.5) * FHDR_RADIUS1 * g_TextureSize).rgb;
+    bloom_sum1 += texture(g_Texture, g_oTexcoord + vec2( 1.5,  1.5) * FHDR_RADIUS1 * g_TextureSize).rgb;
+    bloom_sum1 += texture(g_Texture, g_oTexcoord + vec2(-1.5,  1.5) * FHDR_RADIUS1 * g_TextureSize).rgb;
+    bloom_sum1 += texture(g_Texture, g_oTexcoord + vec2( 0.0, -2.5) * FHDR_RADIUS1 * g_TextureSize).rgb;
+    bloom_sum1 += texture(g_Texture, g_oTexcoord + vec2( 0.0,  2.5) * FHDR_RADIUS1 * g_TextureSize).rgb;
+    bloom_sum1 += texture(g_Texture, g_oTexcoord + vec2(-2.5,  0.0) * FHDR_RADIUS1 * g_TextureSize).rgb;
+    bloom_sum1 += texture(g_Texture, g_oTexcoord + vec2( 2.5,  0.0) * FHDR_RADIUS1 * g_TextureSize).rgb;
+    vec3 bloom_sum2 = texture(g_Texture, g_oTexcoord + vec2(1.5, -1.5) * FHDR_RADIUS2 * g_TextureSize).rgb;
+    bloom_sum2 += texture(g_Texture, g_oTexcoord + vec2(-1.5, -1.5) * FHDR_RADIUS2 * g_TextureSize).rgb;
+    bloom_sum2 += texture(g_Texture, g_oTexcoord + vec2( 1.5,  1.5) * FHDR_RADIUS2 * g_TextureSize).rgb;
+    bloom_sum2 += texture(g_Texture, g_oTexcoord + vec2(-1.5,  1.5) * FHDR_RADIUS2 * g_TextureSize).rgb;
+    bloom_sum2 += texture(g_Texture, g_oTexcoord + vec2( 0.0, -2.5) * FHDR_RADIUS2 * g_TextureSize).rgb;
+    bloom_sum2 += texture(g_Texture, g_oTexcoord + vec2( 0.0,  2.5) * FHDR_RADIUS2 * g_TextureSize).rgb;
+    bloom_sum2 += texture(g_Texture, g_oTexcoord + vec2(-2.5,  0.0) * FHDR_RADIUS2 * g_TextureSize).rgb;
+    bloom_sum2 += texture(g_Texture, g_oTexcoord + vec2( 2.5,  0.0) * FHDR_RADIUS2 * g_TextureSize).rgb;
+    vec3 HDR = (g_Color.rgb + (bloom_sum2 * 0.01 - bloom_sum1 * 0.005)) * FHDR_DIST;
+    g_Color.r = pow(abs(HDR.r + g_Color.r), FHDR_POWER) + HDR.r;
+    g_Color.g = pow(abs(HDR.g + g_Color.g), FHDR_POWER) + HDR.g;
+    g_Color.b = pow(abs(HDR.b + g_Color.b), FHDR_POWER) + HDR.b;
 }
 #endif // FAKEHDR_ENABLED
 
@@ -821,16 +904,16 @@ void fakeHDR() {
    along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
-void fastSharpen() {
-    vec2 g01 = vec2(-1.0, -0.3333) * SourceSize.zw;
-    vec2 g10 = vec2(0.3333, -1.0) * SourceSize.zw;
-    vec2 g12 = vec2(-0.3333, 1.0) * SourceSize.zw;
-    vec2 g21 = vec2(1.0, 0.3333) * SourceSize.zw;
-    vec3 c10 = texture(sampler, texcoord0 + g10).rgb;
-    vec3 c01 = texture(sampler, texcoord0 + g01).rgb;
-    vec3 c21 = texture(sampler, texcoord0 + g21).rgb;
-    vec3 c12 = texture(sampler, texcoord0 + g12).rgb;
-    vec3 c11 = clamp(col.rgb, 0.0, 1.0);
+void shader_fast_sharpen() {
+    vec2 g01 = vec2(-1.0, -0.3333) * g_SourceSize.zw;
+    vec2 g10 = vec2(0.3333, -1.0) * g_SourceSize.zw;
+    vec2 g12 = vec2(-0.3333, 1.0) * g_SourceSize.zw;
+    vec2 g21 = vec2(1.0, 0.3333) * g_SourceSize.zw;
+    vec3 c10 = texture(g_Texture, g_oTexcoord + g10).rgb;
+    vec3 c01 = texture(g_Texture, g_oTexcoord + g01).rgb;
+    vec3 c21 = texture(g_Texture, g_oTexcoord + g21).rgb;
+    vec3 c12 = texture(g_Texture, g_oTexcoord + g12).rgb;
+    vec3 c11 = clamp(g_Color.rgb, 0.0, 1.0);
     vec3 b11 = (c10 + c01 + c12 + c21) * 0.25;
     float contrast = max(max(c11.r, c11.g), c11.b);
     contrast = mix(2.0 * FS_CONTR, FS_CONTR, contrast);
@@ -838,7 +921,7 @@ void fastSharpen() {
     mn1 = min(mn1, c11 * (1.0 - contrast));
     vec3 mx1 = max(max(c10, c01), max(c12, c21));
     mx1 = max(mx1, c11 * (1.0 + contrast));
-    col.rgb = clamp(
+    g_Color.rgb = clamp(
         mix(
             c11, b11,
             -mix(
@@ -850,6 +933,210 @@ void fastSharpen() {
     );
 }
 #endif // FAST_SHARPEN_ENABLED
+
+#if FXAA_ENABLED == 1
+/**
+ * @license
+ * Copyright (c) 2011 NVIDIA Corporation. All rights reserved.
+ *
+ * TO  THE MAXIMUM  EXTENT PERMITTED  BY APPLICABLE  LAW, THIS SOFTWARE  IS PROVIDED
+ * *AS IS*  AND NVIDIA AND  ITS SUPPLIERS DISCLAIM  ALL WARRANTIES,  EITHER  EXPRESS
+ * OR IMPLIED, INCLUDING, BUT NOT LIMITED  TO, NONINFRINGEMENT,IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  IN NO EVENT SHALL  NVIDIA
+ * OR ITS SUPPLIERS BE  LIABLE  FOR  ANY  DIRECT, SPECIAL,  INCIDENTAL,  INDIRECT,  OR
+ * CONSEQUENTIAL DAMAGES WHATSOEVER (INCLUDING, WITHOUT LIMITATION,  DAMAGES FOR LOSS
+ * OF BUSINESS PROFITS, BUSINESS INTERRUPTION, LOSS OF BUSINESS INFORMATION, OR ANY
+ * OTHER PECUNIARY LOSS) ARISING OUT OF THE  USE OF OR INABILITY  TO USE THIS SOFTWARE,
+ * EVEN IF NVIDIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+ */
+
+#if (FXAA_PRESET == 3)
+    #define FXAA_EDGE_THRESHOLD      (1.0/8.0)
+    #define FXAA_EDGE_THRESHOLD_MIN  (1.0/16.0)
+    #define FXAA_SEARCH_STEPS        16
+    #define FXAA_SEARCH_THRESHOLD    (1.0/4.0)
+    #define FXAA_SUBPIX_CAP          (3.0/4.0)
+    #define FXAA_SUBPIX_TRIM         (1.0/4.0)
+#endif
+#if (FXAA_PRESET == 4)
+    #define FXAA_EDGE_THRESHOLD      (1.0/8.0)
+    #define FXAA_EDGE_THRESHOLD_MIN  (1.0/24.0)
+    #define FXAA_SEARCH_STEPS        24
+    #define FXAA_SEARCH_THRESHOLD    (1.0/4.0)
+    #define FXAA_SUBPIX_CAP          (3.0/4.0)
+    #define FXAA_SUBPIX_TRIM         (1.0/4.0)
+#endif
+#if (FXAA_PRESET == 5)
+    #define FXAA_EDGE_THRESHOLD      (1.0/8.0)
+    #define FXAA_EDGE_THRESHOLD_MIN  (1.0/24.0)
+    #define FXAA_SEARCH_STEPS        32
+    #define FXAA_SEARCH_THRESHOLD    (1.0/4.0)
+    #define FXAA_SUBPIX_CAP          (3.0/4.0)
+    #define FXAA_SUBPIX_TRIM         (1.0/4.0)
+#endif
+
+#define FXAA_SUBPIX_TRIM_SCALE (1.0/(1.0 - FXAA_SUBPIX_TRIM))
+
+// Return the luma, the estimation of luminance from rgb inputs.
+// This approximates luma using one FMA instruction,
+// skipping normalization and tossing out blue.
+// FxaaLuma() will range 0.0 to 2.963210702.
+float FxaaLuma(vec3 rgb) {
+    return rgb.y * (0.587/0.299) + rgb.x;
+}
+
+vec3 FxaaLerp3(vec3 a, vec3 b, float amountOfA) {
+    return (vec3(-amountOfA) * b) + ((a * vec3(amountOfA)) + b);
+}
+
+vec4 FxaaTexOff(sampler2D tex, vec2 pos, ivec2 off, vec2 rcpFrame) {
+    float x = pos.x + float(off.x) * rcpFrame.x;
+    float y = pos.y + float(off.y) * rcpFrame.y;
+    return texture(tex, vec2(x, y));
+}
+
+// pos is the output of FxaaVertexShader interpolated across screen.
+// xy -> actual texture position {0.0 to 1.0}
+// rcpFrame should be a uniform equal to  {1.0/frameWidth, 1.0/frameHeight}
+vec3 FxaaPixelShader(vec2 pos, sampler2D tex, vec2 rcpFrame)
+{
+    vec3 rgbN = FxaaTexOff(tex, pos.xy, ivec2( 0,-1), rcpFrame).xyz;
+    vec3 rgbW = FxaaTexOff(tex, pos.xy, ivec2(-1, 0), rcpFrame).xyz;
+    vec3 rgbM = FxaaTexOff(tex, pos.xy, ivec2( 0, 0), rcpFrame).xyz;
+    vec3 rgbE = FxaaTexOff(tex, pos.xy, ivec2( 1, 0), rcpFrame).xyz;
+    vec3 rgbS = FxaaTexOff(tex, pos.xy, ivec2( 0, 1), rcpFrame).xyz;
+
+    float lumaN = FxaaLuma(rgbN);
+    float lumaW = FxaaLuma(rgbW);
+    float lumaM = FxaaLuma(rgbM);
+    float lumaE = FxaaLuma(rgbE);
+    float lumaS = FxaaLuma(rgbS);
+    float rangeMin = min(lumaM, min(min(lumaN, lumaW), min(lumaS, lumaE)));
+    float rangeMax = max(lumaM, max(max(lumaN, lumaW), max(lumaS, lumaE)));
+
+    float range = rangeMax - rangeMin;
+    if(range < max(FXAA_EDGE_THRESHOLD_MIN, rangeMax * FXAA_EDGE_THRESHOLD))
+    {
+        return rgbM;
+    }
+
+    vec3 rgbL = rgbN + rgbW + rgbM + rgbE + rgbS;
+
+    float lumaL = (lumaN + lumaW + lumaE + lumaS) * 0.25;
+    float rangeL = abs(lumaL - lumaM);
+    float blendL = max(0.0, (rangeL / range) - FXAA_SUBPIX_TRIM) * FXAA_SUBPIX_TRIM_SCALE;
+    blendL = min(FXAA_SUBPIX_CAP, blendL);
+
+    vec3 rgbNW = FxaaTexOff(tex, pos.xy, ivec2(-1,-1), rcpFrame).xyz;
+    vec3 rgbNE = FxaaTexOff(tex, pos.xy, ivec2( 1,-1), rcpFrame).xyz;
+    vec3 rgbSW = FxaaTexOff(tex, pos.xy, ivec2(-1, 1), rcpFrame).xyz;
+    vec3 rgbSE = FxaaTexOff(tex, pos.xy, ivec2( 1, 1), rcpFrame).xyz;
+    rgbL += (rgbNW + rgbNE + rgbSW + rgbSE);
+    rgbL *= vec3(1.0/9.0);
+
+    float lumaNW = FxaaLuma(rgbNW);
+    float lumaNE = FxaaLuma(rgbNE);
+    float lumaSW = FxaaLuma(rgbSW);
+    float lumaSE = FxaaLuma(rgbSE);
+
+    float edgeVert =
+        abs((0.25 * lumaNW) + (-0.5 * lumaN) + (0.25 * lumaNE)) +
+        abs((0.50 * lumaW ) + (-1.0 * lumaM) + (0.50 * lumaE )) +
+        abs((0.25 * lumaSW) + (-0.5 * lumaS) + (0.25 * lumaSE));
+    float edgeHorz =
+        abs((0.25 * lumaNW) + (-0.5 * lumaW) + (0.25 * lumaSW)) +
+        abs((0.50 * lumaN ) + (-1.0 * lumaM) + (0.50 * lumaS )) +
+        abs((0.25 * lumaNE) + (-0.5 * lumaE) + (0.25 * lumaSE));
+
+    bool horzSpan = edgeHorz >= edgeVert;
+    float lengthSign = horzSpan ? -rcpFrame.y : -rcpFrame.x;
+
+    if(!horzSpan)
+    {
+        lumaN = lumaW;
+        lumaS = lumaE;
+    }
+
+    float gradientN = abs(lumaN - lumaM);
+    float gradientS = abs(lumaS - lumaM);
+    lumaN = (lumaN + lumaM) * 0.5;
+    lumaS = (lumaS + lumaM) * 0.5;
+
+    if (gradientN < gradientS)
+    {
+        lumaN = lumaS;
+        lumaN = lumaS;
+        gradientN = gradientS;
+        lengthSign *= -1.0;
+    }
+
+    vec2 posN;
+    posN.x = pos.x + (horzSpan ? 0.0 : lengthSign * 0.5);
+    posN.y = pos.y + (horzSpan ? lengthSign * 0.5 : 0.0);
+
+    gradientN *= FXAA_SEARCH_THRESHOLD;
+
+    vec2 posP = posN;
+    vec2 offNP = horzSpan ? vec2(rcpFrame.x, 0.0) : vec2(0.0, rcpFrame.y);
+    float lumaEndN = lumaN;
+    float lumaEndP = lumaN;
+    bool doneN = false;
+    bool doneP = false;
+    posN += offNP * vec2(-1.0, -1.0);
+    posP += offNP * vec2( 1.0,  1.0);
+
+    for(int i = 0; i < FXAA_SEARCH_STEPS; i++) {
+        if(!doneN)
+        {
+            lumaEndN = FxaaLuma(texture(tex, posN.xy).xyz);
+        }
+        if(!doneP)
+        {
+            lumaEndP = FxaaLuma(texture(tex, posP.xy).xyz);
+        }
+
+        doneN = doneN || (abs(lumaEndN - lumaN) >= gradientN);
+        doneP = doneP || (abs(lumaEndP - lumaN) >= gradientN);
+
+        if(doneN && doneP)
+        {
+            break;
+        }
+        if(!doneN)
+        {
+            posN -= offNP;
+        }
+        if(!doneP)
+        {
+            posP += offNP;
+        }
+    }
+
+    float dstN = horzSpan ? pos.x - posN.x : pos.y - posN.y;
+    float dstP = horzSpan ? posP.x - pos.x : posP.y - pos.y;
+    bool directionN = dstN < dstP;
+    lumaEndN = directionN ? lumaEndN : lumaEndP;
+
+    if(((lumaM - lumaN) < 0.0) == ((lumaEndN - lumaN) < 0.0))
+    {
+        lengthSign = 0.0;
+    }
+
+
+    float spanLength = (dstP + dstN);
+    dstN = directionN ? dstN : dstP;
+    float subPixelOffset = (0.5 + (dstN * (-1.0/spanLength))) * lengthSign;
+    vec3 rgbF = texture(tex, vec2(
+        pos.x + (horzSpan ? 0.0 : subPixelOffset),
+        pos.y + (horzSpan ? subPixelOffset : 0.0))).xyz;
+    return FxaaLerp3(rgbL, rgbF, blendL);
+}
+
+void shader_fxaa() {
+    g_Color = vec4(FxaaPixelShader(g_oTexcoord, g_Texture, vec2(g_SourceSize.z, g_SourceSize.w)), 1.0) * 1.0;
+}
+
+#endif // FXAA_ENABLED
 
 #if LEVELS_ENABLED == 1
 /**
@@ -893,11 +1180,11 @@ void fastSharpen() {
     SOFTWARE.
 */
 
-void levels() {
+void shader_levels() {
     float black_point_float = LVLS_BLACK_POINT / 255.0;
     // Avoid division by zero if the white and black point are the same
     float white_point_float = LVLS_WHITE_POINT == LVLS_BLACK_POINT ? (255.0 / 0.00025) : (255.0 / (LVLS_WHITE_POINT - LVLS_BLACK_POINT));
-    col.rgb = col.rgb * white_point_float - (black_point_float *  white_point_float);
+    g_Color.rgb = g_Color.rgb * white_point_float - (black_point_float *  white_point_float);
 }
 #endif // LEVELS_ENABLED
 
@@ -932,25 +1219,25 @@ void levels() {
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 */
-void technicolor2() {
-    vec3 temp = 1.0 - col.rgb;
+void shader_technicolor2() {
+    vec3 temp = 1.0 - g_Color.rgb;
     vec3 target = temp.grg;
     vec3 target2 = temp.bbr;
-    vec3 temp2 = col.rgb * target;
+    vec3 temp2 = g_Color.rgb * target;
     temp2 *= target2;
     temp = temp2 * TC2_COLORSTRENGTH;
     temp2 *= TC2_BRIGHTNESS;
     target = temp.grg;
     target2 = temp.bbr;
-    temp = col.rgb - target;
+    temp = g_Color.rgb - target;
     temp += temp2;
     temp2 = temp - target2;
-    col.r = mix(col.r, temp2.r, TC2_STRENGTH);
-    col.g = mix(col.g, temp2.g, TC2_STRENGTH);
-    col.b = mix(col.b, temp2.b, TC2_STRENGTH);
-    col.r = mix(dot(col.r, 0.333), col.r, TC2_SATURATION);
-    col.g = mix(dot(col.g, 0.333), col.g, TC2_SATURATION);
-    col.b = mix(dot(col.b, 0.333), col.b, TC2_SATURATION);
+    g_Color.r = mix(g_Color.r, temp2.r, TC2_STRENGTH);
+    g_Color.g = mix(g_Color.g, temp2.g, TC2_STRENGTH);
+    g_Color.b = mix(g_Color.b, temp2.b, TC2_STRENGTH);
+    g_Color.r = mix(dot(g_Color.r, 0.333), g_Color.r, TC2_SATURATION);
+    g_Color.g = mix(dot(g_Color.g, 0.333), g_Color.g, TC2_SATURATION);
+    g_Color.b = mix(dot(g_Color.b, 0.333), g_Color.b, TC2_SATURATION);
 }
 #endif // TECHNICOLOR2_ENABLED
 
@@ -1002,58 +1289,61 @@ vec3 VIB_coefLuma = vec3(0.212656, 0.715158, 0.072186);
 #endif
 vec3 VIB_coeffVibrance = vec3(VIB_RGB_BALANCE * -VIB_VIBRANCE);
 
-void vibrance() {
-    float luma = dot(VIB_coefLuma, col.rgb);
-    float max_color = max(col.r, max(col.g, col.b));
-    float min_color = min(col.r, min(col.g, col.b));
+void shader_vibrance() {
+    float luma = dot(VIB_coefLuma, g_Color.rgb);
+    float max_color = max(g_Color.r, max(g_Color.g, g_Color.b));
+    float min_color = min(g_Color.r, min(g_Color.g, g_Color.b));
     float color_saturation = max_color - min_color;
     vec3 p_col = vec3(vec3(vec3(vec3(sign(VIB_coeffVibrance) * color_saturation) - 1.0) * VIB_coeffVibrance) + 1.0);
-    col.r = mix(luma, col.r, p_col.r);
-    col.g = mix(luma, col.g, p_col.g);
-    col.b = mix(luma, col.b, p_col.b);
-
-    //col.rgb = mix(dot(VIB_coefLuma, col.rgb), col.rgb, 1.0 + (coeffVibrance * (1.0 - (sign(coeffVibrance) * (max(col.r, max(col.g, col.b)) - min_color = min(col.r, min(col.g, col.b))))))));
+    g_Color.r = mix(luma, g_Color.r, p_col.r);
+    g_Color.g = mix(luma, g_Color.g, p_col.g);
+    g_Color.b = mix(luma, g_Color.b, p_col.b);
 }
 #endif // VIBRANCE_ENABLED
 
 void main() {
-    col = texture(sampler, texcoord0).rgba;
-    TextureSize = textureSize(sampler, 0);
-    SourceSize = vec4(TextureSize, 1.0 / TextureSize);
+    g_Color = texture(g_Texture, g_oTexcoord).rgba;
+    g_TextureSize = textureSize(g_Texture, 0);
+    g_SourceSize = vec4(g_TextureSize, 1.0 / g_TextureSize);
 #if DEBAND_ENABLED == 1
-    deband();
+    shader_deband();
 #endif // DEBAND_ENABLED
 
 #if TECHNICOLOR2_ENABLED ==1
-    technicolor2();
+    shader_technicolor2();
 #endif // TECHNICOLOR2_ENABLED
 
 #if VIBRANCE_ENABLED == 1
-    vibrance();
+    shader_vibrance();
 #endif // VIBRANCE_ENABLED
 
 #if FAKEHDR_ENABLED == 1
-    fakeHDR();
+    shader_fake_hdr();
 #endif // FAKEHDR_ENABLED
 
 #if LEVELS_ENABLED == 1
-    levels();
+    shader_levels();
+#endif
+
+#if FXAA_ENABLED == 1
+    shader_fxaa();
 #endif
 
 #if CAS_ENABLED == 1
-    amd_cas();
+    shader_amd_cas();
 #endif // CAS_ENABLED
 
 #if NVIDIA_DLS_ENABLED == 1
-    nvidia_dls();
+    shader_nvidia_dls();
 #endif // NVIDIA_DLS_ENABLED
 
 #if FAST_SHARPEN_ENABLED == 1
-    fastSharpen();
+    shader_fast_sharpen();
 #endif // FAST_SHARPEN_ENABLED
 
 #if ADAPTIVE_SHARPEN_ENABLED == 1
-    adaptive_sharpen();
+    shader_adaptive_sharpen();
 #endif // ADAPTIVE_SHARPEN_ENABLED
-    fragColor = col;
+
+    g_FragColor = g_Color;
 }
