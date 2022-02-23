@@ -20,12 +20,12 @@
 
 // https://github.com/KDE/kwin/blob/Plasma/5.24/src/libkwineffects/kwinglutils.cpp
 
-in vec4 position;
-in vec4 texcoord;
-out vec2 texcoord0;
+in vec4 g_Position;
+in vec4 g_iTexcoord;
+out vec2 g_oTexcoord;
 uniform mat4 modelViewProjectionMatrix;
 
 void main() {
-    texcoord0 = texcoord.st;
-    gl_Position = modelViewProjectionMatrix * position;
+    g_oTexcoord = g_iTexcoord.st;
+    gl_Position = modelViewProjectionMatrix * g_Position;
 }
