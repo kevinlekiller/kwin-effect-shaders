@@ -1,5 +1,7 @@
 # KWin Shader Effects
 KDE Plasma / KWin desktop effect aimed at adding post processing effects to video games using GLSL shaders.
+
+![Shaders](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shaders.png)
 ## Index
 - [Requirements](#requirements-not-tested)
 - [Install](#install)
