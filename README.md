@@ -106,8 +106,8 @@ I'm not an expert on OpenGL or glsl, if you are, PR's are welcome.
 
 ## TODO
 Add more shaders.  
-Seperate shaders into their own files, instead of all in 1 file. 
- -> This is currently pointless:
+Seperate shaders into their own files, instead of all in 1 file.  
+ -> This is currently pointless:  
   Currently the way libkwineffects works, redrawing the window  
   reprocesses the original image and overwrites the output image, for example  
   if you add a shader that makes the output dark, then you "draw" the window, then  
