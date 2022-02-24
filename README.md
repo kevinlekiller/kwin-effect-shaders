@@ -103,6 +103,9 @@ This desktop effect is a fork of these projects: [kwin-effect-smart-invert](http
 Most of the included shaders are from libretro, mpv, SweetFX, vkBasalt.  
 You can find the licenses for those shaders in the shader files (src/shaders/).  
 I'm not an expert on OpenGL or glsl, if you are, PR's are welcome.  
+Antialiasing alternatives:  
+If you have a AMD  gpu, see https://docs.mesa3d.org/gallium/postprocess.html#current-filters  
+ex. on Steam game: `pp_jimenezmlaa_color=32 %command%`
 
 ## TODO
 Add more shaders.  
