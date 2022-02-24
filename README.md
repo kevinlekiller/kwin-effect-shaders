@@ -105,8 +105,18 @@ You can find the licenses for those shaders in the shader files (src/shaders/).
 I'm not an expert on OpenGL or glsl, if you are, PR's are welcome.  
 
 ## TODO
-Seperate shaders into their own files, instead of all in 1 file. -> This is being worked on currently.  
-Add more shaders.
+Add more shaders.  
+Seperate shaders into their own files, instead of all in 1 file. 
+ -> This is currently pointless:
+  Currently the way libkwineffects works, redrawing the window  
+  reprocesses the original image and overwrites the output image, for example  
+  if you add a shader that makes the output dark, then you "draw" the window, then  
+  you add new shader that makes the out sharp, then you draw the window, the 2nd draw  
+  overwrites the first one, so the image is just sharp, but not dark.  
+  With how it is currently, splitting the shaders into individual files would  
+  mean having to open each of those files and combine them into 1 string and  
+  have 1 file with the main function and another with the headers or something  
+  like that, which complicates things for no benefit.
 
 ## Screenshots
 [Debanding](https://cdn.knightlab.com/libs/juxtapose/latest/embed/index.html?uid=ae7aca12-941d-11ec-a554-13fc6baea232)  
