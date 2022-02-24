@@ -180,7 +180,7 @@ void ShadersEffect::drawWindow(EffectWindow* w, int mask, const QRegion &region,
     effects->drawWindow(w, mask, region, data);
 
     if (useShader) {
-            ShaderManager::instance()->popShader();
+        ShaderManager::instance()->popShader();
     }
 }
 

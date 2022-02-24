@@ -109,7 +109,7 @@ You can use this on any program, not just a game, the "System Settings" window f
 
 Toggle on and off whole screen (all applications): `CTRL + META + R`
 
-## Blaclkist Applications
+## Blacklist Applications
 
 In the settings for the effect (`System Settings -> Workspace -> Workspace Behavior -> Desktop Effects -> Appearance -> Shaders`), you can add application(s), if more than 1, seperate them with a comma.
 
@@ -133,7 +133,7 @@ This is useful if you use the Enabled by Default option.
 
 You can use the Blacklist at the same time as the Whitelist.
 
-# Enable On Login
+## Enable On Login
 
 In the settings for the effect (`System Settings -> Workspace -> Workspace Behavior -> Desktop Effects -> Appearance -> Shaders`), you can set the "Enabled By Default" option.
 
