@@ -1,10 +1,16 @@
 #!/bin/bash
 
+# BUILD_DIRECTORY=build RELEASE_TYPE=Release DEBUG=ON ./install.sh
+
 [[ $EUID == 0 ]] && echo "This script must not be run as root. Exiting." && exit 1
 
-BUILD_DIRECTORY=build
-RELEASE_TYPE=Release
-DEBUG=OFF
+BUILD_DIRECTORY=${BUILD_DIRECTORY:-build}
+RELEASE_TYPE=${RELEASE_TYPE:-Release}
+DEBUG=${DEBUG:-OFF}
+MAKEFLAGS=${MAKEFLAGS:--j$(nproc)}
+export MAKEFLAGS=$MAKEFLAGS
+CXXFLAGS=${CXXFLAGS:--march=native -mtune=native -O2 -pipe -fstack-protector-strong -fno-plt}
+export CXXFLAGS=$CXXFLAGS
 
 cd "$(realpath "$(dirname "$0")")" || exit $?
 
@@ -13,8 +19,6 @@ cd "$(realpath "$(dirname "$0")")" || exit $?
 mkdir -p "$BUILD_DIRECTORY"
 
 cd "$BUILD_DIRECTORY" || exit $?
-
-[[ $@ =~ DEBUG ]] && DEBUG=ON && RELEASE_TYPE=Debug
 
 cmake -DCMAKE_BUILD_TYPE="$RELEASE_TYPE" -DENABLE_DEBUG="$DEBUG" .. || exit $?
 
