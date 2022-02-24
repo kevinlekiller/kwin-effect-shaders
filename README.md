@@ -4,26 +4,31 @@
 - [Requirements](#requirements-not-tested)
 - [Install](#install)
 - [Uninstall](#uninstall)
-- [Enabling / Disabling the effect](#enabling--disabling-the-effect)
-- [Custom Keyboard shortcuts](#custom-keyboard-shortcuts)
-- [Copying the shader files to your home directory](#copying-the-shader-files-to-your-home-directory)
-- [Modifying the shader files](#modifying-the-shader-files)
-- [Toggling on/off the shaders](#toggling-onoff-the-shaders)
+- [Toggling The KWin Effect](#toggling-the-kwin-effect)
+- [Custom Keyboard Shortcuts](#custom-keyboard-shortcuts)
+- [Copying Shaders To Home Directory](#copying-shaders-to-home-directory)
+- [Modifying Shaders](#modifying-shaders)
+- [Toggling The Shaders](#toggling-the-shaders)
+- [Blacklist Applications](#blacklist-applications)
+- [Whitelist Applications](#whitelist-applications)
+- [Enable On Login](#enable-on-login)
 - [TODO](#todo)
 - [Screenshots](#screenshots)
 
 ## Intro
-KDE Plasma / KWin desktop effect aimed at adding post processing effects to video games.
+KDE Plasma / KWin desktop effect aimed at adding post processing effects to video games using GLSL shaders.
 
-While this might support X11 (not tested), it requires KWin to be compositing, and compositing is usually disabled when playing a game on X11.
+Note that X11 disables compositing in full screen applications, use Wayland if possible.
 
 This project was initially created because some games do not support vkBasalt or ReShade.
 
-This desktop effect is a fork of these projects: [kwin-effect-smart-invert](https://github.com/natask/kwin-effect-smart-invert), [invert](https://github.com/KDE/kwin/tree/master/src/effects/invert) [kwin-effects-yet-another-magic-lamp](https://github.com/zzag/kwin-effects-yet-another-magic-lamp)
+This desktop effect is a fork of these projects: [kwin-effect-smart-invert](https://github.com/natask/kwin-effect-smart-invert), [invert](https://github.com/KDE/kwin/tree/master/src/effects/invert), [kwin-effects-yet-another-magic-lamp](https://github.com/zzag/kwin-effects-yet-another-magic-lamp).
 
-Most of the included shaders are from libretro / mpv / SweetFX / vkBasalt, you can find the license for those shaders in the shader file (src/shaders/shader.frag).
+Most of the included shaders are from libretro, mpv, SweetFX, vkBasalt.
 
-I'm not an expert on OpenGL or glsl, if you are, if you can, please optimize the shaders, or add more.
+Yu can find the licenses for those shaders in the shader files (src/shaders/).
+
+I'm not an expert on OpenGL or glsl, if you are, PR's are welcome.
 
 ## Requirements (not tested)
 Arch Based: `sudo pacman -Syu extra-cmake-modules kwin kf5`
@@ -34,9 +39,9 @@ Fedora Based: `sudo dnf install git cmake gcc-c++ extra-cmake-modules qt5-qttool
 
 ## Install
 
-After installing, log out / in of the session to load the effect.
+After installing, log out and in of the session to load the effect, or restart kwin.
 
-### From source:
+### From Source:
 
 `git clone https://github.com/kevinlekiller/kwin-effect-shaders`
 
@@ -54,23 +59,23 @@ https://aur.archlinux.org/packages/kwin-effect-shaders-git
 
 `./install.sh UNINSTALL`
 
-## Enabling / Disabling the effect
+## Toggling The KWin Effect
 
-System Settings -> Workspace -> Workspace Behavior -> Desktop Effects -> Appearance -> Shaders
+`System Settings -> Workspace -> Workspace Behavior -> Desktop Effects -> Appearance -> Shaders`
 
 Put a checkmark in the box and click accept.
 
-By default all shaders are disabled, see "Modifying the shader files".
+By default all shaders are disabled, see `Modifying The Shader Files`.
 
 ![Desktop Effects](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/settings1.png)
 
-## Custom Keyboard shortcuts
+## Custom Keyboard Shortcuts
 
-System Settings -> Workspace -> Shortcuts -> Shortcuts -> System Services -> Kwin -> Toggle Shaders Effect
+`System Settings -> Workspace -> Shortcuts -> Shortcuts -> System Services -> Kwin -> Toggle Shaders Effect`
 
 ![Keyboard Shortcuts](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shortcuts.png)
 
-## Copying the shader files to your home directory
+## Copying Shaders To Home Directory
 
 If you have ran the `install.sh` script, the following steps are done automatically.
 
@@ -84,7 +89,7 @@ For example `/home/kevin/.local/share/shaders`
 
 ![Shaders path directory](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/settings2.png)
 
-## Modifying the shader files
+## Modifying Shaders
 
 Go to the directory where your shader files are, by default `~/.local/share/shaders`
 
@@ -92,25 +97,53 @@ Modify the `shaders.frag` file in that directory.
 
 ![shader.frag edit](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shader_file.png)
 
-## Toggling on/off the shaders
+## Toggling The Shaders
 
 The default shortcuts are (META is the SUPER key):
 
 The shortcuts might be disabled by default, see "Custom Keyboard Shortcuts".
 
-Toggle on/off active application (this is what you probably want to use): `CTRL + META + Z`
+Toggle on and off active application (this is what you probably want to use): `CTRL + META + Z`
 
 You can use this on any program, not just a game, the "System Settings" window for example.
 
-Toggle on/off whole screen (all applications): `CTRL + META + R`
+Toggle on and off whole screen (all applications): `CTRL + META + R`
+
+## Blaclkist Applications
+
+In the settings for the effect (`System Settings -> Workspace -> Workspace Behavior -> Desktop Effects -> Appearance -> Shaders`), you can add application(s), if more than 1, seperate them with a comma.
+
+For example: `plasmashell,Firefox`
+
+This will block the Plasma desktop and Firefox from being processed.
+
+The list is not case sensitive.
+
+## Whitelist Applications
+
+In the settings for the effect (`System Settings -> Workspace -> Workspace Behavior -> Desktop Effects -> Appearance -> Shaders`), you can add application(s), if more than 1, seperate them with a comma.
+
+For example: `kate,kcalc`
+
+Only Kcalc and Kate will be processed.
+
+The list is not case sensitive.
+
+This is useful if you use the Enabled by Default option.
+
+You can use the Blacklist at the same time as the Whitelist.
+
+# Enable On Login
+
+In the settings for the effect (`System Settings -> Workspace -> Workspace Behavior -> Desktop Effects -> Appearance -> Shaders`), you can set the "Enabled By Default" option.
+
+This will process all applications on login.
+
+You can exclude applications by using the Blacklist and/or Whitelist.
 
 ## TODO
 
-Get the blacklist working.
-
-Implement a whitelist system, where a program which matches the whitelist the shader processing will be automatically enabled.
-
-Seperate shaders into their own files, instead of all in 1 file.
+Seperate shaders into their own files, instead of all in 1 file. -> This is being worked on currently.
 
 Add more shaders.
 

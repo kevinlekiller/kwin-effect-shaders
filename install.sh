@@ -4,6 +4,7 @@
 
 BUILD_DIRECTORY=build
 RELEASE_TYPE=Release
+DEBUG=OFF
 
 cd "$(realpath "$(dirname "$0")")" || exit $?
 
@@ -13,7 +14,9 @@ mkdir -p "$BUILD_DIRECTORY"
 
 cd "$BUILD_DIRECTORY" || exit $?
 
-cmake .. -DCMAKE_BUILD_TYPE="$RELEASE_TYPE" || exit $?
+[[ $@ =~ DEBUG ]] && DEBUG=ON && RELEASE_TYPE=Debug
+
+cmake -DCMAKE_BUILD_TYPE="$RELEASE_TYPE" -DENABLE_DEBUG="$DEBUG" .. || exit $?
 
 make || exit $?
 
@@ -25,4 +28,4 @@ if ! grep "^\[Effect-Shaders\]" ~/.config/kwinrc &> /dev/null; then
     echo -ne "\n[Effect-Shaders]\nShaderPath=$HOME/.local/share/shaders\n" >> ~/.config/kwinrc
 fi
 
-[[ $1 == UNINSTALL ]] && sudo make uninstall
+[[ $@ =~ UNINSTALL ]] && sudo make uninstall

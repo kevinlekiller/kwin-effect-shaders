@@ -11,5 +11,11 @@
         <entry name="Blacklist" type="String">
             <default></default>
         </entry>
+        <entry name="Whitelist" type="String">
+            <default></default>
+        </entry>
+        <entry name="DefaultEnabled" type="Bool">
+            <default>false</default>
+        </entry>
     </group>
 </kcfg>

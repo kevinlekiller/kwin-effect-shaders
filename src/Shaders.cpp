@@ -1,4 +1,4 @@
-/*
+﻿/*
     KWin - the KDE window manager
     This file is part of the KDE project.
     SPDX-FileCopyrightText: 2007 Rivo Laks <rivolaks@hot.ee>
@@ -25,42 +25,69 @@ namespace KWin
 {
 
 ShadersEffect::ShadersEffect()
-    :   m_inited(false),
-        m_valid(true),
-        m_shader(nullptr),
+    :   m_shader(nullptr),
         m_allWindows(false)
 {
+#ifdef DEBUGON
+    logFile.setFileName("/tmp/kwin4_effect_shaders.log");
+    logFile.open(QIODevice::Append | QIODevice::Text);
+    QTextStream out(&logFile);
+    out << "ShadersEffect::ShadersEffect()\n";
+#endif
     reconfigure(ReconfigureAll);
+
     QAction* a = new QAction(this);
     a->setObjectName(QStringLiteral("Shaders"));
     a->setText(i18n("Toggle Shaders Effect"));
     KGlobalAccel::self()->setDefaultShortcut(a, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_R);
     KGlobalAccel::self()->setShortcut(a, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_R);
     effects->registerGlobalShortcut(Qt::CTRL + Qt::META + Qt::Key_R, a);
-
     connect(a, &QAction::triggered, this, &ShadersEffect::toggleScreenShaders);
 
     QAction* b = new QAction(this);
     b->setObjectName(QStringLiteral("ShadersWindow"));
     b->setText(i18n("Toggle Shaders Effect on Window"));
-
     KGlobalAccel::self()->setDefaultShortcut(b, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_Z);
     KGlobalAccel::self()->setShortcut(b, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_Z);
     effects->registerGlobalShortcut(Qt::CTRL + Qt::META + Qt::Key_Z, b);
-
     connect(b, &QAction::triggered, this, &ShadersEffect::toggleWindow);
 
     connect(effects, &EffectsHandler::windowClosed, this, &ShadersEffect::slotWindowClosed);
+
+    if (ShadersConfig::defaultEnabled()) {
+        a->trigger();
+    }
+#ifdef DEBUGON
+    out << "ShadersEffect::ShadersEffect() -> ShadersConfig::defaultEnabled() -> " << ShadersConfig::defaultEnabled() << "\n";
+#endif
 }
 
 ShadersEffect::~ShadersEffect()
 {
+#ifdef DEBUGON
+    QTextStream out(&logFile);
+    out << "ShadersEffect::~ShadersEffect()\n";
+    logFile.close();
+#endif
     delete m_shader;
 }
 
 void ShadersEffect::reconfigure(ReconfigureFlags) {
+#ifdef DEBUGON
+    QTextStream out(&logFile);
+    out << "ShadersEffect::reconfigure()\n";
+#endif
     ShadersConfig::self()->read();
-    m_blacklist = ShadersConfig::blacklist().toLower().split(",");
+    QString blacklist = ShadersConfig::blacklist();
+    m_blacklist = blacklist.toLower().split(",");
+    m_blacklistEn = !blacklist.isEmpty();
+    QString whitelist = ShadersConfig::whitelist();
+    m_whitelist = whitelist.toLower().split(",");
+    m_whitelistEn = !whitelist.isEmpty();
+#ifdef DEBUGON
+    out << "ShadersEffect::reconfigure() -> blacklist -> '" << blacklist << "'\n";
+    out << "ShadersEffect::reconfigure() -> whitelist -> '" << whitelist << "'\n";
+#endif
     QString shaderPath = ShadersConfig::shaderPath().trimmed();
     bool foundPath = false;
     if (!shaderPath.isEmpty()) {
@@ -87,10 +114,13 @@ bool ShadersEffect::supported()
     return effects->compositingType() == OpenGLCompositing;
 }
 
-bool ShadersEffect::loadData()
+bool ShadersEffect::loadShaders()
 {
+#ifdef DEBUGON
+    QTextStream out(&logFile);
+    out << "ShadersEffect::loadShaders()\n";
+#endif
     reconfigure(ReconfigureAll);
-    m_inited = true;
 
     QString fragmentShader("shaders.frag");
     fragmentShader.prepend(shaderPath());
@@ -114,96 +144,108 @@ bool ShadersEffect::loadData()
     if (m_shader->isValid()) {
         return true;
     }
+#ifdef DEBUGON
+    out << "ShadersEffect::loadShaders() -> Shader is invalid\n";
+#endif
     return false;
-}
-
-QString ShadersEffect::getWindowApplicationName(EffectWindow * w) {
-    auto windowClass = w->windowClass();
-    return windowClass.split(" ")[1].toLower();
 }
 
 void ShadersEffect::drawWindow(EffectWindow* w, int mask, const QRegion &region, WindowPaintData& data)
 {
-    // Load if we haven't already
-    if (m_valid && !m_inited) {
-        m_valid = loadData();
+#ifdef DEBUGON
+    QTextStream out(&logFile);
+    out << "ShadersEffect::drawWindow() -> " << w << "\n";
+#endif
+    bool useShader = m_shader->isValid() && (m_allWindows != m_windows.contains(w));
+    if (useShader && (m_blacklistEn || m_whitelistEn)) {
+        QString windowName = w->windowClass().split(" ")[1].toLower();
+        if (m_blacklist.contains(windowName)) {
+#ifdef DEBUGON
+            out << "ShadersEffect::drawWindow() -> Blacklist on " << windowName << "\n";
+#endif
+            useShader = false;
+        } else if (m_whitelistEn && !m_whitelist.contains(windowName)) {
+#ifdef DEBUGON
+            out << "ShadersEffect::drawWindow() -> No whitelist on " << windowName << "\n";
+#endif
+            useShader = false;
+        }
     }
-    if (!m_valid) {
-        return;
-    }
-
-    bool useShader =
-        m_valid &&
-        (m_allWindows != m_windows.contains(w)) &&
-        !m_blacklist.contains(getWindowApplicationName(w)
-    );
     if (useShader) {
-        auto shader = m_windows_shader.value(w, m_shader);
         ShaderManager *shaderManager = ShaderManager::instance();
-        shaderManager->pushShader(shader);
-        data.shader = shader;
+        shaderManager->pushShader(m_shader);
+        data.shader = m_shader;
     }
 
     effects->drawWindow(w, mask, region, data);
 
     if (useShader) {
-        ShaderManager::instance()->popShader();
+            ShaderManager::instance()->popShader();
     }
 }
 
 void ShadersEffect::paintEffectFrame(KWin::EffectFrame* frame, const QRegion &region, double opacity, double frameOpacity)
 {
-    if (m_valid && m_allWindows) {
-        frame->setShader(m_shader);
-        ShaderBinder binder(m_shader);
-        effects->paintEffectFrame(frame, region, opacity, frameOpacity);
-    } else {
-        effects->paintEffectFrame(frame, region, opacity, frameOpacity);
-    }
+#ifdef DEBUGON
+    QTextStream out(&logFile);
+    out << "ShadersEffect::paintEffectFrame()\n";
+#endif
+    effects->paintEffectFrame(frame, region, opacity, frameOpacity);
 }
 
 void ShadersEffect::slotWindowClosed(EffectWindow* w)
 {
-    m_windows_shader.remove(w);
+#ifdef DEBUGON
+    QTextStream out(&logFile);
+    out << "ShadersEffect::slotWindowClosed()\n";
+#endif
     m_windows.removeOne(w);
 }
 
 void ShadersEffect::toggleScreenShaders()
 {
-    m_valid = loadData(); //hotswap
-    if (!m_valid) {
-        return;
-    }
-    m_windows_shader.clear();
+#ifdef DEBUGON
+    QTextStream out(&logFile);
+    out << "ShadersEffect::toggleScreenShaders()\n";
+#endif
     m_allWindows = !m_allWindows;
+    // Only load shaders if enabled.
+    if (m_allWindows) {
+        loadShaders();
+    }
     effects->addRepaintFull();
 }
 
 void ShadersEffect::toggleWindow()
 {
+#ifdef DEBUGON
+    QTextStream out(&logFile);
+    out << "ShadersEffect::toggleWindow()\n";
+#endif
     if (!effects->activeWindow()) {
         return;
     }
-    m_valid = loadData();
-    if (!m_valid) {
-        return;
-    }
-    m_windows_shader.insert(effects->activeWindow(), m_shader);
-    if (!m_windows.contains(effects->activeWindow())) {
-        m_windows.append(effects->activeWindow());
-    } else {
+    // Check if the current window already has shaders on it.
+    if (m_windows.contains(effects->activeWindow())) {
         m_windows.removeOne(effects->activeWindow());
+    } else {
+        loadShaders();
+        m_windows.append(effects->activeWindow());
     }
     effects->activeWindow()->addRepaintFull();
 }
 
 bool ShadersEffect::isActive() const
 {
-    return m_valid && (m_allWindows || !m_windows.isEmpty());
+    return (m_allWindows || !m_windows.isEmpty());
 }
 
 bool ShadersEffect::provides(Feature f)
 {
+#ifdef DEBUGON
+    QTextStream out(&logFile);
+    out << "ShadersEffect::provides()\n";
+#endif
     return f == Nothing;
 }
 
