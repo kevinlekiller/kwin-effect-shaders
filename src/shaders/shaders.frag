@@ -158,7 +158,7 @@
 //----------------------------------------------------------------
 //-------- Nvidia DLS (sharpening) configuration section ---------
 //----------------------------------------------------------------
-//https://github.com/DadSchoorse/vkBasalt/blob/master/src/shader/dls.frag.glsl
+// https://github.com/DadSchoorse/vkBasalt/blob/master/src/shader/dls.frag.glsl
 
 // Set to 1 to enable.
 #define NVIDIA_DLS_ENABLED 0
@@ -169,6 +169,18 @@
 
 // Default: 0.17
 #define DLS_DENOISE 0.17
+
+#endif
+//----------------------------------------------------------------
+//---------------------- Gaussian Blur H -------------------------
+//----------------------------------------------------------------
+// https://github.com/libretro/glsl-shaders/blob/master/blurs/blur-gauss-h.glsl
+
+#define GAUSSBLURH_ENABLED 0
+#if GAUSSBLURH_ENABLED == 1 // Don't change this line.
+
+// Default: 1.0
+#define GAUSSBLURH_STRENGTH 1.0
 
 #endif
 //----------------------------------------------------------------
@@ -254,8 +266,8 @@ vec3 VIB_RGB_BALANCE = vec3(1.0, 1.0, 1.0);
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 
-uniform sampler2D g_Texture;
-in vec2 g_oTexcoord;
+uniform sampler2D g_Texture; // AKA Texture or Source in libretro
+in vec2 g_oTexcoord;         // AKA TEX0.xy or vTexCoord in libretro
 out vec4 g_FragColor;
 vec4 g_Color;
 vec4 g_SourceSize;
@@ -870,6 +882,40 @@ void shader_fast_sharpen() {
 }
 #endif // FAST_SHARPEN_ENABLED
 
+#if GAUSSBLURH_ENABLED == 1
+// Implementation based on the article "Efficient Gaussian blur with linear sampling"
+// http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/
+/* A version for MasterEffect Reborn, a standalone version, and a custom shader version for SweetFX can be
+   found at http://reshade.me/forum/shader-presentation/27-gaussian-blur-bloom-unsharpmask */
+
+void shader_gauss_blur_h() {
+    vec2 PIXEL_SIZE = g_SourceSize.zw;
+    float sampleOffsets1 = 0.0;
+    float sampleOffsets2 = 1.4347826;
+    float sampleOffsets3 = 3.3478260;
+    float sampleOffsets4 = 5.2608695;
+    float sampleOffsets5 = 7.1739130;
+
+    float sampleWeights1 = 0.16818994;
+    float sampleWeights2 = 0.27276957;
+    float sampleWeights3 = 0.11690125;
+    float sampleWeights4 = 0.024067905;
+    float sampleWeights5 = 0.0021112196;
+
+    vec4 color = texture(g_Texture, g_oTexcoord) * sampleWeights1;
+    color += texture(g_Texture, g_oTexcoord + vec2(sampleOffsets2* GAUSSBLURH_STRENGTH * PIXEL_SIZE.x, 0.0)) * sampleWeights2;
+    color += texture(g_Texture, g_oTexcoord - vec2(sampleOffsets2* GAUSSBLURH_STRENGTH * PIXEL_SIZE.x, 0.0)) * sampleWeights2;
+    color += texture(g_Texture, g_oTexcoord + vec2(sampleOffsets3* GAUSSBLURH_STRENGTH * PIXEL_SIZE.x, 0.0)) * sampleWeights3;
+    color += texture(g_Texture, g_oTexcoord - vec2(sampleOffsets3* GAUSSBLURH_STRENGTH * PIXEL_SIZE.x, 0.0)) * sampleWeights3;
+    color += texture(g_Texture, g_oTexcoord + vec2(sampleOffsets4* GAUSSBLURH_STRENGTH * PIXEL_SIZE.x, 0.0)) * sampleWeights4;
+    color += texture(g_Texture, g_oTexcoord - vec2(sampleOffsets4* GAUSSBLURH_STRENGTH * PIXEL_SIZE.x, 0.0)) * sampleWeights4;
+    color += texture(g_Texture, g_oTexcoord + vec2(sampleOffsets5* GAUSSBLURH_STRENGTH * PIXEL_SIZE.x, 0.0)) * sampleWeights5;
+    color += texture(g_Texture, g_oTexcoord - vec2(sampleOffsets5* GAUSSBLURH_STRENGTH * PIXEL_SIZE.x, 0.0)) * sampleWeights5;
+
+    g_Color = vec4(color);
+}
+#endif // GAUSSBLURH_ENABLED
+
 #if LEVELS_ENABLED == 1
 /**
  * Levels version 1.2
@@ -1055,7 +1101,11 @@ void main() {
 
 #if LEVELS_ENABLED == 1
     shader_levels();
-#endif
+#endif // LEVELS_ENABLED
+
+#if GAUSSBLURH_ENABLED == 1
+    shader_gauss_blur_h();
+#endif // GAUSSBLURH_ENABLED
 
 #if CAS_ENABLED == 1
     shader_amd_cas();
