@@ -184,6 +184,18 @@
 
 #endif
 //----------------------------------------------------------------
+//---------------------- Gaussian Blur V -------------------------
+//----------------------------------------------------------------
+// https://github.com/libretro/glsl-shaders/blob/master/blurs/blur-gauss-v.glsl
+
+#define GAUSSBLURV_ENABLED 0
+#if GAUSSBLURV_ENABLED == 1 // Don't change this line.
+
+// Default: 1.0
+#define GAUSSBLURV_STRENGTH 1.0
+
+#endif
+//----------------------------------------------------------------
 //------------ Techicolor 2 configuration section ----------------
 //----------------------------------------------------------------
 // https://github.com/CeeJayDK/SweetFX/blob/master/Shaders/Technicolor2.fx
@@ -916,6 +928,40 @@ void shader_gauss_blur_h() {
 }
 #endif // GAUSSBLURH_ENABLED
 
+#if GAUSSBLURV_ENABLED == 1
+// Implementation based on the article "Efficient Gaussian blur with linear sampling"
+// http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/
+/* A version for MasterEffect Reborn, a standalone version, and a custom shader version for SweetFX can be
+   found at http://reshade.me/forum/shader-presentation/27-gaussian-blur-bloom-unsharpmask */
+
+void shader_gauss_blur_v() {
+    vec2 PIXEL_SIZE = g_SourceSize.zw;
+    float sampleOffsets1 = 0.0;
+    float sampleOffsets2 = 1.4347826;
+    float sampleOffsets3 = 3.3478260;
+    float sampleOffsets4 = 5.2608695;
+    float sampleOffsets5 = 7.1739130;
+
+    float sampleWeights1 = 0.16818994;
+    float sampleWeights2 = 0.27276957;
+    float sampleWeights3 = 0.11690125;
+    float sampleWeights4 = 0.024067905;
+    float sampleWeights5 = 0.0021112196;
+
+    vec4 color = texture(g_Texture, g_oTexcoord) * sampleWeights1;
+    color += texture(g_Texture, g_oTexcoord + vec2(0.0, sampleOffsets2* GAUSSBLURV_STRENGTH * PIXEL_SIZE.y)) * sampleWeights2;
+    color += texture(g_Texture, g_oTexcoord - vec2(0.0, sampleOffsets2* GAUSSBLURV_STRENGTH * PIXEL_SIZE.y)) * sampleWeights2;
+    color += texture(g_Texture, g_oTexcoord + vec2(0.0, sampleOffsets3* GAUSSBLURV_STRENGTH * PIXEL_SIZE.y)) * sampleWeights3;
+    color += texture(g_Texture, g_oTexcoord - vec2(0.0, sampleOffsets3* GAUSSBLURV_STRENGTH * PIXEL_SIZE.y)) * sampleWeights3;
+    color += texture(g_Texture, g_oTexcoord + vec2(0.0, sampleOffsets4* GAUSSBLURV_STRENGTH * PIXEL_SIZE.y)) * sampleWeights4;
+    color += texture(g_Texture, g_oTexcoord - vec2(0.0, sampleOffsets4* GAUSSBLURV_STRENGTH * PIXEL_SIZE.y)) * sampleWeights4;
+    color += texture(g_Texture, g_oTexcoord + vec2(0.0, sampleOffsets5* GAUSSBLURV_STRENGTH * PIXEL_SIZE.y)) * sampleWeights5;
+    color += texture(g_Texture, g_oTexcoord - vec2(0.0, sampleOffsets5* GAUSSBLURV_STRENGTH * PIXEL_SIZE.y)) * sampleWeights5;
+
+    g_Color = vec4(color);
+}
+#endif // GAUSSBLURV_ENABLED
+
 #if LEVELS_ENABLED == 1
 /**
  * Levels version 1.2
@@ -1106,6 +1152,10 @@ void main() {
 #if GAUSSBLURH_ENABLED == 1
     shader_gauss_blur_h();
 #endif // GAUSSBLURH_ENABLED
+
+#if GAUSSBLURV_ENABLED == 1
+    shader_gauss_blur_v();
+#endif // GAUSSBLURV_ENABLED
 
 #if CAS_ENABLED == 1
     shader_amd_cas();
