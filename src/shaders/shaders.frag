@@ -43,7 +43,7 @@
 // Move up or down a SHADER_NAME to change the position it will be run.
 // For example, if you want Vibrance to run before all the other shaders,
 // move SHADER_VIRANCE, above SHADER_DEBAND,
-int shaderOrder[SHADERS+1] = int[] ( // Don't change this line.
+const int SHADER_ORDER[SHADERS+1] = int[] ( // Don't change this line.
 
     SHADER_DEBAND,
     SHADER_NATURAL_VISION,
@@ -1644,7 +1644,7 @@ void main() {
     g_SourceSize = vec4(g_TextureSize, 1.0 / g_TextureSize);
 
     for (int shader = 0; shader < SHADERS; shader++) {
-        switch(shaderOrder[shader]) {
+        switch(SHADER_ORDER[shader]) {
             #if DEBAND_ENABLED == 1
             case SHADER_DEBAND:
                 shader_deband();
