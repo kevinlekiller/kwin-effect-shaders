@@ -1,6 +1,10 @@
 # KWin Shader Effects
 KDE Plasma / KWin desktop effect aimed at adding post processing effects to video games using GLSL shaders.
 
+Example of FakeHDR + Adaptive Sharpen in Life is Strange 2:  
+![Comparison](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/comparison.png)
+
+Example of Vibrance and Levels in KDE Plasma's System Settings:
 ![Shaders](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shaders.png)
 ## Index
 - [Requirements](#requirements-not-tested)
