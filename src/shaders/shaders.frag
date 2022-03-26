@@ -75,6 +75,7 @@
 // quality. Higher = more grain. Setting it to 0 disables the effect.
 // haasn default : 48
 //   mpv default : 48
+// NOTE: Set this to 0 if you use Natural Vision or you'll see green artefacts.
 #define DEBAND_GRAIN 48
 
 #endif
@@ -703,11 +704,7 @@ vec4 DB_average(float range, inout float h) {
 
 void shader_deband() {
     // Initialize the PRNG by hashing the position + a random uniform
-    vec3 m_d = vec3(
-        g_oTexcoord,
-        // https://stackoverflow.com/a/28095165
-        fract(tan(distance(g_TextureSize * 1.61803398874989484820459, g_TextureSize) * g_Color.r) * g_TextureSize.x)
-    ) + vec3(1.0);
+    vec3 m_d = vec3(g_oTexcoord, g_TextureSize * g_Color.x) + vec3(1.0);
     float h_d = DB_permute(DB_permute(DB_permute(m_d.x) + m_d.y) + m_d.z);
     vec4 avg, diff;
     for (int i = 1; i <= int(DEBAND_ITERATIONS); i++) {
@@ -1493,7 +1490,7 @@ void shader_levels() {
 void shader_natural_vision() {
     vec3 c = pow(g_Color.xyz, vec3(NATURAL_VISION_GIN, NATURAL_VISION_GIN, NATURAL_VISION_GIN));
     c *= mat3x3(0.299, 0.587, 0.114, 0.595716, -0.274453, -0.321263, 0.211456, -0.522591,  0.311135);
-    c = vec3(pow(c.x, NATURAL_VISION_Y), c.y* NATURAL_VISION_I, c.z* NATURAL_VISION_Q);
+    c = vec3(pow(c.x, NATURAL_VISION_Y), c.y * NATURAL_VISION_I, c.z * NATURAL_VISION_Q);
     c = clamp(c, vec3(0, -0.595716, -0.522591), vec3(1, 0.595716, 0.522591));
     c *= mat3x3(1, 0.95629572,  0.62102442, 1, -0.27212210, -0.64738060, 1, -1.10698902,  1.70461500);
     g_Color.rgb = pow(c, vec3(1.0 / NATURAL_VISION_GOUT, 1.0 / NATURAL_VISION_GOUT, 1.0 / NATURAL_VISION_GOUT));
