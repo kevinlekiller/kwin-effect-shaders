@@ -1,4 +1,3 @@
-#version 140
 /**
  *  Please see the original licenses / copyright information for the included shaders by scrolling down this file.
  *
@@ -17,12 +16,50 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *  https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html
  */
+#version 140
+#define SHADER_DEBAND           0
+#define SHADER_NATURAL_VISION   1
+#define SHADER_TECHNICOLOR2     2
+#define SHADER_VIBRANCE         3
+#define SHADER_FAKE_HDR         4
+#define SHADER_LEVELS           5
+#define SHADER_FXAA3            6
+#define SHADER_GAUSS_BLUR_H     7
+#define SHADER_GAUSS_BLUR_V     8
+#define SHADER_AMD_CAS          9
+#define SHADER_NVIDIA_DLS       10
+#define SHADER_FAST_SHARPEN     11
+#define SHADER_ADAPTIVE_SHARPEN 12
+#define SHADERS                 13
+//----------------------------------------------------------------
+//----------------------------------------------------------------
+//------------------ Start of user configuration -----------------
+//----------------------------------------------------------------
+//---------- NOTE: All shaders are disabled by default -----------
 
 //----------------------------------------------------------------
+//---------------- Order the Shaders Will Be Run -----------------
 //----------------------------------------------------------------
-//---------------------- Start of user configuration -------------
-//----------------------------------------------------------------
-//----------------------------------------------------------------
+// Move up or down a SHADER_NAME to change the position it will be run.
+// For example, if you want Vibrance to run before all the other shaders,
+// move SHADER_VIRANCE, above SHADER_DEBAND,
+float shaderOrder[SHADERS+1] = float[] ( // Don't change this line.
+
+    SHADER_DEBAND,
+    SHADER_NATURAL_VISION,
+    SHADER_TECHNICOLOR2,
+    SHADER_VIBRANCE,
+    SHADER_FAKE_HDR,
+    SHADER_LEVELS,
+    SHADER_FXAA3,
+    SHADER_GAUSS_BLUR_H,
+    SHADER_GAUSS_BLUR_V,
+    SHADER_AMD_CAS,
+    SHADER_NVIDIA_DLS,
+    SHADER_FAST_SHARPEN,
+    SHADER_ADAPTIVE_SHARPEN,
+
+255); // Don't change this line.
 
 //----------------------------------------------------------------
 //----- AMD Contrast adaptive sharpen configuration section ------
@@ -38,7 +75,7 @@
 
 #endif
 //----------------------------------------------------------------
-//------------ Deband configuration section ----------------------
+//---------------- Deband configuration section ------------------
 //----------------------------------------------------------------
 // https://github.com/haasn/gentoo-conf/blob/xor/home/nand/.mpv/shaders/deband.glsl
 
@@ -80,7 +117,7 @@
 
 #endif
 //----------------------------------------------------------------
-//------------ Fake HDR configuration section --------------------
+//---------------- Fake HDR configuration section ----------------
 //----------------------------------------------------------------
 // https://github.com/CeeJayDK/SweetFX/blob/master/Shaders/FakeHDR.fx
 
@@ -105,7 +142,7 @@
 
 #endif
 //----------------------------------------------------------------
-//------------ Fast Sharpen configuration section ----------------
+//------------- Fast Sharpen configuration section ---------------
 //----------------------------------------------------------------
 // https://github.com/libretro/glsl-shaders/blob/master/sharpen/shaders/fast-sharpen.glsl
 
@@ -130,7 +167,7 @@
 
 #endif
 //----------------------------------------------------------------
-//--------------- FXAA3 configuration section -------------------
+//---------------- FXAA3 configuration section -------------------
 //----------------------------------------------------------------
 // https://gist.github.com/kosua20/0c506b81b3812ac900048059d2383126
 
@@ -184,7 +221,7 @@
 
 #endif
 //----------------------------------------------------------------
-//------------ Levels configuration section ----------------------
+//-------------- Levels configuration section --------------------
 //----------------------------------------------------------------
 // https://github.com/CeeJayDK/SweetFX/blob/master/Shaders/Levels.fx
 
@@ -227,7 +264,7 @@
 
 #endif
 //----------------------------------------------------------------
-//---------------------- Gaussian Blur H -------------------------
+//------------ Gaussian Blur H configuration section -------------
 //----------------------------------------------------------------
 // https://github.com/libretro/glsl-shaders/blob/master/blurs/blur-gauss-h.glsl
 
@@ -239,7 +276,7 @@
 
 #endif
 //----------------------------------------------------------------
-//---------------------- Gaussian Blur V -------------------------
+//------------ Gaussian Blur V configuration section -------------
 //----------------------------------------------------------------
 // https://github.com/libretro/glsl-shaders/blob/master/blurs/blur-gauss-v.glsl
 
@@ -281,7 +318,7 @@
 
 #endif
 //----------------------------------------------------------------
-//------------ Techicolor 2 configuration section ----------------
+//------------- Techicolor 2 configuration section ---------------
 //----------------------------------------------------------------
 // https://github.com/CeeJayDK/SweetFX/blob/master/Shaders/Technicolor2.fx
 
@@ -310,7 +347,7 @@ vec3 TC2_COLORSTRENGTH = vec3(0.2, 0.2, 0.2);
 
 #endif
 //----------------------------------------------------------------
-//------------ Vibrance configuration section --------------------
+//--------------- Vibrance configuration section -----------------
 //----------------------------------------------------------------
 // https://github.com/CeeJayDK/SweetFX/blob/master/Shaders/Vibrance.fx
 
@@ -359,7 +396,7 @@ vec3 VIB_RGB_BALANCE = vec3(1.0, 1.0, 1.0);
 #endif
 //----------------------------------------------------------------
 //----------------------------------------------------------------
-//------------------------ End of user configuration -------------
+//----------------- End of user configuration --------------------
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 
@@ -1606,57 +1643,76 @@ void main() {
     g_TextureSize = textureSize(g_Texture, 0);
     g_SourceSize = vec4(g_TextureSize, 1.0 / g_TextureSize);
 
-#if DEBAND_ENABLED == 1
-    shader_deband();
-#endif // DEBAND_ENABLED
-
-#if NATURAL_VISION_ENABLED == 1
-    shader_natural_vision();
-#endif // NATURAL_VISION_ENABLED
-
-#if TECHNICOLOR2_ENABLED == 1
-    shader_technicolor2();
-#endif // TECHNICOLOR2_ENABLED
-
-#if VIBRANCE_ENABLED == 1
-    shader_vibrance();
-#endif // VIBRANCE_ENABLED
-
-#if FAKEHDR_ENABLED == 1
-    shader_fake_hdr();
-#endif // FAKEHDR_ENABLED
-
-#if LEVELS_ENABLED == 1
-    shader_levels();
-#endif // LEVELS_ENABLED
-
-#if FXAA3_ENABLED == 1
-    shader_fxaa3();
-#endif // FXAA3_ENABLED
-
-#if GAUSSBLURH_ENABLED == 1
-    shader_gauss_blur_h();
-#endif // GAUSSBLURH_ENABLED
-
-#if GAUSSBLURV_ENABLED == 1
-    shader_gauss_blur_v();
-#endif // GAUSSBLURV_ENABLED
-
-#if CAS_ENABLED == 1
-    shader_amd_cas();
-#endif // CAS_ENABLED
-
-#if NVIDIA_DLS_ENABLED == 1
-    shader_nvidia_dls();
-#endif // NVIDIA_DLS_ENABLED
-
-#if FAST_SHARPEN_ENABLED == 1
-    shader_fast_sharpen();
-#endif // FAST_SHARPEN_ENABLED
-
-#if ADAPTIVE_SHARPEN_ENABLED == 1
-    shader_adaptive_sharpen();
-#endif // ADAPTIVE_SHARPEN_ENABLED
-
+    for (int shader = 0; shader < SHADERS; shader++) {
+        switch(shader) {
+            #if DEBAND_ENABLED == 1
+            case SHADER_DEBAND:
+                shader_deband();
+                break;
+            #endif
+            #if NATURAL_VISION_ENABLED == 1
+            case SHADER_NATURAL_VISION:
+                shader_natural_vision();
+                break;
+            #endif
+            #if TECHNICOLOR2_ENABLED == 1
+            case SHADER_TECHNICOLOR2:
+                shader_technicolor2();
+                break;
+            #endif
+            #if VIBRANCE_ENABLED == 1
+            case SHADER_VIBRANCE:
+                shader_vibrance();
+                break;
+            #endif
+            #if FAKEHDR_ENABLED == 1
+            case SHADER_FAKE_HDR:
+                shader_fake_hdr();
+                break;
+            #endif
+            #if LEVELS_ENABLED == 1
+            case SHADER_LEVELS:
+                shader_levels();
+                break;
+            #endif
+            #if FXAA3_ENABLED == 1
+            case SHADER_FXAA3:
+                shader_fxaa3();
+                break;
+            #endif
+            #if GAUSSBLURH_ENABLED == 1
+            case SHADER_GAUSS_BLUR_H:
+                shader_gauss_blur_h();
+                break;
+            #endif
+            #if GAUSSBLURV_ENABLED == 1
+            case SHADER_GAUSS_BLUR_V:
+                shader_gauss_blur_v();
+                break;
+            #endif
+            #if CAS_ENABLED == 1
+            case SHADER_AMD_CAS:
+                shader_amd_cas();
+                break;
+            #endif
+            #if NVIDIA_DLS_ENABLED == 1
+            case SHADER_NVIDIA_DLS:
+                shader_nvidia_dls();
+                break;
+            #endif
+            #if FAST_SHARPEN_ENABLED == 1
+            case SHADER_ADAPTIVE_SHARPEN:
+                shader_fast_sharpen();
+                break;
+            #endif
+            #if ADAPTIVE_SHARPEN_ENABLED == 1
+            case SHADER_FAST_SHARPEN:
+                shader_adaptive_sharpen();
+                break;
+            #endif
+            default:
+                break;
+        }
+    }
     g_FragColor = g_Color;
 }
