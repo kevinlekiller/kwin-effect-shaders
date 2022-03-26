@@ -133,8 +133,7 @@
 //----------------------------------------------------------------
 // https://gist.github.com/kosua20/0c506b81b3812ac900048059d2383126
 
-// If this is enabled, FXAA2 gets disabled.
-
+// Set to 1 to enable.
 #define FXAA3_ENABLED 0
 #if FXAA3_ENABLED == 1 // Don't change this line.
 
@@ -161,16 +160,9 @@
 //   0.0833 - upper limit (default, the start of visible unfiltered edges)
 //   0.0625 - high quality (faster)
 //   0.0312 - visible limit (slower)
-// Special notes when using FXAA_GREEN_AS_LUMA,
-//   Likely want to set this to zero.
-//   As colors that are mostly not-green
-//   will appear very dark in the green channel!
-//   Tune by looking at mostly non-green content,
-//   then start at zero and increase until aliasing is a problem.
-// Default 0.0833
+// Default: 0.0833
 #define FXAA3_QUALITY_EDGE_THRESHOLD_MIN 0.0833
 
-//
 // Choose the quality preset.
 //
 // OPTIONS
@@ -186,37 +178,8 @@
 // 23 = closest to FXAA 3.9 visually and performance wise
 //  _ = the lowest digit is directly related to performance
 // _  = the highest digit is directly related to style
-//
 // Default: 12
 #define FXAA3_QUALITY__PRESET 12
-
-#endif
-//----------------------------------------------------------------
-//--------------- FXAA2 configuration section -------------------
-//----------------------------------------------------------------
-// https://www.geeks3d.com/20110405/fxaa-fast-approximate-anti-aliasing-demo-glsl-opengl-test-radeon-geforce/3/
-
-// This is an older / less effective version of FXAA but easy to implement.
-
-#define FXAA2_ENABLED 0
-#if FXAA2_ENABLED == 1 // Don't change this line.
-
-// Clamps the sample range.
-// Default: 8.0
-#define FXAA2_SPAN_MAX      8.0
-
-// Reduces the sample range.
-// Default: 1.0 / 8.0
-#define FXAA2_REDUCE_MUL    1.0 / 8.0
-
-// The "FXAA_SUBPIX_SHIFT" define can be set to 0.0 to make the algorithm more symmetrical but then it looses ability
-// to attempt to remove sub-pixel aliasing like single pixel features.
-// Default: 1.0 / 4.0
-#define FXAA2_SUBPIX_SHIFT  1.0 / 4.0
-
-// Limits the minimum sample range.
-// Default: 1.0 / 128.0
-#define FXAA2_REDUCE_MIN    1.0 / 128.0
 
 #endif
 //----------------------------------------------------------------
@@ -284,6 +247,36 @@
 
 // Default: 1.0
 #define GAUSSBLURV_STRENGTH 1.0
+
+#endif
+//----------------------------------------------------------------
+//------------ Natural Vision configuration section --------------
+//----------------------------------------------------------------
+// https://github.com/libretro/glsl-shaders/blob/master/misc/natural-vision.glsl
+
+// Set to 1 to enable.
+#define NATURAL_VISION_ENABLED 0
+#if NATURAL_VISION_ENABLED == 1 // Don't change this line.
+
+// Input Gamma
+// Default: 2.2
+#define NATURAL_VISION_GIN  2.2
+
+// Output Gamma
+// Default: 2.2
+#define NATURAL_VISION_GOUT 2.2
+
+// Luminance mutiplier
+// Default: 1.1
+#define NATURAL_VISION_Y    1.1
+
+// Orange to Cyan multiplier
+// Default: 1.1
+#define NATURAL_VISION_I    1.1
+
+// Magenta to Green multiplier
+// Default 1.1
+#define NATURAL_VISION_Q    1.1
 
 #endif
 //----------------------------------------------------------------
@@ -985,59 +978,6 @@ void shader_fast_sharpen() {
 }
 #endif // FAST_SHARPEN_ENABLED
 
-#if FXAA2_ENABLED == 1 && FXAA3_ENABLED != 1
-/*
-Public domain :
-https://web.archive.org/web/20220121020716/https://stackoverflow.com/questions/12170575/using-nvidia-fxaa-in-my-code-whats-the-licensing-model
-
-https://web.archive.org/web/20210126191937/https://www.geeks3d.com/20110405/fxaa-fast-approximate-anti-aliasing-demo-glsl-opengl-test-radeon-geforce/3/
-https://web.archive.org/web/20110902122907/http://developer.download.nvidia.com/assets/gamedev/files/sdk/11/FXAA_WhitePaper.pdf
-https://web.archive.org/web/20210506154317/https://reshade.me/forum/shader-discussion/1641-fxaa-parameter-confusion
-*/
-
-void shader_fxaa2() {
-    vec2 rcpFrame = 1.0 / g_TextureSize.xy;
-    vec4 posPos;
-    posPos.zw = g_oTexcoord.xy - (rcpFrame * (0.5 + FXAA2_SUBPIX_SHIFT));
-    posPos.xy = g_oTexcoord.xy;
-    vec3 luma = vec3(0.299, 0.587, 0.114);
-    float lumaM  = dot(textureLod(g_Texture, posPos.xy, 0.0).xyz, luma);
-    float lumaNW = dot(textureLod(g_Texture, posPos.zw, 0.0).xyz, luma);
-    float lumaNE = dot(textureOffset( g_Texture, posPos.zw, ivec2(1, 0)).xyz, luma);
-    float lumaSW = dot(textureOffset( g_Texture, posPos.zw, ivec2(0, 1)).xyz, luma);
-    float lumaSE = dot(textureOffset( g_Texture, posPos.zw, ivec2(1, 1)).xyz, luma);
-    vec2 dir;
-    dir.x = -((lumaNW + lumaNE) - (lumaSW + lumaSE));
-    dir.y =  ((lumaNW + lumaSW) - (lumaNE + lumaSE));
-    dir = (
-        min(
-            vec2(FXAA2_SPAN_MAX, FXAA2_SPAN_MAX),
-            max(
-                vec2(-FXAA2_SPAN_MAX, -FXAA2_SPAN_MAX),
-                dir * (1.0 / (
-                    min(abs(dir.x), abs(dir.y)) +
-                    max((lumaNW + lumaNE + lumaSW + lumaSE) * (0.25 * FXAA2_REDUCE_MUL), FXAA2_REDUCE_MIN)
-                ))
-            )
-        ) * rcpFrame.xy
-    );
-    vec3 rgbA = (1.0/2.0) * (
-        textureLod(g_Texture, posPos.xy + dir * (1.0/3.0 - 0.5), 0.0).xyz +
-        textureLod(g_Texture, posPos.xy + dir * (2.0/3.0 - 0.5), 0.0).xyz
-    );
-    vec3 rgbB = rgbA * (1.0/2.0) + (1.0/4.0) * (
-        textureLod(g_Texture, posPos.xy + dir * (0.0/3.0 - 0.5), 0.0).xyz +
-        textureLod(g_Texture, posPos.xy + dir * (3.0/3.0 - 0.5), 0.0).xyz
-    );
-    float lumaB = dot(rgbB, luma);
-    if((lumaB < min(lumaM, min(min(lumaNW, lumaNE), min(lumaSW, lumaSE)))) || (lumaB > max(lumaM, max(max(lumaNW, lumaNE), max(lumaSW, lumaSE))))) {
-        g_Color.rgb = rgbA;
-    } else {
-        g_Color.rgb = rgbB;
-    }
-}
-#endif // FXAA2_ENABLED
-
 #if FXAA3_ENABLED == 1
 /*============================================================================
                     NVIDIA FXAA 3.11 by TIMOTHY LOTTES
@@ -1234,7 +1174,7 @@ void shader_fxaa3() {
     vec2 posM;
     posM.x = g_oTexcoord.xy.x;
     posM.y = g_oTexcoord.xy.y;
-    vec4 rgbyM = textureLod(g_Texture, posM, 0.0);
+    vec4 rgbyM = g_Color.xyzw;
     float lumaS = textureLodOffset(g_Texture, posM, 0.0, ivec2( 0, 1)).y;
     float lumaE = textureLodOffset(g_Texture, posM, 0.0, ivec2( 1, 0)).y;
     float lumaN = textureLodOffset(g_Texture, posM, 0.0, ivec2( 0,-1)).y;
@@ -1242,7 +1182,6 @@ void shader_fxaa3() {
     float rangeMax = max(max(lumaN, lumaW), max(lumaE, max(lumaS, rgbyM.y)));
     float range = rangeMax - min(min(lumaN, lumaW), min(lumaE, min(lumaS, rgbyM.y)));
     if (range < max(FXAA3_QUALITY_EDGE_THRESHOLD_MIN, rangeMax * FXAA3_QUALITY_EDGE_THRESHOLD)) {
-        g_Color = rgbyM;
         return;
     }
     float lumaNW = textureLodOffset(g_Texture, posM, 0.0, ivec2(-1,-1)).y;
@@ -1407,7 +1346,7 @@ void shader_fxaa3() {
         if (!doneP) {
             posP.y += offNP.y * pMult;
         }
-        if(!doneNP) {
+        if (!doneNP) {
             break;
         }
     }
@@ -1548,6 +1487,19 @@ void shader_levels() {
 }
 #endif // LEVELS_ENABLED
 
+#if NATURAL_VISION_ENABLED == 1
+// GPL2 or later : https://web.archive.org/web/20210307115242/http://www.razyboard.com/system/morethread-natural-vision-shader-aa-shader-v2o-best-shader-for-2d-pete_bernert-266904-5685248-0.html
+
+void shader_natural_vision() {
+    vec3 c = pow(g_Color.xyz, vec3(NATURAL_VISION_GIN, NATURAL_VISION_GIN, NATURAL_VISION_GIN));
+    c *= mat3x3(0.299, 0.587, 0.114, 0.595716, -0.274453, -0.321263, 0.211456, -0.522591,  0.311135);
+    c = vec3(pow(c.x, NATURAL_VISION_Y), c.y* NATURAL_VISION_I, c.z* NATURAL_VISION_Q);
+    c = clamp(c, vec3(0, -0.595716, -0.522591), vec3(1, 0.595716, 0.522591));
+    c *= mat3x3(1, 0.95629572,  0.62102442, 1, -0.27212210, -0.64738060, 1, -1.10698902,  1.70461500);
+    g_Color.rgb = pow(c, vec3(1.0 / NATURAL_VISION_GOUT, 1.0 / NATURAL_VISION_GOUT, 1.0 / NATURAL_VISION_GOUT));
+}
+#endif // NATURAL_VISION_ENABLED
+
 #if TECHNICOLOR2_ENABLED == 1
 /**
  * Technicolor2 version 1.0
@@ -1666,21 +1618,15 @@ void main() {
     g_TextureSize = textureSize(g_Texture, 0);
     g_SourceSize = vec4(g_TextureSize, 1.0 / g_TextureSize);
 
-#if FXAA2_ENABLED == 1 && FXAA3_ENABLED != 1
-    // Ideally should be placed lower, but it ovewrites g_Color, so needs to be placed on top.
-    shader_fxaa2();
-#endif // FXAA2_ENABLED
-
-#if FXAA3_ENABLED == 1
-    // Ideally should be placed lower, but it ovewrites g_Color, so needs to be placed on top.
-    shader_fxaa3();
-#endif // FXAA3_ENABLED
-
 #if DEBAND_ENABLED == 1
     shader_deband();
 #endif // DEBAND_ENABLED
 
-#if TECHNICOLOR2_ENABLED ==1
+#if NATURAL_VISION_ENABLED == 1
+    shader_natural_vision();
+#endif // NATURAL_VISION_ENABLED
+
+#if TECHNICOLOR2_ENABLED == 1
     shader_technicolor2();
 #endif // TECHNICOLOR2_ENABLED
 
@@ -1695,6 +1641,10 @@ void main() {
 #if LEVELS_ENABLED == 1
     shader_levels();
 #endif // LEVELS_ENABLED
+
+#if FXAA3_ENABLED == 1
+    shader_fxaa3();
+#endif // FXAA3_ENABLED
 
 #if GAUSSBLURH_ENABLED == 1
     shader_gauss_blur_h();
