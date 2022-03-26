@@ -129,6 +129,34 @@
 
 #endif
 //----------------------------------------------------------------
+//--------------- FXAA2 configuration section -------------------
+//----------------------------------------------------------------
+// https://www.geeks3d.com/20110405/fxaa-fast-approximate-anti-aliasing-demo-glsl-opengl-test-radeon-geforce/3/
+
+// This is an older / less effective version of FXAA but easy to implement.
+
+#define FXAA2_ENABLED 0
+#if FXAA2_ENABLED == 1 // Don't change this line.
+
+// Clamps the sample range.
+// Default: 8.0
+#define FXAA2_SPAN_MAX      8.0
+
+// Reduces the sample range.
+// Default: 1.0 / 8.0
+#define FXAA2_REDUCE_MUL    1.0 / 8.0
+
+// The "FXAA_SUBPIX_SHIFT" define can be set to 0.0 to make the algorithm more symmetrical but then it looses ability
+// to attempt to remove sub-pixel aliasing like single pixel features.
+// Default: 1.0 / 4.0
+#define FXAA2_SUBPIX_SHIFT  1.0 / 4.0
+
+// Limits the minimum sample range.
+// Default: 1.0 / 128.0
+#define FXAA2_REDUCE_MIN    1.0 / 128.0
+
+#endif
+//----------------------------------------------------------------
 //------------ Levels configuration section ----------------------
 //----------------------------------------------------------------
 // https://github.com/CeeJayDK/SweetFX/blob/master/Shaders/Levels.fx
@@ -894,6 +922,59 @@ void shader_fast_sharpen() {
 }
 #endif // FAST_SHARPEN_ENABLED
 
+#if FXAA2_ENABLED == 1
+/*
+Public domain :
+https://web.archive.org/web/20220121020716/https://stackoverflow.com/questions/12170575/using-nvidia-fxaa-in-my-code-whats-the-licensing-model
+
+https://web.archive.org/web/20210126191937/https://www.geeks3d.com/20110405/fxaa-fast-approximate-anti-aliasing-demo-glsl-opengl-test-radeon-geforce/3/
+https://web.archive.org/web/20110902122907/http://developer.download.nvidia.com/assets/gamedev/files/sdk/11/FXAA_WhitePaper.pdf
+https://web.archive.org/web/20210506154317/https://reshade.me/forum/shader-discussion/1641-fxaa-parameter-confusion
+*/
+
+void shader_fxaa2() {
+    vec2 rcpFrame = 1.0 / g_TextureSize.xy;
+    vec4 posPos;
+    posPos.zw = g_oTexcoord.xy - (rcpFrame * (0.5 + FXAA2_SUBPIX_SHIFT));
+    posPos.xy = g_oTexcoord.xy;
+    vec3 luma = vec3(0.299, 0.587, 0.114);
+    float lumaM  = dot(textureLod(g_Texture, posPos.xy, 0.0).xyz, luma);
+    float lumaNW = dot(textureLod(g_Texture, posPos.zw, 0.0).xyz, luma);
+    float lumaNE = dot(textureOffset( g_Texture, posPos.zw, ivec2(1, 0)).xyz, luma);
+    float lumaSW = dot(textureOffset( g_Texture, posPos.zw, ivec2(0, 1)).xyz, luma);
+    float lumaSE = dot(textureOffset( g_Texture, posPos.zw, ivec2(1, 1)).xyz, luma);
+    vec2 dir;
+    dir.x = -((lumaNW + lumaNE) - (lumaSW + lumaSE));
+    dir.y =  ((lumaNW + lumaSW) - (lumaNE + lumaSE));
+    dir = (
+        min(
+            vec2(FXAA2_SPAN_MAX, FXAA2_SPAN_MAX),
+            max(
+                vec2(-FXAA2_SPAN_MAX, -FXAA2_SPAN_MAX),
+                dir * (1.0 / (
+                    min(abs(dir.x), abs(dir.y)) +
+                    max((lumaNW + lumaNE + lumaSW + lumaSE) * (0.25 * FXAA2_REDUCE_MUL), FXAA2_REDUCE_MIN)
+                ))
+            )
+        ) * rcpFrame.xy
+    );
+    vec3 rgbA = (1.0/2.0) * (
+        textureLod(g_Texture, posPos.xy + dir * (1.0/3.0 - 0.5), 0.0).xyz +
+        textureLod(g_Texture, posPos.xy + dir * (2.0/3.0 - 0.5), 0.0).xyz
+    );
+    vec3 rgbB = rgbA * (1.0/2.0) + (1.0/4.0) * (
+        textureLod(g_Texture, posPos.xy + dir * (0.0/3.0 - 0.5), 0.0).xyz +
+        textureLod(g_Texture, posPos.xy + dir * (3.0/3.0 - 0.5), 0.0).xyz
+    );
+    float lumaB = dot(rgbB, luma);
+    if((lumaB < min(lumaM, min(min(lumaNW, lumaNE), min(lumaSW, lumaSE)))) || (lumaB > max(lumaM, max(max(lumaNW, lumaNE), max(lumaSW, lumaSE))))) {
+        g_Color.rgb = rgbA;
+    } else {
+        g_Color.rgb = rgbB;
+    }
+}
+#endif // FXAA2_ENABLED
+
 #if GAUSSBLURH_ENABLED == 1
 // Implementation based on the article "Efficient Gaussian blur with linear sampling"
 // http://rastergrid.com/blog/2010/09/efficient-gaussian-blur-with-linear-sampling/
@@ -1129,6 +1210,12 @@ void main() {
     g_Color = texture(g_Texture, g_oTexcoord).rgba;
     g_TextureSize = textureSize(g_Texture, 0);
     g_SourceSize = vec4(g_TextureSize, 1.0 / g_TextureSize);
+
+#if FXAA2_ENABLED == 1
+    // Ideally should be placed lower, but it ovewrites g_Color, so needs to be placed on top.
+    shader_fxaa2();
+#endif // FXAA2_ENABLED
+
 #if DEBAND_ENABLED == 1
     shader_deband();
 #endif // DEBAND_ENABLED
