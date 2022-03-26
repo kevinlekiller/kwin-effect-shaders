@@ -1643,7 +1643,7 @@ void main() {
     g_TextureSize = textureSize(g_Texture, 0);
     g_SourceSize = vec4(g_TextureSize, 1.0 / g_TextureSize);
 
-    for (int shader = 0; shader < SHADERS; shader++) {
+    for (int shader = 0; shader <= SHADERS; shader++) {
         switch(SHADER_ORDER[shader]) {
             #if DEBAND_ENABLED == 1
             case SHADER_DEBAND:
