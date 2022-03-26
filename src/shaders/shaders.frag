@@ -1374,29 +1374,25 @@ void shader_fxaa3() {
 
 void shader_gauss_blur_h() {
     vec2 PIXEL_SIZE = g_SourceSize.zw;
-    float sampleOffsets1 = 0.0;
     float sampleOffsets2 = 1.4347826;
     float sampleOffsets3 = 3.3478260;
     float sampleOffsets4 = 5.2608695;
     float sampleOffsets5 = 7.1739130;
 
-    float sampleWeights1 = 0.16818994;
     float sampleWeights2 = 0.27276957;
     float sampleWeights3 = 0.11690125;
     float sampleWeights4 = 0.024067905;
     float sampleWeights5 = 0.0021112196;
 
-    vec4 color = texture(g_Texture, g_oTexcoord) * sampleWeights1;
-    color += texture(g_Texture, g_oTexcoord + vec2(sampleOffsets2* GAUSSBLURH_STRENGTH * PIXEL_SIZE.x, 0.0)) * sampleWeights2;
-    color += texture(g_Texture, g_oTexcoord - vec2(sampleOffsets2* GAUSSBLURH_STRENGTH * PIXEL_SIZE.x, 0.0)) * sampleWeights2;
-    color += texture(g_Texture, g_oTexcoord + vec2(sampleOffsets3* GAUSSBLURH_STRENGTH * PIXEL_SIZE.x, 0.0)) * sampleWeights3;
-    color += texture(g_Texture, g_oTexcoord - vec2(sampleOffsets3* GAUSSBLURH_STRENGTH * PIXEL_SIZE.x, 0.0)) * sampleWeights3;
-    color += texture(g_Texture, g_oTexcoord + vec2(sampleOffsets4* GAUSSBLURH_STRENGTH * PIXEL_SIZE.x, 0.0)) * sampleWeights4;
-    color += texture(g_Texture, g_oTexcoord - vec2(sampleOffsets4* GAUSSBLURH_STRENGTH * PIXEL_SIZE.x, 0.0)) * sampleWeights4;
-    color += texture(g_Texture, g_oTexcoord + vec2(sampleOffsets5* GAUSSBLURH_STRENGTH * PIXEL_SIZE.x, 0.0)) * sampleWeights5;
-    color += texture(g_Texture, g_oTexcoord - vec2(sampleOffsets5* GAUSSBLURH_STRENGTH * PIXEL_SIZE.x, 0.0)) * sampleWeights5;
-
-    g_Color = vec4(color);
+    g_Color *= 0.16818994;
+    g_Color += texture(g_Texture, g_oTexcoord + vec2(sampleOffsets2 * GAUSSBLURH_STRENGTH * PIXEL_SIZE.x, 0.0)) * sampleWeights2;
+    g_Color += texture(g_Texture, g_oTexcoord - vec2(sampleOffsets2 * GAUSSBLURH_STRENGTH * PIXEL_SIZE.x, 0.0)) * sampleWeights2;
+    g_Color += texture(g_Texture, g_oTexcoord + vec2(sampleOffsets3 * GAUSSBLURH_STRENGTH * PIXEL_SIZE.x, 0.0)) * sampleWeights3;
+    g_Color += texture(g_Texture, g_oTexcoord - vec2(sampleOffsets3 * GAUSSBLURH_STRENGTH * PIXEL_SIZE.x, 0.0)) * sampleWeights3;
+    g_Color += texture(g_Texture, g_oTexcoord + vec2(sampleOffsets4 * GAUSSBLURH_STRENGTH * PIXEL_SIZE.x, 0.0)) * sampleWeights4;
+    g_Color += texture(g_Texture, g_oTexcoord - vec2(sampleOffsets4 * GAUSSBLURH_STRENGTH * PIXEL_SIZE.x, 0.0)) * sampleWeights4;
+    g_Color += texture(g_Texture, g_oTexcoord + vec2(sampleOffsets5 * GAUSSBLURH_STRENGTH * PIXEL_SIZE.x, 0.0)) * sampleWeights5;
+    g_Color += texture(g_Texture, g_oTexcoord - vec2(sampleOffsets5 * GAUSSBLURH_STRENGTH * PIXEL_SIZE.x, 0.0)) * sampleWeights5;
 }
 #endif // GAUSSBLURH_ENABLED
 
@@ -1408,29 +1404,25 @@ void shader_gauss_blur_h() {
 
 void shader_gauss_blur_v() {
     vec2 PIXEL_SIZE = g_SourceSize.zw;
-    float sampleOffsets1 = 0.0;
     float sampleOffsets2 = 1.4347826;
     float sampleOffsets3 = 3.3478260;
     float sampleOffsets4 = 5.2608695;
     float sampleOffsets5 = 7.1739130;
 
-    float sampleWeights1 = 0.16818994;
     float sampleWeights2 = 0.27276957;
     float sampleWeights3 = 0.11690125;
     float sampleWeights4 = 0.024067905;
     float sampleWeights5 = 0.0021112196;
 
-    vec4 color = texture(g_Texture, g_oTexcoord) * sampleWeights1;
-    color += texture(g_Texture, g_oTexcoord + vec2(0.0, sampleOffsets2* GAUSSBLURV_STRENGTH * PIXEL_SIZE.y)) * sampleWeights2;
-    color += texture(g_Texture, g_oTexcoord - vec2(0.0, sampleOffsets2* GAUSSBLURV_STRENGTH * PIXEL_SIZE.y)) * sampleWeights2;
-    color += texture(g_Texture, g_oTexcoord + vec2(0.0, sampleOffsets3* GAUSSBLURV_STRENGTH * PIXEL_SIZE.y)) * sampleWeights3;
-    color += texture(g_Texture, g_oTexcoord - vec2(0.0, sampleOffsets3* GAUSSBLURV_STRENGTH * PIXEL_SIZE.y)) * sampleWeights3;
-    color += texture(g_Texture, g_oTexcoord + vec2(0.0, sampleOffsets4* GAUSSBLURV_STRENGTH * PIXEL_SIZE.y)) * sampleWeights4;
-    color += texture(g_Texture, g_oTexcoord - vec2(0.0, sampleOffsets4* GAUSSBLURV_STRENGTH * PIXEL_SIZE.y)) * sampleWeights4;
-    color += texture(g_Texture, g_oTexcoord + vec2(0.0, sampleOffsets5* GAUSSBLURV_STRENGTH * PIXEL_SIZE.y)) * sampleWeights5;
-    color += texture(g_Texture, g_oTexcoord - vec2(0.0, sampleOffsets5* GAUSSBLURV_STRENGTH * PIXEL_SIZE.y)) * sampleWeights5;
-
-    g_Color = vec4(color);
+    g_Color *= 0.1681899;
+    g_Color += texture(g_Texture, g_oTexcoord + vec2(0.0, sampleOffsets2 * GAUSSBLURV_STRENGTH * PIXEL_SIZE.y)) * sampleWeights2;
+    g_Color += texture(g_Texture, g_oTexcoord - vec2(0.0, sampleOffsets2 * GAUSSBLURV_STRENGTH * PIXEL_SIZE.y)) * sampleWeights2;
+    g_Color += texture(g_Texture, g_oTexcoord + vec2(0.0, sampleOffsets3 * GAUSSBLURV_STRENGTH * PIXEL_SIZE.y)) * sampleWeights3;
+    g_Color += texture(g_Texture, g_oTexcoord - vec2(0.0, sampleOffsets3 * GAUSSBLURV_STRENGTH * PIXEL_SIZE.y)) * sampleWeights3;
+    g_Color += texture(g_Texture, g_oTexcoord + vec2(0.0, sampleOffsets4 * GAUSSBLURV_STRENGTH * PIXEL_SIZE.y)) * sampleWeights4;
+    g_Color += texture(g_Texture, g_oTexcoord - vec2(0.0, sampleOffsets4 * GAUSSBLURV_STRENGTH * PIXEL_SIZE.y)) * sampleWeights4;
+    g_Color += texture(g_Texture, g_oTexcoord + vec2(0.0, sampleOffsets5 * GAUSSBLURV_STRENGTH * PIXEL_SIZE.y)) * sampleWeights5;
+    g_Color += texture(g_Texture, g_oTexcoord - vec2(0.0, sampleOffsets5 * GAUSSBLURV_STRENGTH * PIXEL_SIZE.y)) * sampleWeights5;
 }
 #endif // GAUSSBLURV_ENABLED
 
@@ -1477,10 +1469,9 @@ void shader_gauss_blur_v() {
 */
 
 void shader_levels() {
-    float black_point_float = LVLS_BLACK_POINT / 255.0;
     // Avoid division by zero if the white and black point are the same
     float white_point_float = LVLS_WHITE_POINT == LVLS_BLACK_POINT ? (255.0 / 0.00025) : (255.0 / (LVLS_WHITE_POINT - LVLS_BLACK_POINT));
-    g_Color.rgb = g_Color.rgb * white_point_float - (black_point_float *  white_point_float);
+    g_Color.rgb = g_Color.rgb * white_point_float - ((LVLS_BLACK_POINT / 255.0) *  white_point_float);
 }
 #endif // LEVELS_ENABLED
 
@@ -1488,12 +1479,12 @@ void shader_levels() {
 // GPL2 or later : https://web.archive.org/web/20210307115242/http://www.razyboard.com/system/morethread-natural-vision-shader-aa-shader-v2o-best-shader-for-2d-pete_bernert-266904-5685248-0.html
 
 void shader_natural_vision() {
-    vec3 c = pow(g_Color.xyz, vec3(NATURAL_VISION_GIN, NATURAL_VISION_GIN, NATURAL_VISION_GIN));
-    c *= mat3x3(0.299, 0.587, 0.114, 0.595716, -0.274453, -0.321263, 0.211456, -0.522591,  0.311135);
-    c = vec3(pow(c.x, NATURAL_VISION_Y), c.y * NATURAL_VISION_I, c.z * NATURAL_VISION_Q);
-    c = clamp(c, vec3(0, -0.595716, -0.522591), vec3(1, 0.595716, 0.522591));
-    c *= mat3x3(1, 0.95629572,  0.62102442, 1, -0.27212210, -0.64738060, 1, -1.10698902,  1.70461500);
-    g_Color.rgb = pow(c, vec3(1.0 / NATURAL_VISION_GOUT, 1.0 / NATURAL_VISION_GOUT, 1.0 / NATURAL_VISION_GOUT));
+    g_Color.rgb = pow(g_Color.xyz, vec3(NATURAL_VISION_GIN, NATURAL_VISION_GIN, NATURAL_VISION_GIN));
+    g_Color.rgb *= mat3x3(0.299, 0.587, 0.114, 0.595716, -0.274453, -0.321263, 0.211456, -0.522591,  0.311135);
+    g_Color.rgb = vec3(pow(g_Color.x, NATURAL_VISION_Y), g_Color.y * NATURAL_VISION_I, g_Color.z * NATURAL_VISION_Q);
+    g_Color.rgb = clamp(g_Color.rgb, vec3(0, -0.595716, -0.522591), vec3(1, 0.595716, 0.522591));
+    g_Color.rgb *= mat3x3(1, 0.95629572,  0.62102442, 1, -0.27212210, -0.64738060, 1, -1.10698902,  1.70461500);
+    g_Color.rgb = pow(g_Color.rgb, vec3(1.0 / NATURAL_VISION_GOUT, 1.0 / NATURAL_VISION_GOUT, 1.0 / NATURAL_VISION_GOUT));
 }
 #endif // NATURAL_VISION_ENABLED
 
