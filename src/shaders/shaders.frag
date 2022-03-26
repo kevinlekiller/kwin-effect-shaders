@@ -59,7 +59,7 @@ float shaderOrder[SHADERS+1] = float[] ( // Don't change this line.
     SHADER_FAST_SHARPEN,
     SHADER_ADAPTIVE_SHARPEN,
 
-255); // Don't change this line.
+SHADERS); // Don't change this line.
 
 //----------------------------------------------------------------
 //----- AMD Contrast adaptive sharpen configuration section ------
