@@ -19,18 +19,19 @@
 #version 140
 #define SHADER_DEBAND           0
 #define SHADER_NATURAL_VISION   1
-#define SHADER_TECHNICOLOR2     2
-#define SHADER_VIBRANCE         3
-#define SHADER_FAKE_HDR         4
-#define SHADER_LEVELS           5
-#define SHADER_FXAA3            6
-#define SHADER_GAUSS_BLUR_H     7
-#define SHADER_GAUSS_BLUR_V     8
-#define SHADER_AMD_CAS          9
-#define SHADER_NVIDIA_DLS       10
-#define SHADER_FAST_SHARPEN     11
-#define SHADER_ADAPTIVE_SHARPEN 12
-#define SHADERS                 13
+#define SHADER_TECHNICOLOR1     2
+#define SHADER_TECHNICOLOR2     3
+#define SHADER_VIBRANCE         4
+#define SHADER_FAKE_HDR         5
+#define SHADER_LEVELS           6
+#define SHADER_FXAA3            7
+#define SHADER_GAUSS_BLUR_H     8
+#define SHADER_GAUSS_BLUR_V     9
+#define SHADER_AMD_CAS          10
+#define SHADER_NVIDIA_DLS       11
+#define SHADER_FAST_SHARPEN     12
+#define SHADER_ADAPTIVE_SHARPEN 13
+#define SHADERS                 14
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 //------------------ Start of user configuration -----------------
@@ -47,6 +48,7 @@ const int SHADER_ORDER[SHADERS+1] = int[] ( // Don't change this line.
 
     SHADER_DEBAND,
     SHADER_NATURAL_VISION,
+    SHADER_TECHNICOLOR1,
     SHADER_TECHNICOLOR2,
     SHADER_VIBRANCE,
     SHADER_FAKE_HDR,
@@ -315,6 +317,28 @@ SHADERS); // Don't change this line.
 // Magenta to Green multiplier
 // Default 1.1
 #define NATURAL_VISION_Q    1.1
+
+#endif
+//----------------------------------------------------------------
+//------------- Techicolor 1 configuration section ---------------
+//----------------------------------------------------------------
+// https://github.com/CeeJayDK/SweetFX/blob/master/Shaders/Technicolor.fx
+
+// Set to 1 to enable.
+#define TECHNICOLOR1_ENABLED 1
+#if TECHNICOLOR1_ENABLED == 1 // Don't change this line.
+
+// Default: 4.0
+// 0.0 to 8.0
+#define TC1_POWER 4.0
+
+// Default: 0.88 0.88 0.88
+vec3 TC1_RGB_NEGATIVE_AMOUNT = vec3(0.88, 0.88, 0.88);
+
+// Adjust the strength of the effect.
+// Default: 0.4
+// 0.0 to 1.0
+#define TC1_STRENGTH 0.4
 
 #endif
 //----------------------------------------------------------------
@@ -1525,6 +1549,52 @@ void shader_natural_vision() {
 }
 #endif // NATURAL_VISION_ENABLED
 
+#if TECHNICOLOR1_ENABLED == 1
+/**
+ * Technicolor version 1.1
+ * Original by Prod80
+ * Optimized by CeeJay.dk
+ *
+ * Ported to glsl by kevinlekiller 2022
+*/
+/*
+    The MIT License (MIT)
+
+    Copyright (c) 2014 CeeJayDK
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+*/
+void shader_technicolor1() {
+    float output_r = dot(vec3(1.05, 0.620, 0.0),  g_Color.rgb * (1.0 / (TC1_RGB_NEGATIVE_AMOUNT.r * TC1_POWER)));
+    float output_g = dot(vec3(0.30, 1.0,   0.0),  g_Color.rgb * (1.0 / (TC1_RGB_NEGATIVE_AMOUNT.g * TC1_POWER)));
+    float output_b = dot(vec3(1.0,  0.0,   1.05), g_Color.rgb * (1.0 / (TC1_RGB_NEGATIVE_AMOUNT.b * TC1_POWER)));
+
+    g_Color.rgb = mix(
+        g_Color.rgb,
+        vec3(output_r + 0.0, output_r + 1.3, output_r + 1.00) *
+        vec3(output_g + 1.0, output_g + 0.0, output_g + 1.05) *
+        vec3(output_b + 1.6, output_b + 1.6, output_b + 0.05),
+        TC1_STRENGTH
+    );
+}
+#endif // TECHNICOLOR1_ENABLED
+
 #if TECHNICOLOR2_ENABLED == 1
 /**
  * Technicolor2 version 1.0
@@ -1653,6 +1723,11 @@ void main() {
             #if NATURAL_VISION_ENABLED == 1
             case SHADER_NATURAL_VISION:
                 shader_natural_vision();
+                break;
+            #endif
+            #if TECHNICOLOR1_ENABLED == 1
+            case SHADER_TECHNICOLOR1:
+                shader_technicolor1();
                 break;
             #endif
             #if TECHNICOLOR2_ENABLED == 1
