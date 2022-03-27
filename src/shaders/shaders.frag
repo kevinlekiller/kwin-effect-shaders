@@ -114,7 +114,6 @@ SHADERS); // Don't change this line.
 // quality. Higher = more grain. Setting it to 0 disables the effect.
 // haasn default : 48
 //   mpv default : 48
-// NOTE: Set this to 0 if you use Natural Vision or you'll see green artefacts.
 #define DEBAND_GRAIN 48
 
 #endif
@@ -221,6 +220,31 @@ SHADERS); // Don't change this line.
 // Default: 12
 #define FXAA3_QUALITY__PRESET 12
 
+
+#endif
+//----------------------------------------------------------------
+//------------ Gaussian Blur H configuration section -------------
+//----------------------------------------------------------------
+// https://github.com/libretro/glsl-shaders/blob/master/blurs/blur-gauss-h.glsl
+
+#define GAUSSBLURH_ENABLED 0
+#if GAUSSBLURH_ENABLED == 1 // Don't change this line.
+
+// Default: 1.0
+#define GAUSSBLURH_STRENGTH 1.0
+
+#endif
+//----------------------------------------------------------------
+//------------ Gaussian Blur V configuration section -------------
+//----------------------------------------------------------------
+// https://github.com/libretro/glsl-shaders/blob/master/blurs/blur-gauss-v.glsl
+
+#define GAUSSBLURV_ENABLED 0
+#if GAUSSBLURV_ENABLED == 1 // Don't change this line.
+
+// Default: 1.0
+#define GAUSSBLURV_STRENGTH 1.0
+
 #endif
 //----------------------------------------------------------------
 //-------------- Levels configuration section --------------------
@@ -266,33 +290,11 @@ SHADERS); // Don't change this line.
 
 #endif
 //----------------------------------------------------------------
-//------------ Gaussian Blur H configuration section -------------
-//----------------------------------------------------------------
-// https://github.com/libretro/glsl-shaders/blob/master/blurs/blur-gauss-h.glsl
-
-#define GAUSSBLURH_ENABLED 0
-#if GAUSSBLURH_ENABLED == 1 // Don't change this line.
-
-// Default: 1.0
-#define GAUSSBLURH_STRENGTH 1.0
-
-#endif
-//----------------------------------------------------------------
-//------------ Gaussian Blur V configuration section -------------
-//----------------------------------------------------------------
-// https://github.com/libretro/glsl-shaders/blob/master/blurs/blur-gauss-v.glsl
-
-#define GAUSSBLURV_ENABLED 0
-#if GAUSSBLURV_ENABLED == 1 // Don't change this line.
-
-// Default: 1.0
-#define GAUSSBLURV_STRENGTH 1.0
-
-#endif
-//----------------------------------------------------------------
 //------------ Natural Vision configuration section --------------
 //----------------------------------------------------------------
 // https://github.com/libretro/glsl-shaders/blob/master/misc/natural-vision.glsl
+
+// NOTE: This shader causes issues with green colors when used with some other shaders.
 
 // Set to 1 to enable.
 #define NATURAL_VISION_ENABLED 0
@@ -325,7 +327,7 @@ SHADERS); // Don't change this line.
 // https://github.com/CeeJayDK/SweetFX/blob/master/Shaders/Technicolor.fx
 
 // Set to 1 to enable.
-#define TECHNICOLOR1_ENABLED 1
+#define TECHNICOLOR1_ENABLED 0
 #if TECHNICOLOR1_ENABLED == 1 // Don't change this line.
 
 // Default: 4.0
