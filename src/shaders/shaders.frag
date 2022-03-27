@@ -19,21 +19,22 @@
 #version 140
 #define SHADER_DEBAND           0
 #define SHADER_VIBRANCE         1
-#define SHADER_NATURAL_VISION   2
-#define SHADER_TECHNICOLOR1     3
-#define SHADER_TECHNICOLOR2     4
-#define SHADER_DPX              5
-#define SHADER_FAKE_HDR         6
-#define SHADER_TONEMAP          7
-#define SHADER_LEVELS           8
-#define SHADER_FXAA3            9
-#define SHADER_GAUSS_BLUR_H     10
-#define SHADER_GAUSS_BLUR_V     11
-#define SHADER_AMD_CAS          12
-#define SHADER_NVIDIA_DLS       13
-#define SHADER_FAST_SHARPEN     14
-#define SHADER_ADAPTIVE_SHARPEN 15
-#define SHADERS                 16
+#define SHADER_SEPIA            2
+#define SHADER_NATURAL_VISION   3
+#define SHADER_TECHNICOLOR1     4
+#define SHADER_TECHNICOLOR2     5
+#define SHADER_DPX              6
+#define SHADER_FAKE_HDR         7
+#define SHADER_TONEMAP          8
+#define SHADER_LEVELS           9
+#define SHADER_FXAA3            10
+#define SHADER_GAUSS_BLUR_H     11
+#define SHADER_GAUSS_BLUR_V     12
+#define SHADER_AMD_CAS          13
+#define SHADER_NVIDIA_DLS       14
+#define SHADER_FAST_SHARPEN     15
+#define SHADER_ADAPTIVE_SHARPEN 16
+#define SHADERS                 17
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 //------------------ Start of user configuration -----------------
@@ -50,6 +51,7 @@ const int SHADER_ORDER[SHADERS+1] = int[] ( // Don't change this line.
 
     SHADER_DEBAND,
     SHADER_VIBRANCE,
+    SHADER_SEPIA,
     SHADER_NATURAL_VISION,
     SHADER_TECHNICOLOR1,
     SHADER_TECHNICOLOR2,
@@ -376,6 +378,24 @@ uniform vec3 DPX_RGB_C = vec3(0.36, 0.36, 0.34);
 // Magenta to Green multiplier
 // Default 1.1
 #define NATURAL_VISION_Q    1.1
+
+#endif
+//----------------------------------------------------------------
+//----------------- Sepia configuration section ------------------
+//----------------------------------------------------------------
+// https://github.com/CeeJayDK/SweetFX/blob/master/Shaders/Sepia.fx
+
+// Set to 1 to enable.
+#define SEPIA_ENABLED 0
+#if SEPIA_ENABLED == 1 // Don't change this line.
+
+// Adjust the strength of the effect.
+// 0.0 to 1.0
+// Default: 0.58
+#define SEPIA_STRENGTH 0.58
+
+// Default: 0.55, 0.43, 0.42
+uniform vec3 SEPIA_TINT = vec3(0.55, 0.43, 0.42);
 
 #endif
 //----------------------------------------------------------------
@@ -1680,6 +1700,38 @@ void shader_natural_vision() {
 }
 #endif // NATURAL_VISION_ENABLED
 
+#if SEPIA_ENABLED == 1
+/*
+ * Ported to glsl by kevinlekiller 2022
+*/
+/*
+    The MIT License (MIT)
+
+    Copyright (c) 2014 CeeJayDK
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+*/
+void shader_sepia() {
+    g_Color.rgb = mix(g_Color.rgb, g_Color.rgb * SEPIA_TINT * 2.55, SEPIA_STRENGTH);
+}
+#endif // SEPIA_ENABLED
+
 #if TECHNICOLOR1_ENABLED == 1
 /**
  * Technicolor version 1.1
@@ -1961,6 +2013,11 @@ void main() {
             #if NVIDIA_DLS_ENABLED == 1
             case SHADER_NVIDIA_DLS:
                 shader_nvidia_dls();
+                break;
+            #endif
+            #if SEPIA_ENABLED == 1
+            case SHADER_SEPIA:
+                shader_sepia();
                 break;
             #endif
             #if TECHNICOLOR1_ENABLED == 1
