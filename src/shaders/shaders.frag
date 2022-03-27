@@ -18,20 +18,21 @@
  */
 #version 140
 #define SHADER_DEBAND           0
-#define SHADER_NATURAL_VISION   1
-#define SHADER_TECHNICOLOR1     2
-#define SHADER_TECHNICOLOR2     3
-#define SHADER_VIBRANCE         4
-#define SHADER_FAKE_HDR         5
-#define SHADER_LEVELS           6
-#define SHADER_FXAA3            7
-#define SHADER_GAUSS_BLUR_H     8
-#define SHADER_GAUSS_BLUR_V     9
-#define SHADER_AMD_CAS          10
-#define SHADER_NVIDIA_DLS       11
-#define SHADER_FAST_SHARPEN     12
-#define SHADER_ADAPTIVE_SHARPEN 13
-#define SHADERS                 14
+#define SHADER_VIBRANCE         1
+#define SHADER_NATURAL_VISION   2
+#define SHADER_TECHNICOLOR1     3
+#define SHADER_TECHNICOLOR2     4
+#define SHADER_DPX              5
+#define SHADER_FAKE_HDR         6
+#define SHADER_LEVELS           7
+#define SHADER_FXAA3            8
+#define SHADER_GAUSS_BLUR_H     9
+#define SHADER_GAUSS_BLUR_V     10
+#define SHADER_AMD_CAS          11
+#define SHADER_NVIDIA_DLS       12
+#define SHADER_FAST_SHARPEN     13
+#define SHADER_ADAPTIVE_SHARPEN 14
+#define SHADERS                 15
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 //------------------ Start of user configuration -----------------
@@ -42,15 +43,16 @@
 //---------------- Order the Shaders Will Be Run -----------------
 //----------------------------------------------------------------
 // Move up or down a SHADER_NAME to change the position it will be run.
-// For example, if you want Vibrance to run before all the other shaders,
-// move SHADER_VIRANCE, above SHADER_DEBAND,
+// For example, if you want Fake HDR to run before all the other shaders,
+// move SHADER_FAKE_HDR, above SHADER_DEBAND,
 const int SHADER_ORDER[SHADERS+1] = int[] ( // Don't change this line.
 
     SHADER_DEBAND,
+    SHADER_VIBRANCE,
     SHADER_NATURAL_VISION,
     SHADER_TECHNICOLOR1,
     SHADER_TECHNICOLOR2,
-    SHADER_VIBRANCE,
+    SHADER_DPX,
     SHADER_FAKE_HDR,
     SHADER_LEVELS,
     SHADER_FXAA3,
@@ -63,6 +65,23 @@ const int SHADER_ORDER[SHADERS+1] = int[] ( // Don't change this line.
 
 SHADERS); // Don't change this line.
 
+//----------------------------------------------------------------
+//------------ Adaptive Sharpen configuration section ------------
+//----------------------------------------------------------------
+// NOTE: This shader can be slow, consider using CAS, DLS or Fast Sharpen if you experience framedrops.
+// https://gist.github.com/igv/8a77e4eb8276753b54bb94c1c50c317e
+
+// Set to 1 to enable.
+#define ADAPTIVE_SHARPEN_ENABLED 0
+#if ADAPTIVE_SHARPEN_ENABLED == 1 // Don't change this line.
+
+// Main control of sharpening strength [>0]
+// 0.3 <-> 2.0 is a reasonable range of values
+// Optimal sharpening strength (according to objective metrics) - 0.5.
+// Default: 0.5
+#define AS_CURVE_HEIGHT    0.5
+
+#endif
 //----------------------------------------------------------------
 //----- AMD Contrast adaptive sharpen configuration section ------
 //----------------------------------------------------------------
@@ -115,6 +134,41 @@ SHADERS); // Don't change this line.
 // haasn default : 48
 //   mpv default : 48
 #define DEBAND_GRAIN 48
+
+#endif
+//----------------------------------------------------------------
+//------------------ DPX configuration section -------------------
+//----------------------------------------------------------------
+// https://github.com/CeeJayDK/SweetFX/blob/master/Shaders/DPX.fx
+
+// Set to 1 to enable.
+#define DPX_ENABLED 0
+#if DPX_ENABLED == 1 // Don't change this line.
+
+// Adjust the strength of the effect.
+// 0.0 to 1.0
+// Default: 0.02
+#define DPX_STRENGTH 0.02
+
+// 0.0 to 8.0
+// Default: 3.0
+#define DPX_SATURATION 3.0
+
+// 0.0 to 1.0
+// Default: 0.1
+#define DPX_CONTRAST 0.1
+
+// 0.1 to 2.5
+// Default: 2.5, 2.5, 2.5
+vec3 DPX_COLORFULNESS = vec3(2.5, 2.5, 2.5);
+
+// 1.0 to 15.0
+// Default: 8.0, 8.0, 8.0
+vec3 DPX_RGB_CURVE = vec3(8.0, 8.0, 8.0);
+
+// 0.2 to 0.5
+// Default: 0.36, 0.36, 0.34
+vec3 DPX_RGB_C = vec3(0.36, 0.36, 0.34);
 
 #endif
 //----------------------------------------------------------------
@@ -401,23 +455,6 @@ vec3 VIB_RGB_BALANCE = vec3(1.0, 1.0, 1.0);
 // 1 -> Even
 // Default: 0
 #define VIB_LUMA 0
-
-#endif
-//----------------------------------------------------------------
-//------------ Adaptive Sharpen configuration section ------------
-//----------------------------------------------------------------
-// NOTE: This shader can be slow, consider using CAS, DLS or Fast Sharpen if you experience framedrops.
-// https://gist.github.com/igv/8a77e4eb8276753b54bb94c1c50c317e
-
-// Set to 1 to enable.
-#define ADAPTIVE_SHARPEN_ENABLED 0
-#if ADAPTIVE_SHARPEN_ENABLED == 1 // Don't change this line.
-
-// Main control of sharpening strength [>0]
-// 0.3 <-> 2.0 is a reasonable range of values
-// Optimal sharpening strength (according to objective metrics) - 0.5.
-// Default: 0.5
-#define AS_CURVE_HEIGHT    0.5
 
 #endif
 //----------------------------------------------------------------
@@ -931,6 +968,56 @@ void shader_nvidia_dls()
     g_Color.z += delta;
 }
 #endif // NVIDIA_DLS_ENABLED
+
+#if DPX_ENABLED == 1
+/**
+ * DPX/Cineon shader by Loadus
+ *
+ * Ported to glsl by kevinlekiller - 2022
+ */
+ /*
+    The MIT License (MIT)
+
+    Copyright (c) 2014 CeeJayDK
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+*/
+void shader_dpx() {
+    mat3x3 dpxRGB = mat3x3(
+         2.6714711726599600, -1.2672360578624100, -0.4109956021722270,
+        -1.0251070293466400,  1.9840911624108900,  0.0439502493584124,
+         0.0610009456429445, -0.2236707508128630,  1.1590210416706100
+    );
+    mat3x3 dpxXYZ = mat3x3(
+        0.5003033835433160, 0.3380975732227390, 0.1645897795458570,
+        0.2579688942747580, 0.6761952591447060, 0.0658358459823868,
+        0.0234517888692628, 0.1126992737203000, 0.8668396731242010
+    );
+    vec3 dpxB = g_Color.rgb * (1.0 - DPX_CONTRAST) + (0.5 * DPX_CONTRAST);
+    vec3 dpxB2 = (1.0 / (1.0 + exp(DPX_RGB_CURVE / 2.0)));
+    dpxB = ((1.0 / (1.0 + exp(-DPX_RGB_CURVE * (dpxB - DPX_RGB_C)))) / (-2.0 * dpxB2 + 1.0)) + (-dpxB2 / (-2.0 * dpxB2 + 1.0));
+
+    float dpxVal = max(max(dpxB.r, dpxB.g), dpxB.b);
+    vec3 dpxC0 = dpxXYZ * (pow(abs(dpxB / dpxVal), 1.0 / DPX_COLORFULNESS) * dpxVal);
+    g_Color.rgb = mix(g_Color.rgb, (dpxRGB * ((1.0 - DPX_SATURATION) * dot(dpxC0, vec3(0.30, 0.59, 0.11)) + DPX_SATURATION * dpxC0)), DPX_STRENGTH);
+}
+#endif // DPX_ENABLED
 
 #if FAKEHDR_ENABLED == 1
 /**
@@ -1735,6 +1822,11 @@ void main() {
             #if TECHNICOLOR2_ENABLED == 1
             case SHADER_TECHNICOLOR2:
                 shader_technicolor2();
+                break;
+            #endif
+            #if DPX_ENABLED == 1
+            case SHADER_DPX:
+                shader_dpx();
                 break;
             #endif
             #if VIBRANCE_ENABLED == 1
