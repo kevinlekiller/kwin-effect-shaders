@@ -26,15 +26,16 @@
 #define SHADER_DPX              6
 #define SHADER_FAKE_HDR         7
 #define SHADER_TONEMAP          8
-#define SHADER_LEVELS           9
-#define SHADER_FXAA3            10
-#define SHADER_GAUSS_BLUR_H     11
-#define SHADER_GAUSS_BLUR_V     12
-#define SHADER_AMD_CAS          13
-#define SHADER_NVIDIA_DLS       14
-#define SHADER_FAST_SHARPEN     15
-#define SHADER_ADAPTIVE_SHARPEN 16
-#define SHADERS                 17
+#define SHADER_LIFT_GAMMA_GAIN  9
+#define SHADER_LEVELS           10
+#define SHADER_FXAA3            11
+#define SHADER_GAUSS_BLUR_H     12
+#define SHADER_GAUSS_BLUR_V     13
+#define SHADER_AMD_CAS          14
+#define SHADER_NVIDIA_DLS       15
+#define SHADER_FAST_SHARPEN     16
+#define SHADER_ADAPTIVE_SHARPEN 17
+#define SHADERS                 18
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 //------------------ Start of user configuration -----------------
@@ -58,6 +59,7 @@ const int SHADER_ORDER[SHADERS+1] = int[] ( // Don't change this line.
     SHADER_DPX,
     SHADER_FAKE_HDR,
     SHADER_TONEMAP,
+    SHADER_LIFT_GAMMA_GAIN,
     SHADER_LEVELS,
     SHADER_FXAA3,
     SHADER_GAUSS_BLUR_H,
@@ -322,14 +324,39 @@ uniform vec3 DPX_RGB_C = vec3(0.36, 0.36, 0.34);
 #if LEVELS_ENABLED == 1 // Don't change this line.
 
 // The black point is the new black - literally. Everything darker than this will become completely black.
-// Default: 16
 // 0 to 255
+// Default: 16
 #define LVLS_BLACK_POINT 16
 
 // The new white point. Everything brighter than this becomes completely white.
-// Default: 235
 // 0 to 255
+// Default: 235
 #define LVLS_WHITE_POINT 235
+
+#endif
+//----------------------------------------------------------------
+//------------ Lift Gamma Gain configuration section -------------
+//----------------------------------------------------------------
+// https://github.com/CeeJayDK/SweetFX/blob/master/Shaders/LiftGammaGain.fx
+
+// Set to 1 to enable.
+#define LIFT_GAMMA_GAIN_ENABLED 0
+#if LIFT_GAMMA_GAIN_ENABLED == 1 // Don't change this line.
+
+// Adjust shadows for red, green and blue.
+// 0.0 to 2.0
+// Default: 1.0, 1.0, 1.0
+uniform vec3 LGG_RGB_LIFT = vec3(1.0, 1.0, 1.0);
+
+// Adjust midtones for red, green and blue
+// 0.0 to 2.0
+// Default: 1.0, 1.0, 1.0
+uniform vec3 LGG_RGB_GAMMA = vec3(1.0, 1.0, 1.0);
+
+// Adjust highlights for red, green and blue.
+// 0.0 to 2.0
+// Default: 1.0, 1.0, 1.0
+uniform vec3 LGG_RGB_GAIN = vec3(1.0, 1.0, 1.0);
 
 #endif
 //----------------------------------------------------------------
@@ -1687,6 +1714,48 @@ void shader_levels() {
 }
 #endif // LEVELS_ENABLED
 
+#if LIFT_GAMMA_GAIN_ENABLED == 1
+/**
+ * Lift Gamma Gain version 1.1
+ * by 3an and CeeJay.dk
+ *
+ * Ported to glsl by kevinlekiller 2022
+ */
+ /*
+    The MIT License (MIT)
+    Copyright (c) 2014 CeeJayDK
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+*/
+void shader_lift_gamma_gain() {
+    // -- Lift --
+    g_Color.rgb = g_Color.rgb * (1.5 - 0.5 * LGG_RGB_LIFT) + 0.5 * LGG_RGB_LIFT - 0.5;
+    // Is not strictly necessary, but does not cost performance
+    g_Color.rgb = clamp(g_Color.rgb, 0.0, 1.0);
+
+    // -- Gain --
+    g_Color.rgb *= LGG_RGB_GAIN;
+
+    // -- Gamma --
+    g_Color.rgb = pow(abs(g_Color.rgb), 1.0 / LGG_RGB_GAMMA);
+
+    g_Color.rgb = clamp(g_Color.rgb, 0.0, 1.0);
+}
+#endif
+
 #if NATURAL_VISION_ENABLED == 1
 // GPL2 or later : https://web.archive.org/web/20210307115242/http://www.razyboard.com/system/morethread-natural-vision-shader-aa-shader-v2o-best-shader-for-2d-pete_bernert-266904-5685248-0.html
 
@@ -2003,6 +2072,11 @@ void main() {
             #if LEVELS_ENABLED == 1
             case SHADER_LEVELS:
                 shader_levels();
+                break;
+            #endif
+            #if LIFT_GAMMA_GAIN_ENABLED == 1
+            case SHADER_LIFT_GAMMA_GAIN:
+                shader_lift_gamma_gain();
                 break;
             #endif
             #if NATURAL_VISION_ENABLED == 1
