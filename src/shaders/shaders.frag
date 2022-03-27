@@ -24,15 +24,16 @@
 #define SHADER_TECHNICOLOR2     4
 #define SHADER_DPX              5
 #define SHADER_FAKE_HDR         6
-#define SHADER_LEVELS           7
-#define SHADER_FXAA3            8
-#define SHADER_GAUSS_BLUR_H     9
-#define SHADER_GAUSS_BLUR_V     10
-#define SHADER_AMD_CAS          11
-#define SHADER_NVIDIA_DLS       12
-#define SHADER_FAST_SHARPEN     13
-#define SHADER_ADAPTIVE_SHARPEN 14
-#define SHADERS                 15
+#define SHADER_TONEMAP          7
+#define SHADER_LEVELS           8
+#define SHADER_FXAA3            9
+#define SHADER_GAUSS_BLUR_H     10
+#define SHADER_GAUSS_BLUR_V     11
+#define SHADER_AMD_CAS          12
+#define SHADER_NVIDIA_DLS       13
+#define SHADER_FAST_SHARPEN     14
+#define SHADER_ADAPTIVE_SHARPEN 15
+#define SHADERS                 16
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 //------------------ Start of user configuration -----------------
@@ -54,6 +55,7 @@ const int SHADER_ORDER[SHADERS+1] = int[] ( // Don't change this line.
     SHADER_TECHNICOLOR2,
     SHADER_DPX,
     SHADER_FAKE_HDR,
+    SHADER_TONEMAP,
     SHADER_LEVELS,
     SHADER_FXAA3,
     SHADER_GAUSS_BLUR_H,
@@ -68,8 +70,9 @@ SHADERS); // Don't change this line.
 //----------------------------------------------------------------
 //------------ Adaptive Sharpen configuration section ------------
 //----------------------------------------------------------------
-// NOTE: This shader can be slow, consider using CAS, DLS or Fast Sharpen if you experience framedrops.
 // https://gist.github.com/igv/8a77e4eb8276753b54bb94c1c50c317e
+
+// NOTE: This shader can be slow, consider using CAS, DLS or Fast Sharpen if you experience framedrops.
 
 // Set to 1 to enable.
 #define ADAPTIVE_SHARPEN_ENABLED 0
@@ -160,15 +163,15 @@ SHADERS); // Don't change this line.
 
 // 0.1 to 2.5
 // Default: 2.5, 2.5, 2.5
-vec3 DPX_COLORFULNESS = vec3(2.5, 2.5, 2.5);
+uniform vec3 DPX_COLORFULNESS = vec3(2.5, 2.5, 2.5);
 
 // 1.0 to 15.0
 // Default: 8.0, 8.0, 8.0
-vec3 DPX_RGB_CURVE = vec3(8.0, 8.0, 8.0);
+uniform vec3 DPX_RGB_CURVE = vec3(8.0, 8.0, 8.0);
 
 // 0.2 to 0.5
 // Default: 0.36, 0.36, 0.34
-vec3 DPX_RGB_C = vec3(0.36, 0.36, 0.34);
+uniform vec3 DPX_RGB_C = vec3(0.36, 0.36, 0.34);
 
 #endif
 //----------------------------------------------------------------
@@ -389,7 +392,7 @@ vec3 DPX_RGB_C = vec3(0.36, 0.36, 0.34);
 #define TC1_POWER 4.0
 
 // Default: 0.88 0.88 0.88
-vec3 TC1_RGB_NEGATIVE_AMOUNT = vec3(0.88, 0.88, 0.88);
+uniform vec3 TC1_RGB_NEGATIVE_AMOUNT = vec3(0.88, 0.88, 0.88);
 
 // Adjust the strength of the effect.
 // Default: 0.4
@@ -408,7 +411,7 @@ vec3 TC1_RGB_NEGATIVE_AMOUNT = vec3(0.88, 0.88, 0.88);
 
 // Higher means darker and more intense colors.
 // Default: 0.2 0.2 0.2
-vec3 TC2_COLORSTRENGTH = vec3(0.2, 0.2, 0.2);
+uniform vec3 TC2_COLORSTRENGTH = vec3(0.2, 0.2, 0.2);
 
 // Higher means brighter image.
 // Default: 1.0
@@ -424,6 +427,45 @@ vec3 TC2_COLORSTRENGTH = vec3(0.2, 0.2, 0.2);
 // Default: 1.0
 // 0.0 to 1.0
 #define TC2_STRENGTH 1.0
+
+#endif
+//----------------------------------------------------------------
+//---------------- Tonemap configuration section -----------------
+//----------------------------------------------------------------
+// https://github.com/CeeJayDK/SweetFX/blob/master/Shaders/Tonemap.fx
+
+// Set to 1 to enable.
+#define TONEMAP_ENABLED 0
+#if TONEMAP_ENABLED == 1 // Don't change this line.
+
+// Adjust midtones. 1.0 is neutral.
+// 0.0 to 2.0
+// Default: 1.0
+#define TONEMAP_GAMMA 1.0
+
+// Adjust exposure
+// -1.0 to 1.0
+// Default: 0.0
+#define TONEMAP_EXPOSURE 0.0
+
+// Adjust saturation
+// -1.0 to 1.0
+// Default: 0.0
+#define TONEMAP_SATURATION 0.0
+
+// Brightens the shadows and fades the colors
+// 0.0 to 1.0
+// Default: 0.0
+#define TONEMAP_BLEACH 0.0
+
+// How much of the color tint to remove
+// 0.0 to 1.0
+// Default: 0.0
+#define TONAMEP_DEFOG 0.0
+
+// Which color tint to remove
+// Default: 0.0, 0.0, 1.0
+uniform vec3 TONEMAP_FOGCOLOR = vec3(0.0, 0.0, 1.0);
 
 #endif
 //----------------------------------------------------------------
@@ -448,7 +490,7 @@ vec3 TC2_COLORSTRENGTH = vec3(0.2, 0.2, 0.2);
 // You can then boost that color more than the others.
 // 0.0 to 10.0
 // Default: 1.0, 1.0, 1.0
-vec3 VIB_RGB_BALANCE = vec3(1.0, 1.0, 1.0);
+uniform vec3 VIB_RGB_BALANCE = vec3(1.0, 1.0, 1.0);
 
 // Luma type
 // 0 -> Perceptual
@@ -1737,6 +1779,63 @@ void shader_technicolor2() {
 }
 #endif // TECHNICOLOR2_ENABLED
 
+#if TONEMAP_ENABLED == 1
+/**
+ * Tonemap version 1.1
+ * by Christian Cann Schuldt Jensen ~ CeeJay.dk
+ *
+ * Ported to glsl by kevinlekiller - 2022
+ */
+/*
+    The MIT License (MIT)
+
+    Copyright (c) 2014 CeeJayDK
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+*/
+void shader_tonemap() {
+    // Defog
+    g_Color.rgb = clamp(g_Color.rgb - TONAMEP_DEFOG * TONEMAP_FOGCOLOR * 2.55, 0.0, 1.0);
+    // Exposure
+    g_Color.rgb *= pow(2.0, TONEMAP_EXPOSURE);
+    // Gamma
+    g_Color.r = pow(g_Color.r, TONEMAP_GAMMA);
+    g_Color.g = pow(g_Color.g, TONEMAP_GAMMA);
+    g_Color.b = pow(g_Color.b, TONEMAP_GAMMA);
+
+    float tmLum = dot(vec3(0.2126, 0.7152, 0.0722), g_Color.rgb);
+    vec3 tmA2 = TONEMAP_BLEACH * g_Color.rgb;
+
+    g_Color.rgb += (
+        (1.0 - tmA2) * (tmA2 * mix(
+            2.0 * g_Color.rgb * tmLum, 1.0 - 2.0 *
+            (1.0 - tmLum) *
+            (1.0 - g_Color.rgb), clamp(10.0 * (tmLum - 0.45), 0.0, 1.0)
+        ))
+    );
+
+    float tmGrayDiv = 1.0 / 3.0;
+    vec3 tmDiffColor = g_Color.rgb - vec3(dot(g_Color.r, tmGrayDiv), dot(g_Color.g, tmGrayDiv), dot(g_Color.b, tmGrayDiv));
+    g_Color.rgb = (g_Color.rgb + tmDiffColor * TONEMAP_SATURATION) / (1 + (tmDiffColor * TONEMAP_SATURATION)); // Saturation
+}
+#endif // TONEMAP_ENABLED
+
 #if VIBRANCE_ENABLED == 1
 /**
   Vibrance
@@ -1804,24 +1903,19 @@ void main() {
 
     for (int shader = 0; shader <= SHADERS; shader++) {
         switch(SHADER_ORDER[shader]) {
+            #if ADAPTIVE_SHARPEN_ENABLED == 1
+            case SHADER_FAST_SHARPEN:
+                shader_adaptive_sharpen();
+                break;
+            #endif
+            #if CAS_ENABLED == 1
+            case SHADER_AMD_CAS:
+                shader_amd_cas();
+                break;
+            #endif
             #if DEBAND_ENABLED == 1
             case SHADER_DEBAND:
                 shader_deband();
-                break;
-            #endif
-            #if NATURAL_VISION_ENABLED == 1
-            case SHADER_NATURAL_VISION:
-                shader_natural_vision();
-                break;
-            #endif
-            #if TECHNICOLOR1_ENABLED == 1
-            case SHADER_TECHNICOLOR1:
-                shader_technicolor1();
-                break;
-            #endif
-            #if TECHNICOLOR2_ENABLED == 1
-            case SHADER_TECHNICOLOR2:
-                shader_technicolor2();
                 break;
             #endif
             #if DPX_ENABLED == 1
@@ -1829,19 +1923,14 @@ void main() {
                 shader_dpx();
                 break;
             #endif
-            #if VIBRANCE_ENABLED == 1
-            case SHADER_VIBRANCE:
-                shader_vibrance();
-                break;
-            #endif
             #if FAKEHDR_ENABLED == 1
             case SHADER_FAKE_HDR:
                 shader_fake_hdr();
                 break;
             #endif
-            #if LEVELS_ENABLED == 1
-            case SHADER_LEVELS:
-                shader_levels();
+            #if FAST_SHARPEN_ENABLED == 1
+            case SHADER_ADAPTIVE_SHARPEN:
+                shader_fast_sharpen();
                 break;
             #endif
             #if FXAA3_ENABLED == 1
@@ -1859,9 +1948,14 @@ void main() {
                 shader_gauss_blur_v();
                 break;
             #endif
-            #if CAS_ENABLED == 1
-            case SHADER_AMD_CAS:
-                shader_amd_cas();
+            #if LEVELS_ENABLED == 1
+            case SHADER_LEVELS:
+                shader_levels();
+                break;
+            #endif
+            #if NATURAL_VISION_ENABLED == 1
+            case SHADER_NATURAL_VISION:
+                shader_natural_vision();
                 break;
             #endif
             #if NVIDIA_DLS_ENABLED == 1
@@ -1869,14 +1963,24 @@ void main() {
                 shader_nvidia_dls();
                 break;
             #endif
-            #if FAST_SHARPEN_ENABLED == 1
-            case SHADER_ADAPTIVE_SHARPEN:
-                shader_fast_sharpen();
+            #if TECHNICOLOR1_ENABLED == 1
+            case SHADER_TECHNICOLOR1:
+                shader_technicolor1();
                 break;
             #endif
-            #if ADAPTIVE_SHARPEN_ENABLED == 1
-            case SHADER_FAST_SHARPEN:
-                shader_adaptive_sharpen();
+            #if TECHNICOLOR2_ENABLED == 1
+            case SHADER_TECHNICOLOR2:
+                shader_technicolor2();
+                break;
+            #endif
+            #if TONEMAP_ENABLED == 1
+            case SHADER_TONEMAP:
+                shader_tonemap();
+                break;
+            #endif
+            #if VIBRANCE_ENABLED == 1
+            case SHADER_VIBRANCE:
+                shader_vibrance();
                 break;
             #endif
             default:
