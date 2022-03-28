@@ -7,11 +7,6 @@ project(${SHADERS})
 set(QT_MIN_VERSION "5.4.0")
 set(KF5_MIN_VERSION "5.9.0")
 
-option (ENABLE_DEBUG "Enable debugging." OFF)
-if (ENABLE_DEBUG)
-     add_definitions(-DDEBUGON)
-endif ()
-
 cmake_policy(SET CMP0054 NEW)
 
 find_package(ECM REQUIRED NO_MODULE)

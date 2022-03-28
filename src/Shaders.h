@@ -23,10 +23,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define KWIN_SHADERS_H
 
 #include <kwineffects.h>
-#ifdef DEBUGON
-#include <QFile>
-#endif
-
 namespace KWin
 {
 
@@ -65,14 +61,12 @@ public Q_SLOTS:
     void slotWindowClosed(KWin::EffectWindow *w);
 
 protected:
-    bool loadShaders();
+    void loadShaders();
 
 private:
-#ifdef DEBUGON
-    QFile logFile;
-#endif
     bool m_blacklistEn;
     bool m_whitelistEn;
+    bool m_shadersLoaded;
     GLShader* m_shader;
     bool m_allWindows;
     QStringList m_blacklist;
