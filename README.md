@@ -72,7 +72,10 @@ For example `/home/kevin/.local/share/shaders`
 Go to the directory where your shader files are, by default `~/.local/share/shaders`  
 Modify the `1_settings.frag` file in that directory.
 
-![shader.frag edit](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shader_file.png)
+
+For example, to enable Adaptive sharpen:
+
+![1_settings.frag edit](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shader_file.png)
 
 ## Toggling The Shaders
 The default shortcuts are (META is the SUPER key):  
