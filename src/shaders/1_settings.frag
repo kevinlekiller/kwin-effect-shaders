@@ -18,7 +18,8 @@
 #define SHADER_NVIDIA_DLS       15
 #define SHADER_FAST_SHARPEN     16
 #define SHADER_ADAPTIVE_SHARPEN 17
-#define SHADERS                 18
+#define SHADER_FILM_NOISE       18
+#define SHADERS                 19
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 //------------------ Start of user configuration -----------------
@@ -51,6 +52,7 @@ const int SHADER_ORDER[SHADERS+1] = int[] ( // Don't change this line.
     SHADER_NVIDIA_DLS,
     SHADER_FAST_SHARPEN,
     SHADER_ADAPTIVE_SHARPEN,
+    SHADER_FILM_NOISE,
 
 SHADERS); // Don't change this line.
 
@@ -209,6 +211,22 @@ uniform vec3 DPX_RGB_C = vec3(0.36, 0.36, 0.34);
 // Details sharpened
 // Default: 1.0
 #define FS_DETAILS   1.0
+
+#endif
+//----------------------------------------------------------------
+//-------------- Film Noise configuration section ----------------
+//----------------------------------------------------------------
+// https://github.com/libretro/glsl-shaders/blob/master/film/shaders/film_noise.glsl
+
+// Adds film noise to the output. Works better on non static images.
+
+// Set to 1 to enable.
+#define FILM_NOISE_ENABLED 0
+#if FILM_NOISE_ENABLED == 1 // Don't change this line.
+
+// The amount of noise.
+// Default 2.0
+#define FILM_NOISE_STRENGTH 2.0
 
 #endif
 //----------------------------------------------------------------

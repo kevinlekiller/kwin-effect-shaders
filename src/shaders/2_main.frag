@@ -22,10 +22,12 @@ uniform sampler2D g_Texture;
 // Random number generated with drand48() casted to float.
 // Only updates when a screen change occurs.
 uniform float g_Random;
-// AKA TEX0.xy or vTexCoord in libretro
+// AKA TEX0 or vTexCoord in libretro
+// The coordinates of the current texture.
 in vec2 g_oTexcoord;
+// This is the final color of the pixel.
 out vec4 g_FragColor;
-// Initially set to g_FragColor, at the end of the program g_FragColor is set to g_Color
+// Initially set to the current pixel color, at the end of the program g_FragColor is set to this.
 vec4 g_Color;
 vec4 g_SourceSize;
 vec2 g_TextureSize;
@@ -37,6 +39,7 @@ void shader_dpx();
 void shader_fake_hdr();
 void shader_fast_sharpen();
 void shader_fxaa3();
+void shader_film_noise();
 void shader_gauss_blur_h();
 void shader_gauss_blur_v();
 void shader_levels();
@@ -48,6 +51,7 @@ void shader_technicolor1();
 void shader_technicolor2();
 void shader_tonemap();
 void shader_vibrance();
+
 void main() {
     g_Color = texture(g_Texture, g_oTexcoord).rgba;
     g_TextureSize = textureSize(g_Texture, 0);
@@ -84,6 +88,10 @@ void main() {
             case SHADER_ADAPTIVE_SHARPEN:
                 shader_fast_sharpen();
                 break;
+            #endif
+            #if FILM_NOISE_ENABLED == 1
+            case SHADER_FILM_NOISE:
+                shader_film_noise();
             #endif
             #if FXAA3_ENABLED == 1
             case SHADER_FXAA3:
