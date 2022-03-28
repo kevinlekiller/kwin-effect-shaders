@@ -70,7 +70,7 @@ For example `/home/kevin/.local/share/shaders`
 
 ## Modifying Shaders
 Go to the directory where your shader files are, by default `~/.local/share/shaders`  
-Modify the `shaders.frag` file in that directory.
+Modify the `1_settings.frag` file in that directory.
 
 ![shader.frag edit](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shader_file.png)
 

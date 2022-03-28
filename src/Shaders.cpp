@@ -122,31 +122,31 @@ bool ShadersEffect::loadShaders()
 #endif
     reconfigure(ReconfigureAll);
 
-    QString fragmentShader("shaders.frag");
-    fragmentShader.prepend(shaderPath());
-    QFile ffile(fragmentShader);
-    if (!ffile.exists() || !ffile.open(QFile::ReadOnly)) {
-        return false;
+    QByteArray fragmentBuf, vertexBuf;
+    QDir shadersDir(shaderPath());
+    shadersDir.setFilter(QDir::Files);
+    shadersDir.setSorting(QDir::Name | QDir::IgnoreCase);
+    QFileInfoList shadersList = shadersDir.entryInfoList();
+    for (int i = 0; i < shadersList.size(); ++i) {
+        QFileInfo shaderInfo = shadersList.at(i);
+        QString curFile = shaderInfo.absoluteFilePath();
+        bool isFrag = curFile.endsWith(".frag"), isVert = curFile.endsWith(".vert");
+        if (!isFrag && !isVert) {
+            continue;
+        }
+        QFile file(curFile);
+        if (!file.exists() || !file.open(QFile::ReadOnly)) {
+            file.close();
+            return false;
+        }
+        isFrag ? fragmentBuf.append(file.readAll()) : vertexBuf.append(file.readAll());
+        file.close();
     }
-
-    QString vertexShader("shaders.vert");
-    vertexShader.prepend(shaderPath());
-    QFile vfile(vertexShader);
-    if (!vfile.exists() || !vfile.open(QFile::ReadOnly)) {
-        ffile.close();
-        return false;
-    }
-
-    m_shader = KWin::ShaderManager::instance()->generateCustomShader(KWin::ShaderTrait::MapTexture, vfile.readAll(), ffile.readAll());
-    ffile.close();
-    vfile.close();
+    m_shader = KWin::ShaderManager::instance()->generateCustomShader(KWin::ShaderTrait::MapTexture, vertexBuf, fragmentBuf);
 
     if (m_shader->isValid()) {
         return true;
     }
-#ifdef DEBUGON
-    out << "ShadersEffect::loadShaders() -> Shader is invalid\n";
-#endif
     return false;
 }
 

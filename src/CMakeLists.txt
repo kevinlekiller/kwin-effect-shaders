@@ -36,7 +36,6 @@ install(
     DESTINATION
         ${MODULEPATH}/kwin/effects/plugins/
 )
-install(FILES shaders/shaders.frag DESTINATION ${DATAPATH}/kwin/shaders)
-install(FILES shaders/shaders.vert DESTINATION ${DATAPATH}/kwin/shaders)
+install(DIRECTORY shaders DESTINATION ${DATAPATH}/kwin)
 
 add_subdirectory(kcm)

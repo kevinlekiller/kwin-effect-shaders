@@ -73,7 +73,6 @@ private:
 #endif
     bool m_blacklistEn;
     bool m_whitelistEn;
-    bool m_shaderLoaded;
     GLShader* m_shader;
     bool m_allWindows;
     QStringList m_blacklist;
