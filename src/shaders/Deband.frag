@@ -58,7 +58,7 @@ vec4 DB_average(float range, inout float h) {
 
 void shader_deband() {
     // Initialize the PRNG by hashing the position + a random uniform
-    vec3 m_d = vec3(g_oTexcoord, g_TextureSize * g_Color.x) + vec3(1.0);
+    vec3 m_d = vec3(g_oTexcoord, g_Random) + vec3(1.0);
     float h_d = DB_permute(DB_permute(DB_permute(m_d.x) + m_d.y) + m_d.z);
     vec4 avg, diff;
     for (int i = 1; i <= int(DEBAND_ITERATIONS); i++) {

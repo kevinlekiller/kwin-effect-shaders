@@ -135,12 +135,13 @@ void ShadersEffect::drawWindow(EffectWindow* w, int mask, const QRegion &region,
     if (useShader) {
         ShaderManager *shaderManager = ShaderManager::instance();
         shaderManager->pushShader(m_shader);
+        m_shader->setUniform(m_shader->uniformLocation("g_Random"), (float) drand48());
         data.shader = m_shader;
+        effects->drawWindow(w, mask, region, data);
+        ShaderManager::instance()->popShader();
+        return;
     }
     effects->drawWindow(w, mask, region, data);
-    if (useShader) {
-        ShaderManager::instance()->popShader();
-    }
 }
 
 void ShadersEffect::paintEffectFrame(KWin::EffectFrame* frame, const QRegion &region, double opacity, double frameOpacity)

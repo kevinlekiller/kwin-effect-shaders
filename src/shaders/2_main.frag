@@ -17,9 +17,15 @@
  *  https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html
  */
 
-uniform sampler2D g_Texture; // AKA Texture or Source in libretro
-in vec2 g_oTexcoord;         // AKA TEX0.xy or vTexCoord in libretro
+// AKA Texture or Source in libretro
+uniform sampler2D g_Texture;
+// Random number generated with drand48() casted to float.
+// Only updates when a screen change occurs.
+uniform float g_Random;
+// AKA TEX0.xy or vTexCoord in libretro
+in vec2 g_oTexcoord;
 out vec4 g_FragColor;
+// Initially set to g_FragColor, at the end of the program g_FragColor is set to g_Color
 vec4 g_Color;
 vec4 g_SourceSize;
 vec2 g_TextureSize;
