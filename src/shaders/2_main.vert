@@ -1,6 +1,5 @@
 #version 140
 /**
- *
  *  Copyright (C) 2022  kevinlekiller
  *
  *  This program is free software; you can redistribute it and/or
