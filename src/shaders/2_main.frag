@@ -20,7 +20,8 @@
 // AKA Texture or Source in libretro
 uniform sampler2D g_Texture;
 // Random number generated with drand48() casted to float.
-// Only updates when a screen change occurs.
+// Only pixels which have changed since the last draw are processed,
+// which means if you're doing noise for example, the noise will only apply to the pixels that have changed.
 uniform float g_Random;
 // AKA TEX0 or vTexCoord in libretro
 // The coordinates of the current texture.
