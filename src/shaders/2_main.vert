@@ -1,6 +1,5 @@
 #version 140
 /**
- *  Please see the original licenses / copyright information for the included shaders by scrolling down this file.
  *
  *  Copyright (C) 2022  kevinlekiller
  *
@@ -17,8 +16,6 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *  https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html
  */
-
-// https://github.com/KDE/kwin/blob/Plasma/5.24/src/libkwineffects/kwinglutils.cpp
 
 in vec4 g_Position;
 in vec4 g_iTexcoord;
