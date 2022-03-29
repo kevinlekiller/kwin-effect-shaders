@@ -21,16 +21,19 @@ Example of Vibrance and Levels in KDE Plasma's System Settings:
 - [Notes](#notes)
 - [TODO](#todo)
 - [Screenshots](#screenshots)
-## Requirements (not tested)
-- Arch Based:
+## Requirements
+- Arch Based (untested):
 
 `sudo pacman -Syu extra-cmake-modules kwin kf5`
-- Debian Based:
+- Debian Based (untested):
 
-`sudo apt install git cmake g++ gettext extra-cmake-modules qttools5-dev libqt5x11extras5-dev libkf5configwidgets-dev libkf5crash-dev libkf5globalaccel-dev libkf5kio-dev libkf5notifications-dev kinit-dev kwin-de`
-- Fedora Based:
+`sudo apt install git cmake g++ gettext extra-cmake-modules qttools5-dev libkf5globalaccel-dev libkf5kio-dev kinit-dev kwin-de`
+- Fedora Based (untested):
 
-`sudo dnf install git cmake gcc-c++ extra-cmake-modules qt5-qttools-devel qt5-qttools-static qt5-qtx11extras-devel kf5-kconfigwidgets-devel kf5-kcrash-devel kf5-kguiaddons-devel kf5-kglobalaccel-devel kf5-kio-devel kf5-ki18n-devel kf5-knotifications-devel kf5-kinit-devel kwin-devel qt5-qtbase-devel libepoxy-devel`
+`sudo dnf install git cmake gcc-c++ extra-cmake-modules qt5-qttools-devel qt5-qttools-static kf5-kguiaddons-devel kf5-kglobalaccel-devel kf5-kio-devel kf5-ki18n-devel kwin-devel qt5-qtbase-devel`
+- OpenSUSE Based (tested):
+
+`sudo zypper in -t pattern devel_basis && sudo zypper in cmake extra-cmake-modules kguiaddons-devel kio-devel kwin5-devel kglobalaccel-devel ki18n-devel`
 
 ## Install
 After installing, log out and in of the session to load the effect, or restart kwin.
