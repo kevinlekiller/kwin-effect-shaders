@@ -1,4 +1,4 @@
-﻿/*
+/*
     KWin - the KDE window manager
     This file is part of the KDE project.
     SPDX-FileCopyrightText: 2007 Rivo Laks <rivolaks@hot.ee>
@@ -11,24 +11,18 @@
 #include <QAction>
 #include <QDir>
 #include <QFile>
-#include <QFileSystemWatcher>
 #include <kwinglutils.h>
-#include <kwinglplatform.h>
 #include <KGlobalAccel>
 #include <KLocalizedString>
-#include <QStandardPaths>
-#include <QMatrix4x4>
 
 Q_LOGGING_CATEGORY(KWIN_SHADERS, "kwin4_effect_shaders", QtWarningMsg)
 
 namespace KWin
 {
 
-ShadersEffect::ShadersEffect()
-    :   m_shader(nullptr),
-        m_allWindows(false)
+ShadersEffect::ShadersEffect() : m_shader(nullptr), m_allWindows(false)
 {
-    loadShaders();
+    reconfigure(ReconfigureAll);
 
     QAction* a = new QAction(this);
     a->setObjectName(QStringLiteral("Shaders"));
@@ -36,7 +30,7 @@ ShadersEffect::ShadersEffect()
     KGlobalAccel::self()->setDefaultShortcut(a, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_R);
     KGlobalAccel::self()->setShortcut(a, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_R);
     effects->registerGlobalShortcut(Qt::CTRL + Qt::META + Qt::Key_R, a);
-    connect(a, &QAction::triggered, this, &ShadersEffect::toggleScreenShaders);
+    connect(a, &QAction::triggered, this, &ShadersEffect::slotToggleScreenShaders);
 
     QAction* b = new QAction(this);
     b->setObjectName(QStringLiteral("ShadersWindow"));
@@ -44,7 +38,7 @@ ShadersEffect::ShadersEffect()
     KGlobalAccel::self()->setDefaultShortcut(b, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_Z);
     KGlobalAccel::self()->setShortcut(b, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_Z);
     effects->registerGlobalShortcut(Qt::CTRL + Qt::META + Qt::Key_Z, b);
-    connect(b, &QAction::triggered, this, &ShadersEffect::toggleWindow);
+    connect(b, &QAction::triggered, this, &ShadersEffect::slotToggleWindow);
 
     connect(effects, &EffectsHandler::windowClosed, this, &ShadersEffect::slotWindowClosed);
 
@@ -86,25 +80,6 @@ void ShadersEffect::reconfigure(ReconfigureFlags) {
             m_shaderPath.append("/");
         }
     }
-}
-
-// Regenerate shader if settings file is modified.
-void ShadersEffect::slotReloadShader() {
-    loadShaders();
-}
-
-bool ShadersEffect::supported()
-{
-    // Shaders are version 140
-#ifdef KWIN_HAVE_OPENGLES
-    return false;
-#endif
-    return effects->compositingType() == OpenGLCompositing;
-}
-
-void ShadersEffect::loadShaders()
-{
-    reconfigure(ReconfigureAll);
 
     // Failed to find path where shader files are in.
     if (!m_foundShaderPath) {
@@ -112,7 +87,7 @@ void ShadersEffect::loadShaders()
     }
 
     // Iterate shaders files and append them to their respectful buffers.
-    QDir shadersDir(shaderPath());
+    QDir shadersDir(m_shaderPath);
     shadersDir.setFilter(QDir::Files);
     shadersDir.setSorting(QDir::Name | QDir::IgnoreCase);
     QFileInfoList shadersList = shadersDir.entryInfoList();
@@ -171,16 +146,25 @@ void ShadersEffect::loadShaders()
 
     // Monitor changes to the settings file, if modified, re-generate the shader.
     QString tmpSettingsPath = m_settingsName;
-    tmpSettingsPath.prepend(shaderPath());
+    tmpSettingsPath.prepend(m_shaderPath);
     if (QString::compare(tmpSettingsPath, m_settingsPath) != 0) {
         m_settingsWatcher.removePath(m_settingsPath);
         m_settingsPath.clear();
         m_settingsPath.append(tmpSettingsPath);
         disconnect(&m_settingsWatcher);
         if (m_settingsWatcher.addPath(m_settingsPath)) {
-            connect(&m_settingsWatcher, &QFileSystemWatcher::fileChanged, this, &ShadersEffect::slotReloadShader);
+            connect(&m_settingsWatcher, &QFileSystemWatcher::fileChanged, this, &ShadersEffect::slotReconfigure);
         }
     }
+}
+
+bool ShadersEffect::supported()
+{
+    // Shaders are version 140
+#ifdef KWIN_HAVE_OPENGLES
+    return false;
+#endif
+    return effects->compositingType() == OpenGLCompositing;
 }
 
 void ShadersEffect::drawWindow(EffectWindow* w, int mask, const QRegion &region, WindowPaintData& data)
@@ -206,19 +190,24 @@ void ShadersEffect::drawWindow(EffectWindow* w, int mask, const QRegion &region,
     effects->drawWindow(w, mask, region, data);
 }
 
+// Reconfigure variables if settings file is modified.
+void ShadersEffect::slotReconfigure() {
+    reconfigure(ReconfigureAll);
+}
+
 void ShadersEffect::slotWindowClosed(EffectWindow* w)
 {
     m_windows.removeOne(w);
 }
 
-void ShadersEffect::toggleScreenShaders()
+void ShadersEffect::slotToggleScreenShaders()
 {
     // Toggle if user wants shaders on all windows or not.
     m_allWindows = !m_allWindows;
     effects->addRepaintFull();
 }
 
-void ShadersEffect::toggleWindow()
+void ShadersEffect::slotToggleWindow()
 {
     if (!effects->activeWindow()) {
         return;
@@ -234,11 +223,6 @@ void ShadersEffect::toggleWindow()
 bool ShadersEffect::isActive() const
 {
     return (m_allWindows || !m_windows.isEmpty());
-}
-
-bool ShadersEffect::provides(Feature f)
-{
-    return f == Nothing;
 }
 
 } // namespace

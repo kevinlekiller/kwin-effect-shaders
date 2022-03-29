@@ -27,73 +27,43 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 namespace KWin
 {
 
-class GLShader;
-
 /**
  * Applies fragment shaders to the display.
  */
-class ShadersEffect
-    : public Effect
+class ShadersEffect : public Effect
 {
     Q_OBJECT
-    Q_PROPERTY(QStringList blacklist READ blacklist);
-    Q_PROPERTY(QStringList whitelist READ whitelist);
-    Q_PROPERTY(QString shaderPath READ shaderPath);
 public:
     ShadersEffect();
     ~ShadersEffect() override;
     void reconfigure(ReconfigureFlags) override;
-
     void drawWindow(EffectWindow* w, int mask, const QRegion &region, WindowPaintData& data) override;
     bool isActive() const override;
-    bool provides(Feature) override;
-
     int requestedEffectChainPosition() const override;
 
     static bool supported();
 
-    QStringList blacklist() const;
-    QStringList whitelist() const;
-    QString shaderPath() const;
 public Q_SLOTS:
-    void toggleScreenShaders();
-    void toggleWindow();
+    void slotToggleScreenShaders();
+    void slotToggleWindow();
     void slotWindowClosed(KWin::EffectWindow *w);
-    void slotReloadShader();
-
-protected:
-    void loadShaders();
+    void slotReconfigure();
 
 private:
+    GLShader* m_shader;
+    bool m_allWindows;
     bool m_blacklistEn;
     bool m_whitelistEn;
     bool m_shadersLoaded;
-    GLShader* m_shader;
-    bool m_allWindows;
+    bool m_foundShaderPath;
+    const QString m_settingsName = "1_settings.glsl";
+    QString m_shaderPath;
+    QString m_settingsPath;
     QStringList m_blacklist;
     QStringList m_whitelist;
     QList<EffectWindow*> m_windows;
-    const QString m_settingsName = "1_settings.glsl";
-    bool m_foundShaderPath;
-    QString m_shaderPath;
     QFileSystemWatcher m_settingsWatcher;
-    QString m_settingsPath;
 };
-
-inline QStringList ShadersEffect::blacklist() const
-{
-        return m_blacklist;
-}
-
-inline QStringList ShadersEffect::whitelist() const
-{
-        return m_whitelist;
-}
-
-inline QString ShadersEffect::shaderPath() const
-{
-        return m_shaderPath;
-}
 
 inline int ShadersEffect::requestedEffectChainPosition() const
 {
