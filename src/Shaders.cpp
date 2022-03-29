@@ -74,21 +74,16 @@ void ShadersEffect::reconfigure(ReconfigureFlags) {
 
     m_shadersLoaded = m_foundShaderPath = false;
     // Find path where shader files are in.
-    for (unsigned char i = 0; i <= 1; ++i) {
-        QString shaderPath = ((i == 0) ?
-            ShadersConfig::shaderPath().trimmed() :
-            QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("kwin/shaders"), QStandardPaths::LocateDirectory)
-        );
-        if (!shaderPath.isEmpty()) {
-            QDir dir = QDir(shaderPath);
-            if (dir.exists() && dir.isReadable() && !dir.isEmpty()) {
-                m_shaderPath = shaderPath;
-                m_foundShaderPath = true;
-                if (!m_shaderPath.endsWith("/")) {
-                    m_shaderPath.append("/");
-                }
-                break;
-            }
+    QString shaderPath = ShadersConfig::shaderPath().trimmed();
+    if (shaderPath.isEmpty()) {
+       return;
+    }
+    QDir dir = QDir(shaderPath);
+    if (dir.exists() && dir.isReadable() && !dir.isEmpty()) {
+        m_shaderPath = shaderPath;
+        m_foundShaderPath = true;
+        if (!m_shaderPath.endsWith("/")) {
+            m_shaderPath.append("/");
         }
     }
 }

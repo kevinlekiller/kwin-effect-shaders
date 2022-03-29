@@ -7,6 +7,7 @@
 BUILD_DIRECTORY=${BUILD_DIRECTORY:-build}
 RELEASE_TYPE=${RELEASE_TYPE:-Release}
 MAKEFLAGS=${MAKEFLAGS:--j$(nproc)}
+SHADERSPATH="$HOME/.local/share/shaders"
 export MAKEFLAGS=$MAKEFLAGS
 CXXFLAGS=${CXXFLAGS:--march=native -mtune=native -O2 -pipe -fstack-protector-strong -fno-plt}
 export CXXFLAGS=$CXXFLAGS
@@ -25,10 +26,12 @@ make || exit $?
 
 sudo make install
 
-[[ ! -d ~/.local/share/shaders ]] && cp -r /usr/share/kwin/shaders ~/.local/share/
+[[ $@ =~ UNINSTALL ]] && sudo make uninstall && exit
 
-if ! grep "^\[Effect-Shaders\]" ~/.config/kwinrc &> /dev/null; then
-    echo -ne "\n[Effect-Shaders]\nShaderPath=$HOME/.local/share/shaders\n" >> ~/.config/kwinrc
+if [[ ! -d $SHADERSPATH ]]; then
+    git clone https://github.com/kevinlekiller/kwin-effect-shaders_shaders "$SHADERSPATH"
 fi
 
-[[ $@ =~ UNINSTALL ]] && sudo make uninstall
+if ! grep "^\[Effect-Shaders\]" ~/.config/kwinrc &> /dev/null; then
+    echo -ne "\n[Effect-Shaders]\nShaderPath=$SHADERSPATH\n" >> ~/.config/kwinrc
+fi

@@ -36,6 +36,5 @@ install(
     DESTINATION
         ${MODULEPATH}/kwin/effects/plugins/
 )
-install(DIRECTORY shaders DESTINATION ${DATAPATH}/kwin)
 
 add_subdirectory(kcm)
