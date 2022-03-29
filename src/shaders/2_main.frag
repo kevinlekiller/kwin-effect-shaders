@@ -60,6 +60,9 @@ void shader_film_noise();
 #if FAST_GAUSS_BLURV_ENABLED == 1
 void shader_fast_gaussian_blurV();
 #endif
+#if GRAYSCALE_YUV_ENABLED == 1
+void shader_grayscale_yuv();
+#endif
 #if LEVELS_ENABLED == 1
 void shader_levels();
 #endif
@@ -137,6 +140,11 @@ void main() {
             #if FAST_GAUSS_BLURV_ENABLED == 1
             case SHADER_FAST_GAUSS_BLURV:
                 shader_fast_gaussian_blurV();
+                break;
+            #endif
+            #if GRAYSCALE_YUV_ENABLED == 1
+            case SHADER_GRAYSCALE_YUV:
+                shader_grayscale_yuv();
                 break;
             #endif
             #if LEVELS_ENABLED == 1

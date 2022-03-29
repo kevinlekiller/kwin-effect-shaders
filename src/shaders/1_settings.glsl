@@ -11,14 +11,15 @@
 #define SHADER_TONEMAP              8
 #define SHADER_LIFT_GAMMA_GAIN      9
 #define SHADER_LEVELS              10
-#define SHADER_FXAA3               11
-#define SHADER_AMD_CAS             12
-#define SHADER_NVIDIA_DLS          13
-#define SHADER_FAST_SHARPEN        14
-#define SHADER_ADAPTIVE_SHARPEN    15
-#define SHADER_FAST_GAUSS_BLURV    16
-#define SHADER_FILM_NOISE          17
-#define SHADERS                    18
+#define SHADER_GRAYSCALE_YUV       11
+#define SHADER_FXAA3               12
+#define SHADER_AMD_CAS             13
+#define SHADER_NVIDIA_DLS          14
+#define SHADER_FAST_SHARPEN        15
+#define SHADER_ADAPTIVE_SHARPEN    16
+#define SHADER_FAST_GAUSS_BLURV    17
+#define SHADER_FILM_NOISE          18
+#define SHADERS                    19
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 //------------------ Start of user configuration -----------------
@@ -44,6 +45,7 @@ const int SHADER_ORDER[SHADERS+1] = int[] ( // Don't change this line.
     SHADER_TONEMAP,
     SHADER_LIFT_GAMMA_GAIN,
     SHADER_LEVELS,
+    SHADER_GRAYSCALE_YUV,
     SHADER_FXAA3,
     SHADER_AMD_CAS,
     SHADER_NVIDIA_DLS,
@@ -301,7 +303,17 @@ uniform vec3 DPX_RGB_C = vec3(0.36, 0.36, 0.34);
 
 #endif
 //----------------------------------------------------------------
-//-------------- Levels configuration section --------------------
+//-------------- Grayscale YUV configuration section -------------
+//----------------------------------------------------------------
+// https://wikiless.org/wiki/Grayscale?lang=en#Luma_coding_in_video_systems
+
+// Reduces colors to grayscale (for YUV color space).
+
+// Set to 1 to enable.
+#define GRAYSCALE_YUV_ENABLED 1
+
+//----------------------------------------------------------------
+//---------------- Levels configuration section ------------------
 //----------------------------------------------------------------
 // https://github.com/CeeJayDK/SweetFX/blob/master/Shaders/Levels.fx
 
