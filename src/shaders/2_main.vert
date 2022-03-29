@@ -1,4 +1,6 @@
 /**
+ *  Please see the original licenses / copyright information in individual shader files.
+ *
  *  Copyright (C) 2022  kevinlekiller
  *
  *  This program is free software; you can redistribute it and/or
@@ -18,9 +20,23 @@
 in vec4 g_Position;
 in vec4 g_iTexcoord;
 out vec2 g_oTexcoord;
+uniform sampler2D g_Texture;
 uniform mat4 modelViewProjectionMatrix;
+uniform float g_Random;
+vec2 g_TextureSize;
+vec4 g_SourceSize;
+
 
 void main() {
     g_oTexcoord = g_iTexcoord.st;
     gl_Position = modelViewProjectionMatrix * g_Position;
+    g_TextureSize = textureSize(g_Texture, 0);
+    g_SourceSize = vec4(g_TextureSize, 1.0 / g_TextureSize);
+
+    for (int shader = 0; shader <= SHADERS; shader++) {
+        switch(SHADER_ORDER[shader]) {
+            default:
+                break;
+        }
+    }
 }

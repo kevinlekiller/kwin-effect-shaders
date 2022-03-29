@@ -33,25 +33,60 @@ vec4 g_Color;
 vec4 g_SourceSize;
 vec2 g_TextureSize;
 
+#if ADAPTIVE_SHARPEN_ENABLED == 1
 void shader_adaptive_sharpen();
+#endif
+#if CAS_ENABLED == 1
 void shader_amd_cas();
+#endif
+#if DEBAND_ENABLED == 1
 void shader_deband();
+#endif
+#if DPX_ENABLED == 1
 void shader_dpx();
+#endif
+#if FAKEHDR_ENABLED == 1
 void shader_fake_hdr();
+#endif
+#if FAST_SHARPEN_ENABLED == 1
 void shader_fast_sharpen();
+#endif
+#if FXAA3_ENABLED == 1
 void shader_fxaa3();
+#endif
+#if FILM_NOISE_ENABLED == 1
 void shader_film_noise();
-void shader_gauss_blur_h();
-void shader_gauss_blur_v();
+#endif
+#if FAST_GAUSS_BLURV_ENABLED == 1
+void shader_fast_gaussian_blurV();
+#endif
+#if LEVELS_ENABLED == 1
 void shader_levels();
+#endif
+#if LIFT_GAMMA_GAIN_ENABLED == 1
 void shader_lift_gamma_gain();
+#endif
+#if NATURAL_VISION_ENABLED == 1
 void shader_natural_vision();
+#endif
+#if NVIDIA_DLS_ENABLED == 1
 void shader_nvidia_dls();
+#endif
+#if SEPIA_ENABLED == 1
 void shader_sepia();
+#endif
+#if TECHNICOLOR1_ENABLED == 1
 void shader_technicolor1();
+#endif
+#if TECHNICOLOR2_ENABLED == 1
 void shader_technicolor2();
+#endif
+#if TONEMAP_ENABLED == 1
 void shader_tonemap();
+#endif
+#if VIBRANCE_ENABLED == 1
 void shader_vibrance();
+#endif
 
 void main() {
     g_Color = texture(g_Texture, g_oTexcoord).rgba;
@@ -99,14 +134,9 @@ void main() {
                 shader_fxaa3();
                 break;
             #endif
-            #if GAUSSBLURH_ENABLED == 1
-            case SHADER_GAUSS_BLUR_H:
-                shader_gauss_blur_h();
-                break;
-            #endif
-            #if GAUSSBLURV_ENABLED == 1
-            case SHADER_GAUSS_BLUR_V:
-                shader_gauss_blur_v();
+            #if FAST_GAUSS_BLURV_ENABLED == 1
+            case SHADER_FAST_GAUSS_BLURV:
+                shader_fast_gaussian_blurV();
                 break;
             #endif
             #if LEVELS_ENABLED == 1

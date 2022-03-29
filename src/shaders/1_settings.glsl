@@ -1,25 +1,24 @@
 // Scroll down to "Start of user configuration"
 #version 140
-#define SHADER_DEBAND           0
-#define SHADER_VIBRANCE         1
-#define SHADER_SEPIA            2
-#define SHADER_NATURAL_VISION   3
-#define SHADER_TECHNICOLOR1     4
-#define SHADER_TECHNICOLOR2     5
-#define SHADER_DPX              6
-#define SHADER_FAKE_HDR         7
-#define SHADER_TONEMAP          8
-#define SHADER_LIFT_GAMMA_GAIN  9
-#define SHADER_LEVELS           10
-#define SHADER_FXAA3            11
-#define SHADER_GAUSS_BLUR_H     12
-#define SHADER_GAUSS_BLUR_V     13
-#define SHADER_AMD_CAS          14
-#define SHADER_NVIDIA_DLS       15
-#define SHADER_FAST_SHARPEN     16
-#define SHADER_ADAPTIVE_SHARPEN 17
-#define SHADER_FILM_NOISE       18
-#define SHADERS                 19
+#define SHADER_DEBAND               0
+#define SHADER_VIBRANCE             1
+#define SHADER_SEPIA                2
+#define SHADER_NATURAL_VISION       3
+#define SHADER_TECHNICOLOR1         4
+#define SHADER_TECHNICOLOR2         5
+#define SHADER_DPX                  6
+#define SHADER_FAKE_HDR             7
+#define SHADER_TONEMAP              8
+#define SHADER_LIFT_GAMMA_GAIN      9
+#define SHADER_LEVELS              10
+#define SHADER_FXAA3               11
+#define SHADER_AMD_CAS             12
+#define SHADER_NVIDIA_DLS          13
+#define SHADER_FAST_SHARPEN        14
+#define SHADER_ADAPTIVE_SHARPEN    15
+#define SHADER_FAST_GAUSS_BLURV    16
+#define SHADER_FILM_NOISE          17
+#define SHADERS                    18
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 //------------------ Start of user configuration -----------------
@@ -46,12 +45,11 @@ const int SHADER_ORDER[SHADERS+1] = int[] ( // Don't change this line.
     SHADER_LIFT_GAMMA_GAIN,
     SHADER_LEVELS,
     SHADER_FXAA3,
-    SHADER_GAUSS_BLUR_H,
-    SHADER_GAUSS_BLUR_V,
     SHADER_AMD_CAS,
     SHADER_NVIDIA_DLS,
     SHADER_FAST_SHARPEN,
     SHADER_ADAPTIVE_SHARPEN,
+    SHADER_FAST_GAUSS_BLURV,
     SHADER_FILM_NOISE,
 
 SHADERS); // Don't change this line.
@@ -189,6 +187,25 @@ uniform vec3 DPX_RGB_C = vec3(0.36, 0.36, 0.34);
 
 #endif
 //----------------------------------------------------------------
+//----------- Fast Gaussian Blur 5 configuration section ---------
+//----------------------------------------------------------------
+// https://github.com/Jam3/glsl-fast-gaussian-blur
+
+#define FAST_GAUSS_BLURV_ENABLED 0
+#if FAST_GAUSS_BLURV_ENABLED == 1 // Don't change this line.
+
+// Amount of blurring in the horizontal direction.
+// >= 0.0
+// Default 0.6
+#define FGBV_HORIZONTAL_STRENGTH 0.6
+
+// Amount of blurring in the vertical direction.
+// >= 0.0
+// Default 0.6
+#define FGBV_VERTICAL_STRENGTH 0.6
+
+#endif
+//----------------------------------------------------------------
 //------------- Fast Sharpen configuration section ---------------
 //----------------------------------------------------------------
 // https://github.com/libretro/glsl-shaders/blob/master/sharpen/shaders/fast-sharpen.glsl
@@ -281,31 +298,6 @@ uniform vec3 DPX_RGB_C = vec3(0.36, 0.36, 0.34);
 // _  = the highest digit is directly related to style
 // Default: 12
 #define FXAA3_QUALITY__PRESET 12
-
-
-#endif
-//----------------------------------------------------------------
-//------------ Gaussian Blur H configuration section -------------
-//----------------------------------------------------------------
-// https://github.com/libretro/glsl-shaders/blob/master/blurs/blur-gauss-h.glsl
-
-#define GAUSSBLURH_ENABLED 0
-#if GAUSSBLURH_ENABLED == 1 // Don't change this line.
-
-// Default: 1.0
-#define GAUSSBLURH_STRENGTH 1.0
-
-#endif
-//----------------------------------------------------------------
-//------------ Gaussian Blur V configuration section -------------
-//----------------------------------------------------------------
-// https://github.com/libretro/glsl-shaders/blob/master/blurs/blur-gauss-v.glsl
-
-#define GAUSSBLURV_ENABLED 0
-#if GAUSSBLURV_ENABLED == 1 // Don't change this line.
-
-// Default: 1.0
-#define GAUSSBLURV_STRENGTH 1.0
 
 #endif
 //----------------------------------------------------------------

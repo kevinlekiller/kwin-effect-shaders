@@ -48,6 +48,7 @@ ShadersEffect::ShadersEffect()
 
     connect(effects, &EffectsHandler::windowClosed, this, &ShadersEffect::slotWindowClosed);
 
+    // If the setting "Enable by default" is enabled, trigger the effect on first run.
     if (ShadersConfig::defaultEnabled()) {
         a->trigger();
     }
@@ -59,31 +60,40 @@ ShadersEffect::~ShadersEffect()
 }
 
 void ShadersEffect::reconfigure(ReconfigureFlags) {
-    m_shadersLoaded = false;
     ShadersConfig::self()->read();
+
+    // Check if blacklist is enabled.
     QString blacklist = ShadersConfig::blacklist();
     m_blacklist = blacklist.toLower().split(",");
     m_blacklistEn = !blacklist.isEmpty();
+
+    // Check if whitelist is enabled.
     QString whitelist = ShadersConfig::whitelist();
     m_whitelist = whitelist.toLower().split(",");
     m_whitelistEn = !whitelist.isEmpty();
-    QString shaderPath = ShadersConfig::shaderPath().trimmed();
-    bool foundPath = false;
-    if (!shaderPath.isEmpty()) {
-        QDir dir = QDir(shaderPath);
-        if (dir.exists() && dir.isReadable() && !dir.isEmpty()) {
-            m_shaderPath = shaderPath;
-            foundPath = true;
+
+    m_shadersLoaded = m_foundShaderPath = false;
+    // Find path where shader files are in.
+    for (unsigned char i = 0; i <= 1; ++i) {
+        QString shaderPath = ((i == 0) ?
+            ShadersConfig::shaderPath().trimmed() :
+            QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("kwin/shaders"), QStandardPaths::LocateDirectory)
+        );
+        if (!shaderPath.isEmpty()) {
+            QDir dir = QDir(shaderPath);
+            if (dir.exists() && dir.isReadable() && !dir.isEmpty()) {
+                m_shaderPath = shaderPath;
+                m_foundShaderPath = true;
+                if (!m_shaderPath.endsWith("/")) {
+                    m_shaderPath.append("/");
+                }
+                break;
+            }
         }
-    }
-    if (!foundPath) {
-        m_shaderPath = QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("kwin/shaders"), QStandardPaths::LocateDirectory);
-    }
-    if (!m_shaderPath.endsWith("/")) {
-        m_shaderPath.append("/");
     }
 }
 
+// Regenerate shader if settings file is modified.
 void ShadersEffect::slotReloadShader() {
     loadShaders();
 }
@@ -100,6 +110,11 @@ bool ShadersEffect::supported()
 void ShadersEffect::loadShaders()
 {
     reconfigure(ReconfigureAll);
+
+    // Failed to find path where shader files are in.
+    if (!m_foundShaderPath) {
+        return;
+    }
     QByteArray fragmentBuf, vertexBuf;
 
     // Read settings file and put it in both the fragment and vertex buffers.
@@ -138,20 +153,25 @@ void ShadersEffect::loadShaders()
     // Generate the shader.
     m_shader = KWin::ShaderManager::instance()->generateCustomShader(KWin::ShaderTrait::MapTexture, vertexBuf, fragmentBuf);
 
+    // Shader is invalid.
+    if (!m_shader->isValid()) {
+        return;
+    }
+
+    // Shader succsesfully generated.
+    m_shadersLoaded = true;
+
     // Monitor changes to the settings file, if modified, re-generate the shader.
-    if (m_shader->isValid()) {
-        QString tmpSettingsPath = m_settingsName;
-        tmpSettingsPath.prepend(shaderPath());
-        if (QString::compare(tmpSettingsPath, m_settingsPath) != 0) {
-            m_settingsWatcher.removePath(m_settingsPath);
-            m_settingsPath.clear();
-            m_settingsPath.append(tmpSettingsPath);
-            disconnect(&m_settingsWatcher);
-            if (m_settingsWatcher.addPath(m_settingsPath)) {
-                connect(&m_settingsWatcher, &QFileSystemWatcher::fileChanged, this, &ShadersEffect::slotReloadShader);
-            }
+    QString tmpSettingsPath = m_settingsName;
+    tmpSettingsPath.prepend(shaderPath());
+    if (QString::compare(tmpSettingsPath, m_settingsPath) != 0) {
+        m_settingsWatcher.removePath(m_settingsPath);
+        m_settingsPath.clear();
+        m_settingsPath.append(tmpSettingsPath);
+        disconnect(&m_settingsWatcher);
+        if (m_settingsWatcher.addPath(m_settingsPath)) {
+            connect(&m_settingsWatcher, &QFileSystemWatcher::fileChanged, this, &ShadersEffect::slotReloadShader);
         }
-        m_shadersLoaded = true;
     }
 }
 

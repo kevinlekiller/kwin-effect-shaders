@@ -75,6 +75,7 @@ private:
     QStringList m_whitelist;
     QList<EffectWindow*> m_windows;
     const QString m_settingsName = "1_settings.glsl";
+    bool m_foundShaderPath;
     QString m_shaderPath;
     QFileSystemWatcher m_settingsWatcher;
     QString m_settingsPath;
