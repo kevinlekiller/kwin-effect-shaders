@@ -26,6 +26,9 @@ uniform float g_Random;
 vec2 g_TextureSize;
 vec4 g_SourceSize;
 
+#if ADVANCED_CARTOON_ENABLED == 1
+void shader_advanced_cartoon();
+#endif
 
 void main() {
     g_oTexcoord = g_iTexcoord.st;
@@ -35,6 +38,11 @@ void main() {
 
     for (int shader = 0; shader <= SHADERS; shader++) {
         switch(SHADER_ORDER[shader]) {
+            #if ADVANCED_CARTOON_ENABLED == 1
+            case SHADER_ADVANCED_CARTOON:
+                shader_advanced_cartoon();
+                break;
+            #endif
             default:
                 break;
         }

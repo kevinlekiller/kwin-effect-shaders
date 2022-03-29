@@ -36,6 +36,9 @@ vec2 g_TextureSize;
 #if ADAPTIVE_SHARPEN_ENABLED == 1
 void shader_adaptive_sharpen();
 #endif
+#if ADVANCED_CARTOON_ENABLED == 1
+void shader_advanced_cartoon();
+#endif
 #if CAS_ENABLED == 1
 void shader_amd_cas();
 #endif
@@ -101,6 +104,11 @@ void main() {
             #if ADAPTIVE_SHARPEN_ENABLED == 1
             case SHADER_FAST_SHARPEN:
                 shader_adaptive_sharpen();
+                break;
+            #endif
+            #if ADVANCED_CARTOON_ENABLED == 1
+            case SHADER_ADVANCED_CARTOON:
+                shader_advanced_cartoon();
                 break;
             #endif
             #if CAS_ENABLED == 1

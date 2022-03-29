@@ -11,15 +11,16 @@
 #define SHADER_TONEMAP              8
 #define SHADER_LIFT_GAMMA_GAIN      9
 #define SHADER_LEVELS              10
-#define SHADER_GRAYSCALE_YUV       11
-#define SHADER_FXAA3               12
-#define SHADER_AMD_CAS             13
-#define SHADER_NVIDIA_DLS          14
-#define SHADER_FAST_SHARPEN        15
-#define SHADER_ADAPTIVE_SHARPEN    16
-#define SHADER_FAST_GAUSS_BLURV    17
-#define SHADER_FILM_NOISE          18
-#define SHADERS                    19
+#define SHADER_ADVANCED_CARTOON    11
+#define SHADER_GRAYSCALE_YUV       12
+#define SHADER_FXAA3               13
+#define SHADER_AMD_CAS             14
+#define SHADER_NVIDIA_DLS          15
+#define SHADER_FAST_SHARPEN        16
+#define SHADER_ADAPTIVE_SHARPEN    17
+#define SHADER_FAST_GAUSS_BLURV    18
+#define SHADER_FILM_NOISE          19
+#define SHADERS                    20
 //----------------------------------------------------------------
 //----------------------------------------------------------------
 //------------------ Start of user configuration -----------------
@@ -45,6 +46,7 @@ const int SHADER_ORDER[SHADERS+1] = int[] ( // Don't change this line.
     SHADER_TONEMAP,
     SHADER_LIFT_GAMMA_GAIN,
     SHADER_LEVELS,
+    SHADER_ADVANCED_CARTOON,
     SHADER_GRAYSCALE_YUV,
     SHADER_FXAA3,
     SHADER_AMD_CAS,
@@ -72,6 +74,30 @@ SHADERS); // Don't change this line.
 // Optimal sharpening strength (according to objective metrics) - 0.5.
 // Default: 0.5
 #define AS_CURVE_HEIGHT    0.5
+
+#endif
+//----------------------------------------------------------------
+//------------ Advanced Cartoon configuration section ------------
+//----------------------------------------------------------------
+// https://github.com/libretro/glsl-shaders/blob/master/cel/shaders/advcartoon.glsl
+
+// Set to 1 to enable.
+#define ADVANCED_CARTOON_ENABLED 0
+#if ADVANCED_CARTOON_ENABLED == 1 // Don't change this line.
+
+// Toon Border Thickness
+// 0.0 to 4.0
+// Default: 1.0
+#define ADVANCED_CARTOON_BORDER 1.0
+
+// Toon Mute Colors
+// 0.0 to 1.0
+// Default: 0.0
+#define ADVANCED_CARTOON_MUTE_COLORS 0.0
+
+// Black border sensitivity
+// Default 0.5
+#define ADVANCED_CARTOON_BLACK_BORDER_SEN 0.5
 
 #endif
 //----------------------------------------------------------------
