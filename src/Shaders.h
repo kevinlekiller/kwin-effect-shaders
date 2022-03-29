@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define KWIN_SHADERS_H
 
 #include <kwineffects.h>
+#include <QFileSystemWatcher>
 namespace KWin
 {
 
@@ -59,6 +60,7 @@ public Q_SLOTS:
     void toggleScreenShaders();
     void toggleWindow();
     void slotWindowClosed(KWin::EffectWindow *w);
+    void slotReloadShader();
 
 protected:
     void loadShaders();
@@ -73,6 +75,8 @@ private:
     QStringList m_whitelist;
     QList<EffectWindow*> m_windows;
     QString m_shaderPath;
+    QFileSystemWatcher m_settingsWatcher;
+    QString m_settingsPath;
 };
 
 inline QStringList ShadersEffect::blacklist() const

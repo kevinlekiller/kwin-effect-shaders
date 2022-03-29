@@ -13,7 +13,7 @@ Example of Vibrance and Levels in KDE Plasma's System Settings:
 - [Toggling The KWin Effect](#toggling-the-kwin-effect)
 - [Custom Keyboard Shortcuts](#custom-keyboard-shortcuts)
 - [Copying Shaders To Home Directory](#copying-shaders-to-home-directory)
-- [Modifying Shaders](#modifying-shaders)
+- [Modifying Shader Settings](#modifying-shader-settings)
 - [Toggling The Shaders](#toggling-the-shaders)
 - [Blacklist Applications](#blacklist-applications)
 - [Whitelist Applications](#whitelist-applications)
@@ -49,7 +49,7 @@ https://aur.archlinux.org/packages/kwin-effect-shaders-git
 ## Toggling The KWin Effect
 `System Settings -> Workspace -> Workspace Behavior -> Desktop Effects -> Appearance -> Shaders`  
 Put a checkmark in the box and click accept.  
-By default all shaders are disabled, see `Modifying The Shader Files`.
+By default all shaders are disabled, see `Modifying Shader Settings`.
 
 ![Desktop Effects](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/settings1.png)
 
@@ -68,10 +68,11 @@ For example `/home/kevin/.local/share/shaders`
 
 ![Shaders path directory](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/settings2.png)
 
-## Modifying Shaders
+## Modifying Shader Settings
 Go to the directory where your shader files are, by default `~/.local/share/shaders`  
 Modify the `1_settings.frag` file in that directory.
 
+If shader(s) are enabled, Modifying the settings will trigger the shader(s) to be reloaded.
 
 For example, to enable Adaptive sharpen:
 

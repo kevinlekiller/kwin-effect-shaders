@@ -11,6 +11,7 @@
 #include <QAction>
 #include <QDir>
 #include <QFile>
+#include <QFileSystemWatcher>
 #include <kwinglutils.h>
 #include <kwinglplatform.h>
 #include <KGlobalAccel>
@@ -83,6 +84,10 @@ void ShadersEffect::reconfigure(ReconfigureFlags) {
     }
 }
 
+void ShadersEffect::slotReloadShader() {
+    loadShaders();
+}
+
 bool ShadersEffect::supported()
 {
     // Shaders are version 140
@@ -117,6 +122,17 @@ void ShadersEffect::loadShaders()
     }
     m_shader = KWin::ShaderManager::instance()->generateCustomShader(KWin::ShaderTrait::MapTexture, vertexBuf, fragmentBuf);
     if (m_shader->isValid()) {
+        QString tmpSettingsPath = "1_settings.frag";
+        tmpSettingsPath.prepend(shaderPath());
+        if (QString::compare(tmpSettingsPath, m_settingsPath) != 0) {
+            m_settingsWatcher.removePath(m_settingsPath);
+            m_settingsPath.clear();
+            m_settingsPath.append(tmpSettingsPath);
+            disconnect(&m_settingsWatcher);
+            if (m_settingsWatcher.addPath(m_settingsPath)) {
+                connect(&m_settingsWatcher, &QFileSystemWatcher::fileChanged, this, &ShadersEffect::slotReloadShader);
+            }
+        }
         m_shadersLoaded = true;
     }
 }
