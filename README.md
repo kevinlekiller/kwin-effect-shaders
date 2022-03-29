@@ -57,7 +57,7 @@ Set the `Shader Path` setting in `System Settings -> Workspace -> Workspace Beha
 
 For example `/home/kevin/.local/share/kwin-effect-shaders_shaders`
 
-![Shaders path directory](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/settings2.png)
+![Shaders path directory](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shader_path.png)
 
 ## Toggling The KWin Effect
 `System Settings -> Workspace -> Workspace Behavior -> Desktop Effects -> Appearance -> Shaders`
@@ -82,7 +82,7 @@ If shader(s) are enabled, Modifying the settings will trigger the shader(s) to b
 
 For example, to enable Adaptive sharpen:
 
-![1_settings.glsl edit](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shader_file.png)
+![1_settings.glsl edit](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shader_settings.png)
 
 ## Toggling The Shaders
 The keyboard shortcuts might be disabled by default, see "Custom Keyboard Shortcuts".
