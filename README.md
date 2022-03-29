@@ -131,8 +131,6 @@ This project was initially created because some games do not support vkBasalt or
 
 This desktop effect is a fork of these projects: [kwin-effect-smart-invert](https://github.com/natask/kwin-effect-smart-invert), [invert](https://github.com/KDE/kwin/tree/master/src/effects/invert), [kwin-effects-yet-another-magic-lamp](https://github.com/zzag/kwin-effects-yet-another-magic-lamp).
 
-You can find the licenses for those shaders in the shader files (src/shaders/).
-
 I'm not an expert on OpenGL or glsl, if you are, PR's are welcome.
 
 Antialiasing alternatives:
