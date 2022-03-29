@@ -310,7 +310,7 @@ uniform vec3 DPX_RGB_C = vec3(0.36, 0.36, 0.34);
 // Reduces colors to grayscale (for YUV color space).
 
 // Set to 1 to enable.
-#define GRAYSCALE_YUV_ENABLED 1
+#define GRAYSCALE_YUV_ENABLED 0
 
 //----------------------------------------------------------------
 //---------------- Levels configuration section ------------------
