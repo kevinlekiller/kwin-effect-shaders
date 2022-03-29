@@ -29,7 +29,8 @@ sudo make install
 [[ $@ =~ UNINSTALL ]] && sudo make uninstall && exit
 
 if [[ ! -d $SHADERSPATH ]]; then
-    git clone https://github.com/kevinlekiller/kwin-effect-shaders_shaders "$SHADERSPATH"
+    git clone https://github.com/kevinlekiller/kwin-effect-shaders_shaders "$SHADERSPATH" || exit $?
+    cp -f "$SHADERSPATH/1_settings.glsl.example" "$SHADERSPATH/1_settings.glsl"
 fi
 
 if ! grep "^\[Effect-Shaders\]" ~/.config/kwinrc &> /dev/null; then

@@ -76,7 +76,9 @@ By default all shaders are disabled, see `Modifying Shader Settings`.
 ## Modifying Shader Settings
 Go to the directory where your shader files are, by default `~/.local/share/kwin-effect-shaders_shaders`
 
-Modify the `1_settings.glsl` file in that directory.
+Copy `1_settings.glsl.example` to `1_settings.glsl` : `cp 1_settings.glsl.example 1_settings.glsl`
+
+Modify the `1_settings.glsl` file.
 
 If shader(s) are enabled, Modifying the settings will trigger the shader(s) to be reloaded.
 
