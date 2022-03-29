@@ -28,7 +28,7 @@ ShadersEffect::ShadersEffect()
     :   m_shader(nullptr),
         m_allWindows(false)
 {
-    reconfigure(ReconfigureAll);
+    loadShaders();
 
     QAction* a = new QAction(this);
     a->setObjectName(QStringLiteral("Shaders"));
@@ -206,11 +206,6 @@ void ShadersEffect::drawWindow(EffectWindow* w, int mask, const QRegion &region,
     effects->drawWindow(w, mask, region, data);
 }
 
-void ShadersEffect::paintEffectFrame(KWin::EffectFrame* frame, const QRegion &region, double opacity, double frameOpacity)
-{
-    effects->paintEffectFrame(frame, region, opacity, frameOpacity);
-}
-
 void ShadersEffect::slotWindowClosed(EffectWindow* w)
 {
     m_windows.removeOne(w);
@@ -218,11 +213,8 @@ void ShadersEffect::slotWindowClosed(EffectWindow* w)
 
 void ShadersEffect::toggleScreenShaders()
 {
+    // Toggle if user wants shaders on all windows or not.
     m_allWindows = !m_allWindows;
-    // Only load shaders if enabled.
-    if (m_allWindows) {
-        loadShaders();
-    }
     effects->addRepaintFull();
 }
 
@@ -231,13 +223,11 @@ void ShadersEffect::toggleWindow()
     if (!effects->activeWindow()) {
         return;
     }
-    // Check if the current window already has shaders on it.
-    if (m_windows.contains(effects->activeWindow())) {
-        m_windows.removeOne(effects->activeWindow());
-    } else {
-        loadShaders();
-        m_windows.append(effects->activeWindow());
-    }
+    // Toggle if user wants shaders on active window or not.
+    m_windows.contains(effects->activeWindow()) ?
+        (void) m_windows.removeOne(effects->activeWindow()) :
+               m_windows.append(effects->activeWindow()
+    );
     effects->activeWindow()->addRepaintFull();
 }
 
