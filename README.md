@@ -70,13 +70,13 @@ For example `/home/kevin/.local/share/shaders`
 
 ## Modifying Shader Settings
 Go to the directory where your shader files are, by default `~/.local/share/shaders`  
-Modify the `1_settings.frag` file in that directory.
+Modify the `1_settings.glsl` file in that directory.
 
 If shader(s) are enabled, Modifying the settings will trigger the shader(s) to be reloaded.
 
 For example, to enable Adaptive sharpen:
 
-![1_settings.frag edit](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shader_file.png)
+![1_settings.glsl edit](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shader_file.png)
 
 ## Toggling The Shaders
 The default shortcuts are (META is the SUPER key):  

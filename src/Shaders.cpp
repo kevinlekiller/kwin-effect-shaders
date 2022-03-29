@@ -101,13 +101,27 @@ void ShadersEffect::loadShaders()
 {
     reconfigure(ReconfigureAll);
     QByteArray fragmentBuf, vertexBuf;
+
+    // Read settings file and put it in both the fragment and vertex buffers.
+    QString curFile = shaderPath();
+    curFile.append(m_settingsName);
+    QFile file(curFile);
+    if (!file.exists() || !file.open(QFile::ReadOnly)) {
+        file.close();
+        return;
+    }
+    fragmentBuf.append(file.readAll());
+    vertexBuf.append(fragmentBuf);
+    file.close();
+
+    // Iterate all fragment and vertex files and append them to the buffers.
     QDir shadersDir(shaderPath());
     shadersDir.setFilter(QDir::Files);
     shadersDir.setSorting(QDir::Name | QDir::IgnoreCase);
     QFileInfoList shadersList = shadersDir.entryInfoList();
     for (int i = 0; i < shadersList.size(); ++i) {
         QFileInfo shaderInfo = shadersList.at(i);
-        QString curFile = shaderInfo.absoluteFilePath();
+        curFile = shaderInfo.absoluteFilePath();
         bool isFrag = curFile.endsWith(".frag");
         if (!isFrag && !curFile.endsWith(".vert")) {
             continue;
@@ -120,9 +134,13 @@ void ShadersEffect::loadShaders()
         isFrag ? fragmentBuf.append(file.readAll()) : vertexBuf.append(file.readAll());
         file.close();
     }
+
+    // Generate the shader.
     m_shader = KWin::ShaderManager::instance()->generateCustomShader(KWin::ShaderTrait::MapTexture, vertexBuf, fragmentBuf);
+
+    // Monitor changes to the settings file, if modified, re-generate the shader.
     if (m_shader->isValid()) {
-        QString tmpSettingsPath = "1_settings.frag";
+        QString tmpSettingsPath = m_settingsName;
         tmpSettingsPath.prepend(shaderPath());
         if (QString::compare(tmpSettingsPath, m_settingsPath) != 0) {
             m_settingsWatcher.removePath(m_settingsPath);

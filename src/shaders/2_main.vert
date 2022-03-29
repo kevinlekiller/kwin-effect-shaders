@@ -1,4 +1,3 @@
-#version 140
 /**
  *  Copyright (C) 2022  kevinlekiller
  *
