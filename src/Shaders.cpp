@@ -54,6 +54,10 @@ ShadersEffect::~ShadersEffect()
 }
 
 void ShadersEffect::reconfigure(ReconfigureFlags) {
+    if (!supported()) {
+        return;
+    }
+
     ShadersConfig::self()->read();
 
     // Check if blacklist is enabled.
@@ -160,11 +164,11 @@ void ShadersEffect::reconfigure(ReconfigureFlags) {
 
 bool ShadersEffect::supported()
 {
-    // Shaders are version 140
 #ifdef KWIN_HAVE_OPENGLES
     return false;
 #endif
-    return effects->compositingType() == OpenGLCompositing;
+    // GLSL 1.4 needs GL >= 3.1
+    return effects->compositingType() == OpenGLCompositing && hasGLVersion(3, 1);
 }
 
 void ShadersEffect::drawWindow(EffectWindow* w, int mask, const QRegion &region, WindowPaintData& data)
