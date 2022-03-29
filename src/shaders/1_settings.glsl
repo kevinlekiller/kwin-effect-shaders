@@ -72,6 +72,7 @@ SHADERS); // Don't change this line.
 // Main control of sharpening strength [>0]
 // 0.3 <-> 2.0 is a reasonable range of values
 // Optimal sharpening strength (according to objective metrics) - 0.5.
+//   Range: > 0.0
 // Default: 0.5
 #define AS_CURVE_HEIGHT    0.5
 
@@ -86,17 +87,18 @@ SHADERS); // Don't change this line.
 #if ADVANCED_CARTOON_ENABLED == 1 // Don't change this line.
 
 // Toon Border Thickness
-// 0.0 to 4.0
+//   Range: 0.0 to 4.0
 // Default: 1.0
 #define ADVANCED_CARTOON_BORDER 1.0
 
 // Toon Mute Colors
-// 0.0 to 1.0
+//   Range: 0.0 to 1.0
 // Default: 0.0
 #define ADVANCED_CARTOON_MUTE_COLORS 0.0
 
 // Black border sensitivity
-// Default 0.5
+//   Range: > 0.0
+// Default: 0.5
 #define ADVANCED_CARTOON_BLACK_BORDER_SEN 0.5
 
 #endif
@@ -109,6 +111,12 @@ SHADERS); // Don't change this line.
 #define CAS_ENABLED 0
 #if CAS_ENABLED == 1 // Don't change this line.
 
+// Specifies the amount of sharpning in the CAS shader.
+// 0.0 less sharp, less artefacts, but not off
+// 1.0 maximum sharp more artefacts
+// Everything in between is possible
+// Negative values sharpen even less, up to -1.0 make a visible difference
+//   Range: -1.0 to 1.0
 // Default: 0.4
 #define CAS_SHARPNESS 0.4
 
@@ -127,14 +135,16 @@ SHADERS); // Don't change this line.
 // The threshold of difference below which a pixel is considered to be part of
 // a gradient. Higher = more debanding, but setting it too high diminishes image
 // details.
-// haasn default : 64
-//   mpv default : 32
+//         Range: >= 1
+// haasn default: 64
+//   mpv default: 32
 #define DEBAND_THRESHOLD 64
 
 // The range (in source pixels) at which to sample for neighbours. Higher values
 // will find more gradients, but lower values will deband more aggressively.
-// haasn default : 8
-//   mpv default : 16
+//         Range: >= 1
+// haasn default: 8
+//   mpv default: 16
 #define DEBAND_RANGE 16
 
 // The number of debanding iterations to perform. Each iteration samples from
@@ -142,15 +152,17 @@ SHADERS); // Don't change this line.
 // increase the debanding quality. Conversely, it slows the shader down.
 // (Each iteration will use a multiple of the configured RANGE, and a
 // successively lower THRESHOLD - so setting it much higher has little effect)
-// haasn default : 4
-//   mpv default : 1
+//         Range: >= 1
+// haasn default: 4
+//   mpv default: 1
 #define DEBAND_ITERATIONS 1
 
 // (Optional) Add some extra noise to the image. This significantly helps cover
 // up remaining banding and blocking artifacts, at comparatively little visual
 // quality. Higher = more grain. Setting it to 0 disables the effect.
-// haasn default : 48
-//   mpv default : 48
+//         Range: >= 0
+// haasn default: 48
+//   mpv default: 48
 #define DEBAND_GRAIN 48
 
 #endif
@@ -164,27 +176,27 @@ SHADERS); // Don't change this line.
 #if DPX_ENABLED == 1 // Don't change this line.
 
 // Adjust the strength of the effect.
-// 0.0 to 1.0
+//   Range: 0.0 to 1.0
 // Default: 0.02
 #define DPX_STRENGTH 0.02
 
-// 0.0 to 8.0
+//   Range: 0.0 to 8.0
 // Default: 3.0
 #define DPX_SATURATION 3.0
 
-// 0.0 to 1.0
+//   Range: 0.0 to 1.0
 // Default: 0.1
 #define DPX_CONTRAST 0.1
 
-// 0.1 to 2.5
+//   Range: 0.1 to 2.5
 // Default: 2.5, 2.5, 2.5
 uniform vec3 DPX_COLORFULNESS = vec3(2.5, 2.5, 2.5);
 
-// 1.0 to 15.0
+//   Range: 1.0 to 15.0
 // Default: 8.0, 8.0, 8.0
 uniform vec3 DPX_RGB_CURVE = vec3(8.0, 8.0, 8.0);
 
-// 0.2 to 0.5
+//   Range: 0.2 to 0.5
 // Default: 0.36, 0.36, 0.34
 uniform vec3 DPX_RGB_C = vec3(0.36, 0.36, 0.34);
 
@@ -201,15 +213,19 @@ uniform vec3 DPX_RGB_C = vec3(0.36, 0.36, 0.34);
 #if FAKEHDR_ENABLED == 1 // Don't change this line.
 
 // Power
+// Personal recommendation : Somewhere between 1.15 and 1.2
+//   Range: 0.0 to 8.0
 // Default: 1.30
 #define FHDR_POWER   1.3
 
 // Radius 1
+//   Range: 0.0 to 8.0
 // Default: 0.793
 #define FHDR_RADIUS1 0.793
 
 // Radius 2
 // Raising this seems to make the effect stronger and also brighter.
+//   Range: 0.0 to 8.0
 // Default: 0.87
 #define FHDR_RADIUS2 0.87
 
@@ -223,13 +239,13 @@ uniform vec3 DPX_RGB_C = vec3(0.36, 0.36, 0.34);
 #if FAST_GAUSS_BLURV_ENABLED == 1 // Don't change this line.
 
 // Amount of blurring in the horizontal direction.
-// >= 0.0
-// Default 0.6
+//   Range: >= 0.0
+// Default: 0.6
 #define FGBV_HORIZONTAL_STRENGTH 0.6
 
 // Amount of blurring in the vertical direction.
-// >= 0.0
-// Default 0.6
+//   Range: >= 0.0
+// Default: 0.6
 #define FGBV_VERTICAL_STRENGTH 0.6
 
 #endif
@@ -245,15 +261,17 @@ uniform vec3 DPX_RGB_C = vec3(0.36, 0.36, 0.34);
 #if FAST_SHARPEN_ENABLED == 1 // Don't change this line.
 
 // Sharpen strength
-// Default: 1.2
-#define FS_SHARPEN   1.2
+//   Range: 0.0 to 2.0
+// Default: 1.0
+#define FS_SHARPEN   1.0
 
 // Amount of sharpening
-// Default: 0.08
-// Reducing this to around 0.01 helps not making everything look white.
-#define FS_CONTR     0.08
+//   Range: 0.00 to 0.25
+// Default: 0.07
+#define FS_CONTR     0.07
 
 // Details sharpened
+//   Range: 0.0 to 1.0
 // Default: 1.0
 #define FS_DETAILS   1.0
 
@@ -270,7 +288,8 @@ uniform vec3 DPX_RGB_C = vec3(0.36, 0.36, 0.34);
 #if FILM_NOISE_ENABLED == 1 // Don't change this line.
 
 // The amount of noise.
-// Default 2.0
+//   Range: > 0.0
+// Default: 2.0
 #define FILM_NOISE_STRENGTH 2.0
 
 #endif
@@ -355,12 +374,12 @@ uniform vec3 DPX_RGB_C = vec3(0.36, 0.36, 0.34);
 #if LEVELS_ENABLED == 1 // Don't change this line.
 
 // The black point is the new black - literally. Everything darker than this will become completely black.
-// 0 to 255
+//   Range: 0 to 255
 // Default: 16
 #define LVLS_BLACK_POINT 16
 
 // The new white point. Everything brighter than this becomes completely white.
-// 0 to 255
+//   Range: 0 to 255
 // Default: 235
 #define LVLS_WHITE_POINT 235
 
@@ -375,17 +394,17 @@ uniform vec3 DPX_RGB_C = vec3(0.36, 0.36, 0.34);
 #if LIFT_GAMMA_GAIN_ENABLED == 1 // Don't change this line.
 
 // Adjust shadows for red, green and blue.
-// 0.0 to 2.0
+//   Range: 0.0 to 2.0
 // Default: 1.0, 1.0, 1.0
 uniform vec3 LGG_RGB_LIFT = vec3(1.0, 1.0, 1.0);
 
 // Adjust midtones for red, green and blue
-// 0.0 to 2.0
+//   Range: 0.0 to 2.0
 // Default: 1.0, 1.0, 1.0
 uniform vec3 LGG_RGB_GAMMA = vec3(1.0, 1.0, 1.0);
 
 // Adjust highlights for red, green and blue.
-// 0.0 to 2.0
+//   Range: 0.0 to 2.0
 // Default: 1.0, 1.0, 1.0
 uniform vec3 LGG_RGB_GAIN = vec3(1.0, 1.0, 1.0);
 
@@ -399,9 +418,17 @@ uniform vec3 LGG_RGB_GAIN = vec3(1.0, 1.0, 1.0);
 #define NVIDIA_DLS_ENABLED 0
 #if NVIDIA_DLS_ENABLED == 1 // Don't change this line.
 
+// Specifies the amount of sharpening in the Denoised Luma Sharpening shader.
+// Increase to sharpen details within the image.
+// 0.0 less sharp, less artefacts, but not off
+// 1.0 maximum sharp more artefacts
+//   Range: 0.0 to 1.0
 // Default: 0.5
 #define DLS_SHARPEN 0.5
 
+// Specifies the amount of denoising in the Denoised Luma Sharpening shader.
+// Increase to limit how intensely film grain within the image gets sharpened.
+//   Range: 0.0 to 1.0
 // Default: 0.17
 #define DLS_DENOISE 0.17
 
@@ -418,22 +445,27 @@ uniform vec3 LGG_RGB_GAIN = vec3(1.0, 1.0, 1.0);
 #if NATURAL_VISION_ENABLED == 1 // Don't change this line.
 
 // Input Gamma
+//   Range: 0.0 to 10.0
 // Default: 2.2
 #define NATURAL_VISION_GIN  2.2
 
 // Output Gamma
+//   Range: 0.0 to 10.0
 // Default: 2.2
 #define NATURAL_VISION_GOUT 2.2
 
 // Luminance mutiplier
+//   Range: 0.0 to 10.0
 // Default: 1.1
 #define NATURAL_VISION_Y    1.1
 
 // Orange to Cyan multiplier
+//   Range: 0.0 to 10.0
 // Default: 1.1
 #define NATURAL_VISION_I    1.1
 
 // Magenta to Green multiplier
+//   Range: 0.0 to 10.0
 // Default 1.1
 #define NATURAL_VISION_Q    1.1
 
@@ -448,10 +480,11 @@ uniform vec3 LGG_RGB_GAIN = vec3(1.0, 1.0, 1.0);
 #if SEPIA_ENABLED == 1 // Don't change this line.
 
 // Adjust the strength of the effect.
-// 0.0 to 1.0
+//   Range: 0.0 to 1.0
 // Default: 0.58
 #define SEPIA_STRENGTH 0.58
 
+//   Range: 0.0 to 1.0
 // Default: 0.55, 0.43, 0.42
 uniform vec3 SEPIA_TINT = vec3(0.55, 0.43, 0.42);
 
@@ -465,16 +498,17 @@ uniform vec3 SEPIA_TINT = vec3(0.55, 0.43, 0.42);
 #define TECHNICOLOR1_ENABLED 0
 #if TECHNICOLOR1_ENABLED == 1 // Don't change this line.
 
+//   Range: 0.0 to 8.0
 // Default: 4.0
-// 0.0 to 8.0
 #define TC1_POWER 4.0
 
+//   Range: 0.0 to 1.0
 // Default: 0.88 0.88 0.88
 uniform vec3 TC1_RGB_NEGATIVE_AMOUNT = vec3(0.88, 0.88, 0.88);
 
 // Adjust the strength of the effect.
+//   Range: 0.0 to 1.0
 // Default: 0.4
-// 0.0 to 1.0
 #define TC1_STRENGTH 0.4
 
 #endif
@@ -488,22 +522,23 @@ uniform vec3 TC1_RGB_NEGATIVE_AMOUNT = vec3(0.88, 0.88, 0.88);
 #if TECHNICOLOR2_ENABLED == 1 // Don't change this line.
 
 // Higher means darker and more intense colors.
+//   Range: 0.0 to 1.0
 // Default: 0.2 0.2 0.2
 uniform vec3 TC2_COLORSTRENGTH = vec3(0.2, 0.2, 0.2);
 
 // Higher means brighter image.
+//   Range: 0.5 to 1.5
 // Default: 1.0
-// 0.5 to 1.5
 #define TC2_BRIGHTNESS 1.0
 
 // Additional saturation control since this effect tends to oversaturate the image.
+//   Range: 0.0 to 1.5
 // Default: 1.0
-// 0.0 to 1.5
 #define TC2_SATURATION 1.0
 
 // Adjust the strength of the effect.
+//   Range: 0.0 to 1.0
 // Default: 1.0
-// 0.0 to 1.0
 #define TC2_STRENGTH 1.0
 
 #endif
@@ -517,31 +552,32 @@ uniform vec3 TC2_COLORSTRENGTH = vec3(0.2, 0.2, 0.2);
 #if TONEMAP_ENABLED == 1 // Don't change this line.
 
 // Adjust midtones. 1.0 is neutral.
-// 0.0 to 2.0
+//   Range: 0.0 to 2.0
 // Default: 1.0
 #define TONEMAP_GAMMA 1.0
 
 // Adjust exposure
-// -1.0 to 1.0
+//   Range: -1.0 to 1.0
 // Default: 0.0
 #define TONEMAP_EXPOSURE 0.0
 
 // Adjust saturation
-// -1.0 to 1.0
+//   Range: -1.0 to 1.0
 // Default: 0.0
 #define TONEMAP_SATURATION 0.0
 
 // Brightens the shadows and fades the colors
-// 0.0 to 1.0
+//   Range: 0.0 to 1.0
 // Default: 0.0
 #define TONEMAP_BLEACH 0.0
 
 // How much of the color tint to remove
-// 0.0 to 1.0
+//   Range: 0.0 to 1.0
 // Default: 0.0
 #define TONAMEP_DEFOG 0.0
 
 // Which color tint to remove
+//   Range: 0.0 to 1.0
 // Default: 0.0, 0.0, 1.0
 uniform vec3 TONEMAP_FOGCOLOR = vec3(0.0, 0.0, 1.0);
 
@@ -559,20 +595,21 @@ uniform vec3 TONEMAP_FOGCOLOR = vec3(0.0, 0.0, 1.0);
 #if VIBRANCE_ENABLED == 1 // Don't change this line.
 
 // Intelligently saturates (or desaturates if you use negative values) the pixels depending on their original saturation.
-// -1.0 to 1.0
+//   Range: -1.0 to 1.0
 // Default: 0.15
 #define VIB_VIBRANCE 0.15
 
 // A per channel multiplier to the Vibrance strength so you can give more boost to certain colors over others.
 // This is handy if you are colorblind and less sensitive to a specific color.
 // You can then boost that color more than the others.
-// 0.0 to 10.0
+//   Range: 0.0 to 10.0
 // Default: 1.0, 1.0, 1.0
 uniform vec3 VIB_RGB_BALANCE = vec3(1.0, 1.0, 1.0);
 
 // Luma type
 // 0 -> Perceptual
 // 1 -> Even
+//   Range: 0 or 1
 // Default: 0
 #define VIB_LUMA 0
 
