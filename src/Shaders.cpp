@@ -110,39 +110,52 @@ void ShadersEffect::loadShaders()
     if (!m_foundShaderPath) {
         return;
     }
-    QByteArray fragmentBuf, vertexBuf;
 
-    // Read settings file and put it in both the fragment and vertex buffers.
-    QString curFile = shaderPath();
-    curFile.append(m_settingsName);
-    QFile file(curFile);
-    if (!file.exists() || !file.open(QFile::ReadOnly)) {
-        file.close();
-        return;
-    }
-    fragmentBuf.append(file.readAll());
-    vertexBuf.append(fragmentBuf);
-    file.close();
-
-    // Iterate all fragment and vertex files and append them to the buffers.
+    // Iterate shaders files and append them to their respectful buffers.
     QDir shadersDir(shaderPath());
     shadersDir.setFilter(QDir::Files);
     shadersDir.setSorting(QDir::Name | QDir::IgnoreCase);
     QFileInfoList shadersList = shadersDir.entryInfoList();
+    QByteArray fragmentBuf, vertexBuf;
+    bool foundSettings = false;
     for (int i = 0; i < shadersList.size(); ++i) {
-        QFileInfo shaderInfo = shadersList.at(i);
-        curFile = shaderInfo.absoluteFilePath();
+        QString curFile = shadersList.at(i).absoluteFilePath();
+
         bool isFrag = curFile.endsWith(".frag");
-        if (!isFrag && !curFile.endsWith(".vert")) {
+        bool isVert = curFile.endsWith(".vert");
+        bool isGlsl = curFile.endsWith(".glsl");
+        if (!isFrag && !isVert && !isGlsl) {
             continue;
         }
+
         QFile file(curFile);
         if (!file.exists() || !file.open(QFile::ReadOnly)) {
-            file.close();
             return;
         }
-        isFrag ? fragmentBuf.append(file.readAll()) : vertexBuf.append(file.readAll());
+
+        QByteArray fileBuf = file.readAll();
         file.close();
+
+        // Settings file should always be first and in both shader buffers.
+        if (!foundSettings && isGlsl && curFile.endsWith(m_settingsName)) {
+            fragmentBuf.prepend(fileBuf);
+            vertexBuf.prepend(fileBuf);
+            foundSettings = true;
+            continue;
+        }
+
+        if (isFrag || isGlsl) {
+            fragmentBuf.append(fileBuf);
+        }
+
+        if (isVert || isGlsl) {
+            vertexBuf.append(fileBuf);
+        }
+    }
+
+    // Didn't find settings file.
+    if (!foundSettings) {
+        return;
     }
 
     // Generate the shader.
