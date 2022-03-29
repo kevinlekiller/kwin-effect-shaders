@@ -7,7 +7,7 @@
 BUILD_DIRECTORY=${BUILD_DIRECTORY:-build}
 RELEASE_TYPE=${RELEASE_TYPE:-Release}
 MAKEFLAGS=${MAKEFLAGS:--j$(nproc)}
-SHADERSPATH="$HOME/.local/share/shaders"
+SHADERSPATH="$HOME/.local/share/kwin-effect-shaders_shaders"
 export MAKEFLAGS=$MAKEFLAGS
 CXXFLAGS=${CXXFLAGS:--march=native -mtune=native -O2 -pipe -fstack-protector-strong -fno-plt}
 export CXXFLAGS=$CXXFLAGS

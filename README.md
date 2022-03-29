@@ -51,11 +51,11 @@ If you have ran the `install.sh` script, everything within this section is done 
 
 Clone the shader files to somewhere in your home directory:
 
-    git clone https://github.com/kevinlekiller/kwin-effect-shaders_shaders ~/.local/share/shaders
+    git clone https://github.com/kevinlekiller/kwin-effect-shaders_shaders ~/.local/share/kwin-effect-shaders_shaders
 
 Set the `Shader Path` setting in `System Settings -> Workspace -> Workspace Behavior -> Desktop Effects -> Appearance -> Shaders` (there's a button to the right you can click to change the settings) to the directory you copied the shaders to (use the real path).
 
-For example `/home/kevin/.local/share/shaders`
+For example `/home/kevin/.local/share/kwin-effect-shaders_shaders`
 
 ![Shaders path directory](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/settings2.png)
 
@@ -74,7 +74,7 @@ By default all shaders are disabled, see `Modifying Shader Settings`.
 ![Keyboard Shortcuts](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shortcuts.png)
 
 ## Modifying Shader Settings
-Go to the directory where your shader files are, by default `~/.local/share/shaders`
+Go to the directory where your shader files are, by default `~/.local/share/kwin-effect-shaders_shaders`
 
 Modify the `1_settings.glsl` file in that directory.
 
