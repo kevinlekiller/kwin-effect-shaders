@@ -83,7 +83,7 @@ Copy `1_settings.glsl.example` to `1_settings.glsl` : `cp 1_settings.glsl.exampl
 
 Modify the `1_settings.glsl` file.
 
-If shader(s) are enabled, Modifying the settings will trigger the shader(s) to be reloaded.
+The settings file is monitored, any changes you make to the file will be applied to any enabled shaders in real time.
 
 For example, to enable Adaptive sharpen:
 
