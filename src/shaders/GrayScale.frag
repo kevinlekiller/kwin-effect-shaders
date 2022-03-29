@@ -1,4 +1,4 @@
-#if GRAYSCALE_YUV_ENABLED == 1
+#if GRAYSCALE_ENABLED == 1
 /**
  *  Copyright (C) 2022  kevinlekiller
  *
@@ -15,7 +15,19 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *  https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html
  */
-void shader_grayscale_yuv() {
-    g_Color.rgb = vec3((g_Color.r * 0.299) + (g_Color.g * 0.587) + (g_Color.b * 0.114));
+
+uniform vec3 grayScaleMethods[4] = vec3[] (
+    vec3(0.2100, 0.7200, 0.0700), // sRGB
+    vec3(0.2990, 0.5870, 0.1140), // YUV
+    vec3(0.2126, 0.7152, 0.0722), // ITU-R BT.709
+    vec3(0.2627, 0.6780, 0.0593)  // ITU-R BT.2100
+);
+
+void shader_grayscale() {
+    g_Color.rgb = vec3(
+        (g_Color.r * grayScaleMethods[GRAYSCALE_METHOD].r) +
+        (g_Color.g * grayScaleMethods[GRAYSCALE_METHOD].g) +
+        (g_Color.b * grayScaleMethods[GRAYSCALE_METHOD].b)
+    );
 }
 #endif

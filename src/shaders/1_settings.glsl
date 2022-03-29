@@ -12,7 +12,7 @@
 #define SHADER_LIFT_GAMMA_GAIN      9
 #define SHADER_LEVELS              10
 #define SHADER_ADVANCED_CARTOON    11
-#define SHADER_GRAYSCALE_YUV       12
+#define SHADER_GRAYSCALE           12
 #define SHADER_FXAA3               13
 #define SHADER_AMD_CAS             14
 #define SHADER_NVIDIA_DLS          15
@@ -47,7 +47,7 @@ const int SHADER_ORDER[SHADERS+1] = int[] ( // Don't change this line.
     SHADER_LIFT_GAMMA_GAIN,
     SHADER_LEVELS,
     SHADER_ADVANCED_CARTOON,
-    SHADER_GRAYSCALE_YUV,
+    SHADER_GRAYSCALE,
     SHADER_FXAA3,
     SHADER_AMD_CAS,
     SHADER_NVIDIA_DLS,
@@ -348,15 +348,25 @@ uniform vec3 DPX_RGB_C = vec3(0.36, 0.36, 0.34);
 
 #endif
 //----------------------------------------------------------------
-//-------------- Grayscale YUV configuration section -------------
+//---------------- Grayscale configuration section ---------------
 //----------------------------------------------------------------
 // https://wikiless.org/wiki/Grayscale?lang=en#Luma_coding_in_video_systems
 
-// Reduces colors to grayscale (for YUV color space).
+// Reduces colors to grayscale.
 
 // Set to 1 to enable.
-#define GRAYSCALE_YUV_ENABLED 0
+#define GRAYSCALE_ENABLED 0
+#if GRAYSCALE_ENABLED == 1 // Don't change this line.
 
+// Select the method to use to convert to Grayscale.
+// 0 -> sRGB
+// 1 -> YUV
+// 2 -> ITU-R BT.709
+// 3 -> ITU-R BT.2100
+// Default: 0
+#define GRAYSCALE_METHOD 1
+
+#endif
 //----------------------------------------------------------------
 //---------------- Levels configuration section ------------------
 //----------------------------------------------------------------
