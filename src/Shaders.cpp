@@ -58,30 +58,24 @@ void ShadersEffect::reconfigure(ReconfigureFlags) {
         return;
     }
 
+    m_shadersLoaded = false;
+
     ShadersConfig::self()->read();
 
-    // Check if blacklist is enabled.
-    QString blacklist = ShadersConfig::blacklist();
-    m_blacklist = blacklist.toLower().split(",");
-    m_blacklistEn = !blacklist.isEmpty();
-
-    // Check if whitelist is enabled.
-    QString whitelist = ShadersConfig::whitelist();
-    m_whitelist = whitelist.toLower().split(",");
-    m_whitelistEn = !whitelist.isEmpty();
-
-    m_shadersLoaded = m_foundShaderPath = false;
     // Find path where shader files are in.
     QString shaderPath = ShadersConfig::shaderPath().trimmed();
-    if (shaderPath.isEmpty()) {
-       return;
+    if (!shaderPath.endsWith("/")) {
+        shaderPath.append("/");
     }
-    QDir dir = QDir(shaderPath);
-    if (dir.exists() && dir.isReadable() && !dir.isEmpty()) {
-        m_shaderPath = shaderPath;
-        m_foundShaderPath = true;
-        if (!m_shaderPath.endsWith("/")) {
-            m_shaderPath.append("/");
+    if (QString::compare(m_shaderPath, shaderPath) != 0) {
+        m_foundShaderPath = false;
+        if (shaderPath.isEmpty()) {
+           return;
+        }
+        QDir shadersDir(shaderPath);
+        if (shadersDir.exists() && shadersDir.isReadable() && !shadersDir.isEmpty()) {
+            m_shaderPath = shaderPath;
+            m_foundShaderPath = true;
         }
     }
 
@@ -107,28 +101,28 @@ void ShadersEffect::reconfigure(ReconfigureFlags) {
             continue;
         }
 
-        QFile file(curFile);
-        if (!file.exists() || !file.open(QFile::ReadOnly)) {
+        QFile shaderFile(curFile);
+        if (!shaderFile.exists() || !shaderFile.open(QFile::ReadOnly)) {
             return;
         }
 
-        QByteArray fileBuf = file.readAll();
-        file.close();
+        QByteArray shaderBuf = shaderFile.readAll();
+        shaderFile.close();
 
         // Settings file should always be first and in both shader buffers.
         if (!foundSettings && isGlsl && curFile.endsWith(m_settingsName)) {
-            fragmentBuf.prepend(fileBuf);
-            vertexBuf.prepend(fileBuf);
+            fragmentBuf.prepend(shaderBuf);
+            vertexBuf.prepend(shaderBuf);
             foundSettings = true;
             continue;
         }
 
         if (isFrag || isGlsl) {
-            fragmentBuf.append(fileBuf);
+            fragmentBuf.append(shaderBuf);
         }
 
         if (isVert || isGlsl) {
-            vertexBuf.append(fileBuf);
+            vertexBuf.append(shaderBuf);
         }
     }
 
@@ -160,15 +154,26 @@ void ShadersEffect::reconfigure(ReconfigureFlags) {
             connect(&m_settingsWatcher, &QFileSystemWatcher::fileChanged, this, &ShadersEffect::slotReconfigure);
         }
     }
+
+    // Check if blacklist is enabled.
+    QString blacklist = ShadersConfig::blacklist();
+    m_blacklist = blacklist.toLower().split(",");
+    m_blacklistEn = !blacklist.isEmpty();
+
+    // Check if whitelist is enabled.
+    QString whitelist = ShadersConfig::whitelist();
+    m_whitelist = whitelist.toLower().split(",");
+    m_whitelistEn = !whitelist.isEmpty();
 }
 
 bool ShadersEffect::supported()
 {
 #ifdef KWIN_HAVE_OPENGLES
     return false;
-#endif
+#else
     // GLSL 1.4 needs GL >= 3.1
     return effects->compositingType() == OpenGLCompositing && hasGLVersion(3, 1);
+#endif
 }
 
 void ShadersEffect::drawWindow(EffectWindow* w, int mask, const QRegion &region, WindowPaintData& data)

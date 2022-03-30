@@ -52,9 +52,9 @@ public Q_SLOTS:
 private:
     GLShader* m_shader;
     bool m_allWindows;
-    bool m_blacklistEn;
-    bool m_whitelistEn;
-    bool m_shadersLoaded;
+    bool m_blacklistEn = false;
+    bool m_whitelistEn = false;
+    bool m_shadersLoaded = false;
     bool m_foundShaderPath;
     const QString m_settingsName = "1_settings.glsl";
     QString m_shaderPath;
