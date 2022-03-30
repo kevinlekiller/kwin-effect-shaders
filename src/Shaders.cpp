@@ -61,13 +61,12 @@ void ShadersEffect::resetWindows() {
     m_windows.clear();
     m_allWindows = false;
     m_shadersLoaded = false;
+    m_foundShaderPath = false;
     effects->addRepaintFull();
 }
 
 // Get the settings from kwinrc.
 void ShadersEffect::slotReconfigureConfig() {
-    m_foundShaderPath = false;
-
     // This is not ideal, but since ShadersConfig::configChange never emits, we don't have a choice.
     // Removing / re-adding the file gets around an issue where when the file is modified the signal
     // is not emited after the first time.
@@ -86,26 +85,18 @@ void ShadersEffect::slotReconfigureConfig() {
 
     // Find path where shader files are in.
     QString shaderPath = ShadersConfig::shaderPath().trimmed();
-    if (shaderPath.isEmpty()) {
-        resetWindows();
-        return;
-    }
     if (!shaderPath.endsWith("/")) {
         shaderPath.append("/");
     }
+    m_foundShaderPath = true;
     if (QString::compare(m_shaderPath, shaderPath) != 0) {
         m_shaderPath = shaderPath;
         QDir shadersDir(m_shaderPath);
-        if (shadersDir.isReadable() && shadersDir.exists(m_settingsName)) {
-            m_foundShaderPath = true;
-            slotReconfigureShader();
-        } else {
+        if (!shadersDir.isReadable() || !shadersDir.exists(m_settingsName)) {
             resetWindows();
             return;
         }
-    } else {
-        // Path didn't change.
-        m_foundShaderPath = true;
+        slotReconfigureShader();
     }
 
     // Check if blacklist is enabled.
@@ -134,7 +125,6 @@ void ShadersEffect::slotReconfigureShader() {
     shadersDir.setSorting(QDir::Name | QDir::IgnoreCase);
     QFileInfoList shadersList = shadersDir.entryInfoList();
     QByteArray fragmentBuf, vertexBuf;
-    bool foundSettings = false;
     for (int i = 0; i < shadersList.size(); ++i) {
         QString curFile = shadersList.at(i).absoluteFilePath();
 
@@ -155,10 +145,9 @@ void ShadersEffect::slotReconfigureShader() {
         shaderFile.close();
 
         // Settings file should always be first and in both shader buffers.
-        if (!foundSettings && isGlsl && curFile.endsWith(m_settingsName)) {
+        if (isGlsl && curFile.endsWith(m_settingsName)) {
             fragmentBuf.prepend(shaderBuf);
             vertexBuf.prepend(shaderBuf);
-            foundSettings = true;
             continue;
         }
 
@@ -169,13 +158,6 @@ void ShadersEffect::slotReconfigureShader() {
         if (isVert || isGlsl) {
             vertexBuf.append(shaderBuf);
         }
-    }
-
-    // Didn't find settings file.
-    if (!foundSettings) {
-        m_foundShaderPath = false;
-        resetWindows();
-        return;
     }
 
     // Generate the shader.
