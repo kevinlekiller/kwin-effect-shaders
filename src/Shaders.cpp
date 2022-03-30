@@ -58,25 +58,26 @@ void ShadersEffect::reconfigure(ReconfigureFlags) {
         return;
     }
 
-    m_shadersLoaded = false;
+    m_shadersLoaded = m_foundShaderPath = false;
 
     ShadersConfig::self()->read();
 
     // Find path where shader files are in.
     QString shaderPath = ShadersConfig::shaderPath().trimmed();
+    if (shaderPath.isEmpty()) {
+       return;
+    }
     if (!shaderPath.endsWith("/")) {
         shaderPath.append("/");
     }
     if (QString::compare(m_shaderPath, shaderPath) != 0) {
-        m_foundShaderPath = false;
-        if (shaderPath.isEmpty()) {
-           return;
-        }
         QDir shadersDir(shaderPath);
         if (shadersDir.exists() && shadersDir.isReadable() && !shadersDir.isEmpty()) {
             m_shaderPath = shaderPath;
             m_foundShaderPath = true;
         }
+    } else {
+         m_foundShaderPath = true;
     }
 
     // Failed to find path where shader files are in.
