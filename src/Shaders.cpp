@@ -41,7 +41,7 @@ ShadersEffect::ShadersEffect() : m_shader(nullptr), m_allWindows(false) {
 
     QAction* allWindowShortcut = new QAction(this);
     allWindowShortcut->setObjectName(QStringLiteral("Shaders"));
-    allWindowShortcut->setText(i18n("Toggle Shaders Effect on all Windows"));
+    allWindowShortcut->setText(i18n("Toggle Shaders Effect On All Windows"));
     KGlobalAccel::self()->setDefaultShortcut(allWindowShortcut, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_R);
     KGlobalAccel::self()->setShortcut(allWindowShortcut, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_R);
     effects->registerGlobalShortcut(Qt::CTRL + Qt::META + Qt::Key_R, allWindowShortcut);
@@ -49,7 +49,7 @@ ShadersEffect::ShadersEffect() : m_shader(nullptr), m_allWindows(false) {
 
     QAction* curWindowShortcut = new QAction(this);
     curWindowShortcut->setObjectName(QStringLiteral("ShadersWindow"));
-    curWindowShortcut->setText(i18n("Toggle Shaders Effect on Window"));
+    curWindowShortcut->setText(i18n("Toggle Shaders Effect On Current Window"));
     KGlobalAccel::self()->setDefaultShortcut(curWindowShortcut, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_Z);
     KGlobalAccel::self()->setShortcut(curWindowShortcut, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_Z);
     effects->registerGlobalShortcut(Qt::CTRL + Qt::META + Qt::Key_Z, curWindowShortcut);
@@ -177,7 +177,7 @@ void ShadersEffect::slotReconfigureShader() {
     }
 
     // Generate the shader.
-    m_shader = KWin::ShaderManager::instance()->generateCustomShader(KWin::ShaderTrait::MapTexture, vertexBuf, fragmentBuf);
+    m_shader = ShaderManager::instance()->generateCustomShader(ShaderTrait::MapTexture, vertexBuf, fragmentBuf);
 
     // Shader is invalid.
     if (!m_shader->isValid()) {
