@@ -1,4 +1,4 @@
-/********************************************************************
+﻿/********************************************************************
  KWin - the KDE window manager
  This file is part of the KDE project.
 
@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <kwineffects.h>
 #include <QFileSystemWatcher>
+
 namespace KWin
 {
 
@@ -36,18 +37,11 @@ class ShadersEffect : public Effect
 public:
     ShadersEffect();
     ~ShadersEffect() override;
-    void reconfigure(ReconfigureFlags) override;
     void drawWindow(EffectWindow* w, int mask, const QRegion &region, WindowPaintData& data) override;
     bool isActive() const override;
     int requestedEffectChainPosition() const override;
 
     static bool supported();
-
-public Q_SLOTS:
-    void slotToggleScreenShaders();
-    void slotToggleWindow();
-    void slotWindowClosed(KWin::EffectWindow *w);
-    void slotReconfigure();
 
 private:
     GLShader* m_shader;
@@ -55,14 +49,25 @@ private:
     bool m_blacklistEn = false;
     bool m_whitelistEn = false;
     bool m_shadersLoaded = false;
-    bool m_foundShaderPath;
+    bool m_foundShaderPath = false;
     const QString m_settingsName = "1_settings.glsl";
     QString m_shaderPath;
     QString m_settingsPath;
+    QString m_kwinrcPath;
     QStringList m_blacklist;
     QStringList m_whitelist;
     QList<EffectWindow*> m_windows;
     QFileSystemWatcher m_settingsWatcher;
+    QFileSystemWatcher m_kwinrcWatcher;
+
+    void resetWindows();
+
+private Q_SLOTS:
+    void slotReconfigureShader();
+    void slotReconfigureConfig();
+    void slotToggleScreenShaders();
+    void slotToggleWindowShaders();
+    void slotWindowClosed(KWin::EffectWindow *w);
 };
 
 inline int ShadersEffect::requestedEffectChainPosition() const
