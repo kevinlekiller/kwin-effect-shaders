@@ -17,6 +17,7 @@ Example of Vibrance and Levels in KDE Plasma's System Settings:
 - [Toggling The Shaders](#toggling-the-shaders)
 - [Blacklist Applications](#blacklist-applications)
 - [Whitelist Applications](#whitelist-applications)
+- [How To Find an Application Name](#how-to-find-an-application-name)
 - [Enable On Login](#enable-on-login)
 - [Notes](#notes)
 - [TODO](#todo)
@@ -121,6 +122,23 @@ The list is not case sensitive.
 This is useful if you use the Enabled by Default option.
 
 You can use the Blacklist at the same time as the Whitelist.
+
+## How To Find an Application Name
+To find an application name to use in the blacklist or whitelist, follow these steps:
+
+`System Settings -> Window Management -> Window Rules -> Add New...`
+
+If you're in a game, set it to windowed mode.
+
+Click `Detect Window Properties`, click the application.
+
+The application name is first string in the `Whole window class` (delimited by the space character).
+
+For example, with kate, the "Whole window class" is `kate org.kde.kate`, so the name to put in the blacklist or whitelist would be kate.
+
+Another example, lutris, the whole window class is `lutris` so the name would be lutris.
+
+![find_application_name](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/find_application_name.png)
 
 ## Enable On Login
 In the settings for the effect (`System Settings -> Workspace -> Workspace Behavior -> Desktop Effects -> Appearance -> Shaders`), you can set the "Enabled By Default" option.
