@@ -204,7 +204,7 @@ bool ShadersEffect::supported() {
 void ShadersEffect::drawWindow(EffectWindow* w, int mask, const QRegion &region, WindowPaintData& data) {
     bool useShader = m_shadersLoaded && m_allWindows != m_windows.contains(w);
     // Check if window is blacklisted or whitelisted.
-    if (m_blacklistEn || m_whitelistEn) {
+    if (useShader && (m_blacklistEn || m_whitelistEn)) {
         QString windowName = w->windowClass().trimmed().split(" ")[0];
         if ((m_blacklistEn && m_blacklist.contains(windowName, Qt::CaseInsensitive)) || (m_whitelistEn && !m_whitelist.contains(windowName, Qt::CaseInsensitive))) {
             useShader = false;
