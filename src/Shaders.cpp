@@ -214,8 +214,7 @@ void ShadersEffect::drawWindow(EffectWindow* w, int mask, const QRegion &region,
         effects->drawWindow(w, mask, region, data);
         return;
     }
-    ShaderManager *shaderManager = ShaderManager::instance();
-    shaderManager->pushShader(m_shader);
+    ShaderManager::instance()->pushShader(m_shader);
     m_shader->setUniform(m_shader->uniformLocation("g_Random"), (float) drand48());
     data.shader = m_shader;
     effects->drawWindow(w, mask, region, data);
