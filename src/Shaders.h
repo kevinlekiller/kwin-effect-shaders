@@ -60,7 +60,7 @@ private:
     QFileSystemWatcher m_settingsWatcher;
     QFileSystemWatcher m_kwinrcWatcher;
 
-    void resetWindows();
+    void resetWindows(bool repaint);
 
 private Q_SLOTS:
     void slotReconfigureShader();

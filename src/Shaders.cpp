@@ -25,8 +25,19 @@ ShadersEffect::ShadersEffect() : m_shader(nullptr), m_allWindows(false) {
         return;
     }
 
+    // This is not ideal, but since ShadersConfig::configChange never emits, we don't have a choice.
     m_kwinrcPath = QStandardPaths::locate(QStandardPaths::ConfigLocation, "kwinrc", QStandardPaths::LocateFile);
-    slotReconfigureConfig();
+    if (m_kwinrcWatcher.addPath(m_kwinrcPath)) {
+        connect(&m_kwinrcWatcher, &QFileSystemWatcher::fileChanged, this, &ShadersEffect::slotReconfigureConfig);
+    }
+
+    /* Unfortunately the signal never emits.
+    connect(&m_shadersConfig, &ShadersConfig::configChanged, this, &ShadersEffect::slotReconfigureConfig);
+    */
+
+    if (!m_foundShaderPath) {
+        slotReconfigureConfig();
+    }
 
     QAction* allWindowShortcut = new QAction(this);
     allWindowShortcut->setObjectName(QStringLiteral("Shaders"));
@@ -56,30 +67,24 @@ ShadersEffect::~ShadersEffect() {
     delete m_shader;
 }
 
-// Failed to process shaders, reset variables to default.
-void ShadersEffect::resetWindows() {
+// Reset variables to default.
+void ShadersEffect::resetWindows(bool repaint) {
     m_windows.clear();
     m_allWindows = false;
-    m_shadersLoaded = false;
     m_foundShaderPath = false;
-    effects->addRepaintFull();
+    if (repaint) {
+        m_shadersLoaded = false;
+        effects->addRepaintFull();
+    }
 }
 
 // Get the settings from kwinrc.
 void ShadersEffect::slotReconfigureConfig() {
-    // This is not ideal, but since ShadersConfig::configChange never emits, we don't have a choice.
+    resetWindows(false);
     // Removing / re-adding the file gets around an issue where when the file is modified the signal
-    // is not emited after the first time.
+    // is not emited after the first time. See https://doc.qt.io/qt-5/qfilesystemwatcher.html#fileChanged
     m_kwinrcWatcher.removePath(m_kwinrcPath);
-    disconnect(&m_kwinrcWatcher);
-    if (m_kwinrcWatcher.addPath(m_kwinrcPath)) {
-        connect(&m_kwinrcWatcher, &QFileSystemWatcher::fileChanged, this, &ShadersEffect::slotReconfigureConfig);
-    }
-
-    /* Unfortunately the signal never emits.
-    disconnect(&m_shadersConfig);
-    connect(&m_shadersConfig, &ShadersConfig::configChanged, this, &ShadersEffect::slotReconfigureConfig);
-    */
+    m_kwinrcWatcher.addPath(m_kwinrcPath);
 
     ShadersConfig::self()->load();
 
@@ -93,19 +98,19 @@ void ShadersEffect::slotReconfigureConfig() {
         m_shaderPath = shaderPath;
         QDir shadersDir(m_shaderPath);
         if (!shadersDir.isReadable() || !shadersDir.exists(m_settingsName)) {
-            resetWindows();
+            resetWindows(true);
             return;
         }
         slotReconfigureShader();
     }
 
     // Check if blacklist is enabled.
-    QString blacklist = ShadersConfig::blacklist();
+    QString blacklist = ShadersConfig::blacklist().trimmed();
     m_blacklist = blacklist.toLower().split(",");
     m_blacklistEn = !blacklist.isEmpty();
 
     // Check if whitelist is enabled.
-    QString whitelist = ShadersConfig::whitelist();
+    QString whitelist = ShadersConfig::whitelist().trimmed();
     m_whitelist = whitelist.toLower().split(",");
     m_whitelistEn = !whitelist.isEmpty();
 }
@@ -117,6 +122,17 @@ void ShadersEffect::slotReconfigureShader() {
     // Failed to find path where shader files are in.
     if (!m_foundShaderPath) {
         return;
+    }
+
+    // Monitor changes to the settings file, if modified, re-generate the shader.
+    QString tmpSettingsPath = m_shaderPath;
+    tmpSettingsPath.append(m_settingsName);
+    if (QString::compare(tmpSettingsPath, m_settingsPath) != 0) {
+        m_settingsWatcher.removePath(m_settingsPath);
+        m_settingsPath = tmpSettingsPath;
+        m_settingsWatcher.addPath(m_settingsPath);
+        disconnect(&m_settingsWatcher);
+        connect(&m_settingsWatcher, &QFileSystemWatcher::fileChanged, this, &ShadersEffect::slotReconfigureShader);
     }
 
     // Iterate shaders files and append them to their respectful buffers.
@@ -137,7 +153,7 @@ void ShadersEffect::slotReconfigureShader() {
 
         QFile shaderFile(curFile);
         if (!shaderFile.exists() || !shaderFile.open(QFile::ReadOnly)) {
-            resetWindows();
+            resetWindows(true);
             return;
         }
 
@@ -165,21 +181,8 @@ void ShadersEffect::slotReconfigureShader() {
 
     // Shader is invalid.
     if (!m_shader->isValid()) {
-        resetWindows();
+        resetWindows(true);
         return;
-    }
-
-    // Monitor changes to the settings file, if modified, re-generate the shader.
-    QString tmpSettingsPath = m_settingsName;
-    tmpSettingsPath.prepend(m_shaderPath);
-    if (QString::compare(tmpSettingsPath, m_settingsPath) != 0) {
-        m_settingsWatcher.removePath(m_settingsPath);
-        disconnect(&m_settingsWatcher);
-        m_settingsPath.clear();
-        m_settingsPath.append(tmpSettingsPath);
-        if (m_settingsWatcher.addPath(m_settingsPath)) {
-            connect(&m_settingsWatcher, &QFileSystemWatcher::fileChanged, this, &ShadersEffect::slotReconfigureShader);
-        }
     }
 
     // Shader succsesfully generated.
@@ -200,24 +203,23 @@ bool ShadersEffect::supported() {
 // Draw the window with the requested shader.
 void ShadersEffect::drawWindow(EffectWindow* w, int mask, const QRegion &region, WindowPaintData& data) {
     bool useShader = m_shadersLoaded && m_allWindows != m_windows.contains(w);
-    if (useShader && (m_blacklistEn || m_whitelistEn)) {
-        QString windowName = w->windowClass().split(" ")[1].toLower();
-        if (m_blacklist.contains(windowName)) {
-            useShader = false;
-        } else if (m_whitelistEn && !m_whitelist.contains(windowName)) {
+    // Check if window is blacklisted or whitelisted.
+    if (m_blacklistEn || m_whitelistEn) {
+        QString windowName = w->windowClass().split(" ")[0];
+        if ((m_blacklistEn && m_blacklist.contains(windowName, Qt::CaseInsensitive)) || (m_whitelistEn && !m_whitelist.contains(windowName, Qt::CaseInsensitive))) {
             useShader = false;
         }
     }
-    if (useShader) {
-        ShaderManager *shaderManager = ShaderManager::instance();
-        shaderManager->pushShader(m_shader);
-        m_shader->setUniform(m_shader->uniformLocation("g_Random"), (float) drand48());
-        data.shader = m_shader;
+    if (!useShader) {
         effects->drawWindow(w, mask, region, data);
-        ShaderManager::instance()->popShader();
         return;
     }
+    ShaderManager *shaderManager = ShaderManager::instance();
+    shaderManager->pushShader(m_shader);
+    m_shader->setUniform(m_shader->uniformLocation("g_Random"), (float) drand48());
+    data.shader = m_shader;
     effects->drawWindow(w, mask, region, data);
+    ShaderManager::instance()->popShader();
 }
 
 // Window was closed, remove from array.
