@@ -47,7 +47,7 @@ ShadersEffect::ShadersEffect() : m_shader(nullptr), m_allWindows(false) {
     connect(effects, &EffectsHandler::windowClosed, this, &ShadersEffect::slotWindowClosed);
 
     // If the setting "Enable by default" is enabled, trigger the effect on first run.
-    if (ShadersConfig::self()->defaultEnabled()) {
+    if (ShadersConfig::defaultEnabled()) {
         allWindowShortcut->trigger();
     }
 }
@@ -85,7 +85,7 @@ void ShadersEffect::slotReconfigureConfig() {
     ShadersConfig::self()->load();
 
     // Find path where shader files are in.
-    QString shaderPath = ShadersConfig::self()->shaderPath().trimmed();
+    QString shaderPath = ShadersConfig::shaderPath().trimmed();
     if (shaderPath.isEmpty()) {
         resetWindows();
         return;
@@ -109,12 +109,12 @@ void ShadersEffect::slotReconfigureConfig() {
     }
 
     // Check if blacklist is enabled.
-    QString blacklist = ShadersConfig::self()->blacklist();
+    QString blacklist = ShadersConfig::blacklist();
     m_blacklist = blacklist.toLower().split(",");
     m_blacklistEn = !blacklist.isEmpty();
 
     // Check if whitelist is enabled.
-    QString whitelist = ShadersConfig::self()->whitelist();
+    QString whitelist = ShadersConfig::whitelist();
     m_whitelist = whitelist.toLower().split(",");
     m_whitelistEn = !whitelist.isEmpty();
 }
