@@ -91,7 +91,7 @@ Copy `1_settings.glsl.example` to `1_settings.glsl` : `cp 1_settings.glsl.exampl
 
 Modify the `1_settings.glsl` file.
 
-You can have the settings file re-read by using one of the keyboard shortcuts. The file is only read if it is modified.
+Modifying the file while shaders are enabled will automatically reload the settings.
 
 For example, to enable the Adaptive Sharpen shader:
 

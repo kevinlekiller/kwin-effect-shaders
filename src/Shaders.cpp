@@ -56,6 +56,7 @@ ShadersEffect::~ShadersEffect() {
     delete m_shader;
 }
 
+// Reset values to default.
 void ShadersEffect::resetWindows() {
     m_windows.clear();
     m_allWindows = false;
@@ -63,49 +64,8 @@ void ShadersEffect::resetWindows() {
     effects->addRepaintFull();
 }
 
-void ShadersEffect::reconfigureSettings() {
-    // Get settings from kwinrc
-    QFileInfo kwinrcInfo(m_kwinrcPath);
-    bool shaderPathChanged = false;
-    if (kwinrcInfo.lastModified().toSecsSinceEpoch() != m_kwinrcLastModified) {
-        m_kwinrcLastModified = kwinrcInfo.lastModified().toSecsSinceEpoch();
-        ShadersConfig::self()->load();
-
-        // Find path where shader files are in.
-        QString shaderPath = ShadersConfig::shaderPath().trimmed();
-        if (!shaderPath.endsWith("/")) {
-            shaderPath.append("/");
-        }
-        if (QString::compare(m_shaderPath, shaderPath) != 0) {
-            m_shaderPath = shaderPath;
-            QDir shadersDir(shaderPath);
-            if (!shadersDir.isReadable() || !shadersDir.exists(m_settingsName)) {
-                resetWindows();
-                return;
-            }
-            shaderPathChanged = true;
-        }
-
-        // Check if blacklist is enabled.
-        QString blacklist = ShadersConfig::blacklist().trimmed();
-        m_blacklist = blacklist.toLower().split(",");
-        m_blacklistEn = !blacklist.isEmpty();
-
-        // Check if whitelist is enabled.
-        QString whitelist = ShadersConfig::whitelist().trimmed();
-        m_whitelist = whitelist.toLower().split(",");
-        m_whitelistEn = !whitelist.isEmpty();
-    }
-
-    // Check if glsl settings file changed.
-    QString settingsName = m_shaderPath;
-    settingsName.append(m_settingsName);
-    QFileInfo settingsInfo(settingsName);
-    if (!shaderPathChanged && settingsInfo.lastModified().toSecsSinceEpoch() == m_settingsLastModified) {
-        return;
-    }
-    m_settingsLastModified = settingsInfo.lastModified().toSecsSinceEpoch();
-
+// Build shader if needed.
+void ShadersEffect::slotReconfigureShader() {
     // Iterate shaders files and append them to their respectful buffers.
     QDir shadersDir(m_shaderPath);
     shadersDir.setFilter(QDir::Files | QDir::NoDotAndDotDot);
@@ -158,6 +118,50 @@ void ShadersEffect::reconfigureSettings() {
     // Shader succsesfully generated.
     m_shadersLoaded = true;
     effects->addRepaintFull();
+}
+
+// Get settings from kwinrc
+void ShadersEffect::reconfigureSettings() {
+    // Check if kwinrc file was changed.
+    QFileInfo kwinrcInfo(m_kwinrcPath);
+    if (kwinrcInfo.lastModified().toSecsSinceEpoch() == m_kwinrcLastModified) {
+        return;
+    }
+    m_kwinrcLastModified = kwinrcInfo.lastModified().toSecsSinceEpoch();
+
+    ShadersConfig::self()->load();
+
+    // Find path where shader files are in.
+    QString shaderPath = ShadersConfig::shaderPath().trimmed();
+    if (!shaderPath.endsWith("/")) {
+        shaderPath.append("/");
+    }
+    if (QString::compare(m_shaderPath, shaderPath) != 0) {
+        if (m_shaderPathWatcher.directories().contains(m_shaderPath)) {
+            m_shaderPathWatcher.removePath(m_shaderPath);
+            disconnect(&m_shaderPathWatcher);
+        }
+        m_shaderPath = shaderPath;
+        QDir shadersDir(shaderPath);
+        if (!shadersDir.isReadable() || !shadersDir.exists(m_settingsName)) {
+            resetWindows();
+            return;
+        }
+        if (m_shaderPathWatcher.addPath(m_shaderPath)) {
+            connect(&m_shaderPathWatcher, &QFileSystemWatcher::directoryChanged, this, &ShadersEffect::slotReconfigureShader);
+        }
+        slotReconfigureShader();
+    }
+
+    // Check if blacklist is enabled.
+    QString blacklist = ShadersConfig::blacklist().trimmed();
+    m_blacklist = blacklist.toLower().split(",");
+    m_blacklistEn = !blacklist.isEmpty();
+
+    // Check if whitelist is enabled.
+    QString whitelist = ShadersConfig::whitelist().trimmed();
+    m_whitelist = whitelist.toLower().split(",");
+    m_whitelistEn = !whitelist.isEmpty();
 }
 
 // Checks for GLSL 140 support.
