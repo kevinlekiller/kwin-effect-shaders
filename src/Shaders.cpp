@@ -61,11 +61,17 @@ void ShadersEffect::resetWindows() {
     m_windows.clear();
     m_allWindows = false;
     m_shadersLoaded = false;
+    m_shadersBeingConfigured = false;
     effects->addRepaintFull();
 }
 
 // Build shader if needed.
 void ShadersEffect::slotReconfigureShader() {
+    // In case this is triggered multiple times in a fast succession.
+    if (m_shadersBeingConfigured) {
+        return;
+    }
+    m_shadersBeingConfigured = true;
     // Iterate shaders files and append them to their respectful buffers.
     QDir shadersDir(m_shaderPath);
     shadersDir.setFilter(QDir::Files | QDir::NoDotAndDotDot);
@@ -118,6 +124,7 @@ void ShadersEffect::slotReconfigureShader() {
     // Shader succsesfully generated.
     m_shadersLoaded = true;
     effects->addRepaintFull();
+    m_shadersBeingConfigured = false;
 }
 
 // Get settings from kwinrc

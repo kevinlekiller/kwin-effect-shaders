@@ -46,6 +46,7 @@ private:
     bool m_blacklistEn = false;
     bool m_whitelistEn = false;
     bool m_shadersLoaded = false;
+    bool m_shadersBeingConfigured = false;
     qint64 m_kwinrcLastModified = 0;
     const QString m_settingsName = "1_settings.glsl";
     QString m_kwinrcPath;
