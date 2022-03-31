@@ -67,7 +67,7 @@ For example `/home/kevin/.local/share/kwin-effect-shaders_shaders`
 
 Put a checkmark in the box and click accept.
 
-By default all shaders are disabled, see `Modifying Shader Settings`.
+By default all shaders are disabled, see `Modifying The Shader Settings`.
 
 ![Desktop Effects](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/settings1.png)
 
@@ -80,7 +80,7 @@ NOTE: The keyboard shortcuts might be disabled by default.
 
 To change these:
 
-`System Settings -> Workspace -> Shortcuts -> Shortcuts -> System Services -> Kwin -> Toggle Shaders Effect`
+`System Settings -> Workspace -> Shortcuts -> Shortcuts -> System Services -> Kwin`
 
 ![Keyboard Shortcuts](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/keyboard_shortcuts.png)
 
