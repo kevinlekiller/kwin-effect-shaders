@@ -214,6 +214,7 @@ void ShadersEffect::slotToggleScreenShaders() {
     if (m_allWindows) {
         reconfigureSettings();
     }
+    // Doing this here allows reconfigureSettings() to run and check if m_shaderPath is changed.
     if (!m_shadersLoaded) {
         return;
     }
@@ -232,6 +233,7 @@ void ShadersEffect::slotToggleWindowShaders() {
         m_windows.append(effects->activeWindow());
         reconfigureSettings();
     }
+    // Doing this here allows reconfigureSettings() to run and check if m_shaderPath is changed.
     if (!m_shadersLoaded) {
         return;
     }
