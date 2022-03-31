@@ -7,18 +7,17 @@ Example of FakeHDR + Adaptive Sharpen in Life is Strange 2:
 Example of Vibrance and Levels in KDE Plasma's System Settings:
 ![Shaders](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shaders.png)
 ## Index
-- [Requirements](#requirements-not-tested)
-- [Install](#install)
-- [Uninstall](#uninstall)
-- [Acquiring the shader files](#acquiring-the-shader-files)
-- [Toggling The KWin Effect](#toggling-the-kwin-effect)
-- [Custom Keyboard Shortcuts](#custom-keyboard-shortcuts)
-- [Modifying Shader Settings](#modifying-shader-settings)
-- [Toggling The Shaders](#toggling-the-shaders)
-- [Blacklist Applications](#blacklist-applications)
-- [Whitelist Applications](#whitelist-applications)
-- [How To Find an Application Name](#how-to-find-an-application-name)
-- [Enable On Login](#enable-on-login)
+- [Requirements](#requirements)
+- [Installing](#installing)
+- [Uninstalling](#uninstalling)
+- [Acquiring The Shader Files](#acquiring-the-shader-files)
+- [Enabling The KWin Desktop Effect](#enabling-the-kwin-desktop-effect)
+- [Keyboard Shortcuts](#keyboard-shortcuts)
+- [Modifying The Shader Settings](#modifying-the-shader-settings)
+- [Blacklisting Applications](#blacklisting-applications)
+- [Whitelisting Applications](#whitelisting-applications)
+- [Finding Application Names](#finding-application-names)
+- [Enabling On Login](#enabling-on-login)
 - [Notes](#notes)
 - [TODO](#todo)
 - [Screenshots](#screenshots)
@@ -36,7 +35,7 @@ Example of Vibrance and Levels in KDE Plasma's System Settings:
 
 `sudo zypper in -t pattern devel_basis && sudo zypper in cmake extra-cmake-modules kguiaddons-devel kio-devel kwin5-devel kglobalaccel-devel ki18n-devel`
 
-## Install
+## Installing
 After installing, log out and in of the session to load the effect, or restart kwin.
 ### From Source:
     git clone https://github.com/kevinlekiller/kwin-effect-shaders
@@ -47,10 +46,10 @@ After installing, log out and in of the session to load the effect, or restart k
 ### Arch (AUR):
 https://aur.archlinux.org/packages/kwin-effect-shaders-git
 
-## Uninstall
+## Uninstalling
     ./install.sh UNINSTALL
 
-## Acquiring the shader files
+## Acquiring The Shader Files
 If you have ran the `install.sh` script, everything within this section is done automatically.
 
 Clone the shader files to somewhere in your home directory:
@@ -63,7 +62,7 @@ For example `/home/kevin/.local/share/kwin-effect-shaders_shaders`
 
 ![Shaders path directory](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shader_path.png)
 
-## Toggling The KWin Effect
+## Enabling The KWin Desktop Effect
 `System Settings -> Workspace -> Workspace Behavior -> Desktop Effects -> Appearance -> Shaders`
 
 Put a checkmark in the box and click accept.
@@ -72,36 +71,33 @@ By default all shaders are disabled, see `Modifying Shader Settings`.
 
 ![Desktop Effects](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/settings1.png)
 
-## Custom Keyboard Shortcuts
+## Keyboard Shortcuts
+NOTE: The keyboard shortcuts might be disabled by default.
+
+"Shaders Effect: Toggle Shaders Effect On Current Window" ; This is set to `CTRL + META + Z` by default.
+
+"Shaders Effect: Toggle Shaders Effect On All Windows"    ; This is set to `CTRL + META + X` by default.
+
+To change these:
+
 `System Settings -> Workspace -> Shortcuts -> Shortcuts -> System Services -> Kwin -> Toggle Shaders Effect`
 
-![Keyboard Shortcuts](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shortcuts.png)
+![Keyboard Shortcuts](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/keyboard_shortcuts.png)
 
-## Modifying Shader Settings
+## Modifying The Shader Settings
 Go to the directory where your shader files are, by default `~/.local/share/kwin-effect-shaders_shaders`
 
 Copy `1_settings.glsl.example` to `1_settings.glsl` : `cp 1_settings.glsl.example 1_settings.glsl`
 
 Modify the `1_settings.glsl` file.
 
-The settings file is monitored, any changes you make to the file will be applied to any enabled shaders in real time.
+You can have the settings file re-read by using one of the keyboard shortcuts. The file is only read if it is modified.
 
-For example, to enable Adaptive sharpen:
+For example, to enable the Adaptive Sharpen shader:
 
 ![1_settings.glsl edit](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shader_settings.png)
 
-## Toggling The Shaders
-The keyboard shortcuts might be disabled by default, see "Custom Keyboard Shortcuts".
-
-The default shortcuts are:
-
-Toggle on and off active application (this is what you probably want to use) (META is the SUPER key): `CTRL + META + Z`
-
-You can use this on any program, not just a game, the "System Settings" window for example.
-
-Toggle on and off whole screen (all applications): `CTRL + META + R`
-
-## Blacklist Applications
+## Blacklisting Applications
 In the settings for the effect (`System Settings -> Workspace -> Workspace Behavior -> Desktop Effects -> Appearance -> Shaders`), you can add application(s), if more than 1, seperate them with a comma.
 
 For example: `plasmashell,Firefox`
@@ -110,7 +106,7 @@ This will block the Plasma desktop and Firefox from being processed.
 
 The list is not case sensitive.
 
-## Whitelist Applications
+## Whitelisting Applications
 In the settings for the effect (`System Settings -> Workspace -> Workspace Behavior -> Desktop Effects -> Appearance -> Shaders`), you can add application(s), if more than 1, seperate them with a comma.
 
 For example: `kate,kcalc`
@@ -123,7 +119,7 @@ This is useful if you use the Enabled by Default option.
 
 You can use the Blacklist at the same time as the Whitelist.
 
-## How To Find an Application Name
+## Finding Application Names
 To find an application name to use in the blacklist or whitelist, follow these steps:
 
 `System Settings -> Window Management -> Window Rules -> Add New...`
@@ -140,7 +136,7 @@ Another example, lutris, the whole window class is `lutris` so the name would be
 
 ![find_application_name](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/find_application_name.png)
 
-## Enable On Login
+## Enabling On Login
 In the settings for the effect (`System Settings -> Workspace -> Workspace Behavior -> Desktop Effects -> Appearance -> Shaders`), you can set the "Enabled By Default" option.
 
 This will process all applications on login.

@@ -17,45 +17,34 @@
 
 Q_LOGGING_CATEGORY(KWIN_SHADERS, "kwin4_effect_shaders", QtWarningMsg)
 
-namespace KWin
-{
+namespace KWin {
 
 ShadersEffect::ShadersEffect() : m_shader(nullptr), m_allWindows(false) {
     if (!supported()) {
         return;
     }
 
-    // This is not ideal, but since ShadersConfig::configChange never emits, we don't have a choice.
     m_kwinrcPath = QStandardPaths::locate(QStandardPaths::ConfigLocation, "kwinrc", QStandardPaths::LocateFile);
-    if (m_kwinrcWatcher.addPath(m_kwinrcPath)) {
-        connect(&m_kwinrcWatcher, &QFileSystemWatcher::fileChanged, this, &ShadersEffect::slotReconfigureConfig);
-    }
-
-    /* Unfortunately the signal never emits.
-    connect(&m_shadersConfig, &ShadersConfig::configChanged, this, &ShadersEffect::slotReconfigureConfig);
-    */
-
-    if (!m_foundShaderPath) {
-        slotReconfigureConfig();
-    }
 
     QAction* allWindowShortcut = new QAction(this);
     allWindowShortcut->setObjectName(QStringLiteral("Shaders"));
-    allWindowShortcut->setText(i18n("Toggle Shaders Effect On All Windows"));
-    KGlobalAccel::self()->setDefaultShortcut(allWindowShortcut, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_R);
-    KGlobalAccel::self()->setShortcut(allWindowShortcut, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_R);
-    effects->registerGlobalShortcut(Qt::CTRL + Qt::META + Qt::Key_R, allWindowShortcut);
+    allWindowShortcut->setText(i18n("Shaders Effect: Toggle Shaders Effect On All Windows"));
+    KGlobalAccel::self()->setDefaultShortcut(allWindowShortcut, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_X);
+    KGlobalAccel::self()->setShortcut(allWindowShortcut, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_X);
+    effects->registerGlobalShortcut(Qt::CTRL + Qt::META + Qt::Key_X, allWindowShortcut);
     connect(allWindowShortcut, &QAction::triggered, this, &ShadersEffect::slotToggleScreenShaders);
 
     QAction* curWindowShortcut = new QAction(this);
     curWindowShortcut->setObjectName(QStringLiteral("ShadersWindow"));
-    curWindowShortcut->setText(i18n("Toggle Shaders Effect On Current Window"));
+    curWindowShortcut->setText(i18n("Shaders Effect: Toggle Shaders Effect On Current Window"));
     KGlobalAccel::self()->setDefaultShortcut(curWindowShortcut, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_Z);
     KGlobalAccel::self()->setShortcut(curWindowShortcut, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_Z);
     effects->registerGlobalShortcut(Qt::CTRL + Qt::META + Qt::Key_Z, curWindowShortcut);
     connect(curWindowShortcut, &QAction::triggered, this, &ShadersEffect::slotToggleWindowShaders);
 
     connect(effects, &EffectsHandler::windowClosed, this, &ShadersEffect::slotWindowClosed);
+
+    reconfigureSettings();
 
     // If the setting "Enable by default" is enabled, trigger the effect on first run.
     if (ShadersConfig::defaultEnabled()) {
@@ -67,73 +56,55 @@ ShadersEffect::~ShadersEffect() {
     delete m_shader;
 }
 
-// Reset variables to default.
-void ShadersEffect::resetWindows(bool repaint) {
+void ShadersEffect::resetWindows() {
     m_windows.clear();
     m_allWindows = false;
-    m_foundShaderPath = false;
-    if (repaint) {
-        m_shadersLoaded = false;
-        effects->addRepaintFull();
-    }
-}
-
-// Get the settings from kwinrc.
-void ShadersEffect::slotReconfigureConfig() {
-    resetWindows(false);
-    // Removing / re-adding the file gets around an issue where when the file is modified the signal
-    // is not emited after the first time. See https://doc.qt.io/qt-5/qfilesystemwatcher.html#fileChanged
-    m_kwinrcWatcher.removePath(m_kwinrcPath);
-    m_kwinrcWatcher.addPath(m_kwinrcPath);
-
-    ShadersConfig::self()->load();
-
-    // Find path where shader files are in.
-    QString shaderPath = ShadersConfig::shaderPath().trimmed();
-    if (!shaderPath.endsWith("/")) {
-        shaderPath.append("/");
-    }
-    m_foundShaderPath = true;
-    if (QString::compare(m_shaderPath, shaderPath) != 0) {
-        m_shaderPath = shaderPath;
-        QDir shadersDir(m_shaderPath);
-        if (!shadersDir.isReadable() || !shadersDir.exists(m_settingsName)) {
-            resetWindows(true);
-            return;
-        }
-        slotReconfigureShader();
-    }
-
-    // Check if blacklist is enabled.
-    QString blacklist = ShadersConfig::blacklist().trimmed();
-    m_blacklist = blacklist.toLower().split(",");
-    m_blacklistEn = !blacklist.isEmpty();
-
-    // Check if whitelist is enabled.
-    QString whitelist = ShadersConfig::whitelist().trimmed();
-    m_whitelist = whitelist.toLower().split(",");
-    m_whitelistEn = !whitelist.isEmpty();
-}
-
-// Create shader from shader files.
-void ShadersEffect::slotReconfigureShader() {
     m_shadersLoaded = false;
+    effects->addRepaintFull();
+}
 
-    // Failed to find path where shader files are in.
-    if (!m_foundShaderPath) {
+void ShadersEffect::reconfigureSettings() {
+    // Get settings from kwinrc
+    QFileInfo kwinrcInfo(m_kwinrcPath);
+    bool shaderPathChanged = false;
+    if (kwinrcInfo.lastModified().toSecsSinceEpoch() != m_kwinrcLastModified) {
+        m_kwinrcLastModified = kwinrcInfo.lastModified().toSecsSinceEpoch();
+        ShadersConfig::self()->load();
+
+        // Find path where shader files are in.
+        QString shaderPath = ShadersConfig::shaderPath().trimmed();
+        if (!shaderPath.endsWith("/")) {
+            shaderPath.append("/");
+        }
+        if (QString::compare(m_shaderPath, shaderPath) != 0) {
+            m_shaderPath = shaderPath;
+            QDir shadersDir(shaderPath);
+            if (!shadersDir.isReadable() || !shadersDir.exists(m_settingsName)) {
+                resetWindows();
+                return;
+            }
+            shaderPathChanged = true;
+        }
+
+        // Check if blacklist is enabled.
+        QString blacklist = ShadersConfig::blacklist().trimmed();
+        m_blacklist = blacklist.toLower().split(",");
+        m_blacklistEn = !blacklist.isEmpty();
+
+        // Check if whitelist is enabled.
+        QString whitelist = ShadersConfig::whitelist().trimmed();
+        m_whitelist = whitelist.toLower().split(",");
+        m_whitelistEn = !whitelist.isEmpty();
+    }
+
+    // Check if glsl settings file changed.
+    QString settingsName = m_shaderPath;
+    settingsName.append(m_settingsName);
+    QFileInfo settingsInfo(settingsName);
+    if (!shaderPathChanged && settingsInfo.lastModified().toSecsSinceEpoch() == m_settingsLastModified) {
         return;
     }
-
-    // Monitor changes to the settings file, if modified, re-generate the shader.
-    QString tmpSettingsPath = m_shaderPath;
-    tmpSettingsPath.append(m_settingsName);
-    if (QString::compare(tmpSettingsPath, m_settingsPath) != 0) {
-        m_settingsWatcher.removePath(m_settingsPath);
-        m_settingsPath = tmpSettingsPath;
-        m_settingsWatcher.addPath(m_settingsPath);
-        disconnect(&m_settingsWatcher);
-        connect(&m_settingsWatcher, &QFileSystemWatcher::fileChanged, this, &ShadersEffect::slotReconfigureShader);
-    }
+    m_settingsLastModified = settingsInfo.lastModified().toSecsSinceEpoch();
 
     // Iterate shaders files and append them to their respectful buffers.
     QDir shadersDir(m_shaderPath);
@@ -153,17 +124,16 @@ void ShadersEffect::slotReconfigureShader() {
 
         QFile shaderFile(curFile);
         if (!shaderFile.exists() || !shaderFile.open(QFile::ReadOnly)) {
-            resetWindows(true);
+            resetWindows();
             return;
         }
 
         QByteArray shaderBuf = shaderFile.readAll();
         shaderFile.close();
 
-        // Settings file should always be first and in both shader buffers.
-        if (isGlsl && curFile.endsWith(m_settingsName)) {
-            fragmentBuf.prepend(shaderBuf);
-            vertexBuf.prepend(shaderBuf);
+        if (curFile.endsWith(m_settingsName)) {
+            fragmentBuf.append(shaderBuf);
+            vertexBuf.append(shaderBuf);
             continue;
         }
 
@@ -181,7 +151,7 @@ void ShadersEffect::slotReconfigureShader() {
 
     // Shader is invalid.
     if (!m_shader->isValid()) {
-        resetWindows(true);
+        resetWindows();
         return;
     }
 
@@ -228,24 +198,32 @@ void ShadersEffect::slotWindowClosed(EffectWindow* w) {
 
 // User activated keybind to toggle shader on all windows.
 void ShadersEffect::slotToggleScreenShaders() {
+    // Toggle if user wants shaders on all windows or not.
+    m_allWindows = !m_allWindows;
+    if (m_allWindows) {
+        reconfigureSettings();
+    }
     if (!m_shadersLoaded) {
         return;
     }
-    // Toggle if user wants shaders on all windows or not.
-    m_allWindows = !m_allWindows;
     effects->addRepaintFull();
 }
 
 // User activated keybind to toggle shader on active window.
 void ShadersEffect::slotToggleWindowShaders() {
-    if (!m_shadersLoaded || !effects->activeWindow()) {
+    if (!effects->activeWindow()) {
         return;
     }
     // Toggle if user wants shaders on active window or not.
-    m_windows.contains(effects->activeWindow()) ?
-        (void) m_windows.removeOne(effects->activeWindow()) :
-               m_windows.append(effects->activeWindow()
-    );
+    if (m_windows.contains(effects->activeWindow())) {
+        m_windows.removeOne(effects->activeWindow());
+    } else {
+        m_windows.append(effects->activeWindow());
+        reconfigureSettings();
+    }
+    if (!m_shadersLoaded) {
+        return;
+    }
     effects->activeWindow()->addRepaintFull();
 }
 
