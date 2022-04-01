@@ -55,6 +55,10 @@ void ShadersUI::setNumWindowsStatus(int numWindows) {
     ui->val_Status->setText(QVariant(numWindows).toString());
 }
 
+void ShadersUI::setShaderCompiled(bool compiled) {
+    ui->val_ShaderCompiled->setText(compiled ? "Yes" : "No");
+}
+
 void ShadersUI::setShadersText(QByteArray text) {
     //ui->val_ShadersText->verticalScrollBar()->setValue(m_shadersTextScrollPos);
     ui->val_ShadersText->setPlainText(text);

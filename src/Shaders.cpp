@@ -166,6 +166,7 @@ void ShadersEffect::slotUILaunch() {
     m_shadersUI.setDefaultEnabled(m_settings->value("DefaultEnabled").toBool());
     updateStatusCount();
     m_shadersUI.setShadersText(m_shaderSettingsBuf);
+    m_shadersUI.setShaderCompiled(m_shadersLoaded);
     m_shadersUI.open();
 }
 

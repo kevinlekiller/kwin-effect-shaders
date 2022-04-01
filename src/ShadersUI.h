@@ -23,6 +23,7 @@ public:
     void setShaderPath(QString);
     void setDefaultEnabled(bool);
     void setNumWindowsStatus(int);
+    void setShaderCompiled(bool);
     void setShadersText(QByteArray);
 
 Q_SIGNALS:
