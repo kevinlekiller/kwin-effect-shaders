@@ -26,6 +26,7 @@ public:
     void setShadersText(QByteArray);
 
 Q_SIGNALS:
+    void signalShaderTestRequested();
     void signalShaderSaveRequested();
     void signalSettingsSaveRequested();
 
@@ -35,6 +36,7 @@ private:
 
 private Q_SLOTS:
     void slotWindowClosed();
+    void slotShaderTestRequested();
     void slotShaderSaveRequested();
     void slotSettingsSaveRequested();
 };

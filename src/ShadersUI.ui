@@ -25,6 +25,9 @@
   <layout class="QGridLayout" name="gridLayout">
    <item row="1" column="1">
     <widget class="QDialogButtonBox" name="button_CloseWindow">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Closes the window, does not save any values, use Save if you need to do so.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
      <property name="standardButtons">
       <set>QDialogButtonBox::Ok</set>
      </property>
@@ -38,7 +41,7 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="tab_Settings">
       <attribute name="title">
        <string>Settings</string>
       </attribute>
@@ -116,7 +119,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab2">
+     <widget class="QWidget" name="tab_Status">
       <attribute name="title">
        <string>Status</string>
       </attribute>
@@ -137,25 +140,38 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab3">
+     <widget class="QWidget" name="tab_Shaders">
       <attribute name="title">
        <string>Shaders</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_4">
-       <item row="0" column="0">
+       <item row="0" column="0" colspan="2">
         <widget class="QTextEdit" name="val_ShadersText">
          <property name="acceptRichText">
           <bool>false</bool>
          </property>
         </widget>
        </item>
-       <item row="1" column="0" alignment="Qt::AlignBottom">
+       <item row="1" column="0">
+        <widget class="QDialogButtonBox" name="button_ShadersTest">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Apply does not save changes to the file.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="standardButtons">
+          <set>QDialogButtonBox::Apply</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1" alignment="Qt::AlignRight|Qt::AlignBottom">
         <widget class="QDialogButtonBox" name="button_ShadersSave">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Saving will write changes to the file.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="standardButtons">
           <set>QDialogButtonBox::Save</set>

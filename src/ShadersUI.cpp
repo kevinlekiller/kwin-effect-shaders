@@ -7,6 +7,7 @@ ShadersUI::ShadersUI(QWidget *parent) : QDialog(parent), ui(new Ui::ShadersUI) {
     connect(this, &QDialog::finished, this, &ShadersUI::slotWindowClosed);
     connect(ui->button_CloseWindow, &QDialogButtonBox::clicked, this, &QDialog::accept);
     connect(ui->button_ShadersSave, &QDialogButtonBox::clicked, this, &ShadersUI::slotShaderSaveRequested);
+    connect(ui->button_ShadersTest, &QDialogButtonBox::clicked, this, &ShadersUI::slotShaderTestRequested);
     connect(ui->button_SettingsSave, &QDialogButtonBox::clicked, this, &ShadersUI::slotSettingsSaveRequested);
 }
 
@@ -20,6 +21,10 @@ void ShadersUI::slotWindowClosed() {
 
 void ShadersUI::slotShaderSaveRequested() {
     emit signalShaderSaveRequested();
+}
+
+void ShadersUI::slotShaderTestRequested() {
+    emit signalShaderTestRequested();
 }
 
 void ShadersUI::slotSettingsSaveRequested() {

@@ -55,6 +55,7 @@ ShadersEffect::ShadersEffect() : m_shader(nullptr), m_allWindows(false) {
     processWhitelist(m_settings->value("Whitelist").toString());
     processShaderPath(m_settings->value("ShaderPath").toString());
 
+    connect(&m_shadersUI, &ShadersUI::signalShaderTestRequested, this, &ShadersEffect::slotUIShaderTestRequested);
     connect(&m_shadersUI, &ShadersUI::signalShaderSaveRequested, this, &ShadersEffect::slotUIShaderSaveRequested);
     connect(&m_shadersUI, &ShadersUI::signalSettingsSaveRequested, this, &ShadersEffect::slotUISettingsSaveRequested);
     connect(&m_shadersUI, &QDialog::finished, this, &ShadersEffect::slotUIClosed);
@@ -127,12 +128,17 @@ void ShadersEffect::updateStatusCount() {
     m_shadersUI.setNumWindowsStatus(m_windows.count() + (int) m_allWindows);
 }
 
+void ShadersEffect::slotUIShaderTestRequested() {
+    generateShaderFromBuffer();
+}
+
 void ShadersEffect::slotUIShaderSaveRequested() {
     QFile settingsFile(m_shaderSettingsPath);
     if (!settingsFile.open(QFile::WriteOnly | QFile::Truncate)) {
         return;
     }
-    settingsFile.write(m_shadersUI.getShadersText());
+    m_shaderSettingsBuf = m_shadersUI.getShadersText();
+    settingsFile.write(m_shaderSettingsBuf);
     settingsFile.close();
     slotReconfigureShader();
 }
@@ -159,12 +165,56 @@ void ShadersEffect::slotUILaunch() {
     m_shadersUI.setWhitelist(m_whitelist.join(","));
     m_shadersUI.setDefaultEnabled(m_settings->value("DefaultEnabled").toBool());
     updateStatusCount();
-    m_shadersUI.setShadersText(m_shaderArr.value(m_shaderSettingsPath).value(m_settingsModified));
+    m_shadersUI.setShadersText(m_shaderSettingsBuf);
     m_shadersUI.open();
 }
 
 void ShadersEffect::slotUIClosed() {
 
+}
+
+void ShadersEffect::compileShader(QByteArray *vertex, QByteArray *fragment) {
+    m_shader = ShaderManager::instance()->generateCustomShader(ShaderTrait::MapTexture, *vertex, *fragment);
+
+    // Shader is invalid.
+    if (!m_shader->isValid()) {
+        resetWindows();
+        return;
+    }
+    m_shadersLoaded = true;
+    effects->addRepaintFull();
+    m_shadersBeingConfigured = false;
+}
+
+void  ShadersEffect::generateShaderFromBuffer() {
+    if (m_shaderArr.empty()) {
+        return;
+    }
+    //m_shadersBeingConfigured = true;
+    QByteArray fragmentBuf, vertexBuf;
+    QMapIterator<QString, QHash<qint64, QByteArray>> shaders(m_shaderArr);
+    while (shaders.hasNext()) {
+        shaders.next();
+        QString curFile = shaders.key();
+        if (curFile.endsWith(m_shaderSettingsName)) {
+            m_shaderSettingsBuf = m_shadersUI.getShadersText();
+            fragmentBuf.prepend(m_shaderSettingsBuf);
+            vertexBuf.prepend(m_shaderSettingsBuf);
+            continue;
+        }
+        bool isFrag = curFile.endsWith(".frag");
+        bool isVert = curFile.endsWith(".vert");
+        bool isGlsl = curFile.endsWith(".glsl");
+        QHashIterator<qint64, QByteArray> shaderValues(shaders.value());
+        shaderValues.next();
+        if (isGlsl || isFrag) {
+            fragmentBuf.append(shaderValues.value());
+        }
+        if (isGlsl || isVert) {
+            vertexBuf.append(shaderValues.value());
+        }
+    }
+    compileShader(&vertexBuf, &fragmentBuf);
 }
 
 // Build shader if needed.
@@ -212,8 +262,9 @@ void ShadersEffect::slotReconfigureShader() {
 
         if (curFile.endsWith(m_shaderSettingsName)) {
             m_settingsModified = lastModified;
-            fragmentBuf.append(shaderBuf);
-            vertexBuf.append(shaderBuf);
+            m_shaderSettingsBuf = shaderBuf;
+            fragmentBuf.prepend(shaderBuf);
+            vertexBuf.prepend(shaderBuf);
             continue;
         }
 
@@ -225,20 +276,7 @@ void ShadersEffect::slotReconfigureShader() {
             vertexBuf.append(shaderBuf);
         }
     }
-
-    // Generate the shader.
-    m_shader = ShaderManager::instance()->generateCustomShader(ShaderTrait::MapTexture, vertexBuf, fragmentBuf);
-
-    // Shader is invalid.
-    if (!m_shader->isValid()) {
-        resetWindows();
-        return;
-    }
-
-    // Shader succsesfully generated.
-    m_shadersLoaded = true;
-    effects->addRepaintFull();
-    m_shadersBeingConfigured = false;
+    compileShader(&vertexBuf, &fragmentBuf);
 }
 
 // Checks for GLSL 140 support.
