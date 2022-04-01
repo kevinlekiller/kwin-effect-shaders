@@ -1,6 +1,19 @@
 #######################################
 # Effect
 
+include(KDEInstallDirs)
+include(KDECMakeSettings)
+
+# required frameworks by Core
+find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
+    GuiAddons
+    KIO
+)
+
+find_package(KWinDBusInterface CONFIG REQUIRED)
+
+find_path(EFFECTS_H kwineffects.h PATH_SUFFIXES kf5)
+
 find_package (KF5 REQUIRED COMPONENTS
     GlobalAccel
     I18n
@@ -9,9 +22,10 @@ find_package (KF5 REQUIRED COMPONENTS
 set(effect_SRCS
     plugin.cc
     Shaders.cpp
+    ShadersUI.cpp
 )
 
-kconfig_add_kcfg_files(effect_SRCS ShadersConfig.kcfgc)
+qt5_wrap_ui(effect_SRCS ShadersUI.ui)
 
 add_library(${SHADERS} SHARED ${effect_SRCS})
 
@@ -37,4 +51,3 @@ install(
         ${MODULEPATH}/kwin/effects/plugins/
 )
 
-add_subdirectory(kcm)

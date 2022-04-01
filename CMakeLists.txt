@@ -27,17 +27,4 @@ set (CMAKE_MODULE_PATH
 include (FeatureSummary)
 feature_summary (WHAT ALL)
 
-include(KDEInstallDirs)
-include(KDECMakeSettings)
-
-# required frameworks by Core
-find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
-    GuiAddons
-    KIO
-)
-
-find_package(KWinDBusInterface CONFIG REQUIRED)
-
-find_path(EFFECTS_H kwineffects.h PATH_SUFFIXES kf5)
-
 add_subdirectory(src)

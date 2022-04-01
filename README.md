@@ -10,8 +10,8 @@ Example of Vibrance and Levels in KDE Plasma's System Settings:
 - [Requirements](#requirements)
 - [Installing](#installing)
 - [Uninstalling](#uninstalling)
-- [Acquiring The Shader Files](#acquiring-the-shader-files)
 - [Enabling The KWin Desktop Effect](#enabling-the-kwin-desktop-effect)
+- [Acquiring The Shader Files](#acquiring-the-shader-files)
 - [Keyboard Shortcuts](#keyboard-shortcuts)
 - [Modifying The Shader Settings](#modifying-the-shader-settings)
 - [Blacklisting Applications](#blacklisting-applications)
@@ -49,19 +49,6 @@ https://aur.archlinux.org/packages/kwin-effect-shaders-git
 ## Uninstalling
     ./install.sh UNINSTALL
 
-## Acquiring The Shader Files
-If you have ran the `install.sh` script, everything within this section is done automatically.
-
-Clone the shader files to somewhere in your home directory:
-
-    git clone https://github.com/kevinlekiller/kwin-effect-shaders_shaders ~/.local/share/kwin-effect-shaders_shaders
-
-Set the `Shader Path` setting in `System Settings -> Workspace -> Workspace Behavior -> Desktop Effects -> Appearance -> Shaders` (there's a button to the right you can click to change the settings) to the directory you copied the shaders to (use the real path).
-
-For example `/home/kevin/.local/share/kwin-effect-shaders_shaders`
-
-![Shaders path directory](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shader_path.png)
-
 ## Enabling The KWin Desktop Effect
 `System Settings -> Workspace -> Workspace Behavior -> Desktop Effects -> Appearance -> Shaders`
 
@@ -71,8 +58,23 @@ By default all shaders are disabled, see `Modifying The Shader Settings`.
 
 ![Desktop Effects](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/settings1.png)
 
+## Acquiring The Shader Files
+If you have ran the `install.sh` script, everything within this section is done automatically.
+
+Clone the shader files to somewhere in your home directory:
+
+    git clone https://github.com/kevinlekiller/kwin-effect-shaders_shaders ~/.local/share/kwin-effect-shaders_shaders
+
+Set the `Shader Path` by opening the configuration window (see "Keyboard Shortcuts").
+
+For example `/home/kevin/.local/share/kwin-effect-shaders_shaders`
+
+![Shaders path directory](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shaders_ui.png)
+
 ## Keyboard Shortcuts
 NOTE: The keyboard shortcuts might be disabled by default.
+
+"Shaders Effect: Opens the configuration UI" ; This is set to `CTRL + META + A` by default.
 
 "Shaders Effect: Toggle Shaders Effect On Current Window" ; This is set to `CTRL + META + Z` by default.
 
@@ -98,7 +100,7 @@ For example, to enable the Adaptive Sharpen shader:
 ![1_settings.glsl edit](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shader_settings.png)
 
 ## Blacklisting Applications
-In the settings for the effect (`System Settings -> Workspace -> Workspace Behavior -> Desktop Effects -> Appearance -> Shaders`), you can add application(s), if more than 1, seperate them with a comma.
+In the configuration window, you can add application(s), if more than 1, seperate them with a comma.
 
 For example: `plasmashell,Firefox`
 
@@ -107,7 +109,7 @@ This will block the Plasma desktop and Firefox from being processed.
 The list is not case sensitive.
 
 ## Whitelisting Applications
-In the settings for the effect (`System Settings -> Workspace -> Workspace Behavior -> Desktop Effects -> Appearance -> Shaders`), you can add application(s), if more than 1, seperate them with a comma.
+In the configuration window, you can add application(s), if more than 1, seperate them with a comma.
 
 For example: `kate,kcalc`
 
@@ -137,7 +139,7 @@ Another example, lutris, the whole window class is `lutris` so the name would be
 ![find_application_name](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/find_application_name.png)
 
 ## Enabling On Login
-In the settings for the effect (`System Settings -> Workspace -> Workspace Behavior -> Desktop Effects -> Appearance -> Shaders`), you can set the "Enabled By Default" option.
+In the configuration window you can set the "Enabled By Default" option.
 
 This will process all applications on login.
 

@@ -16,6 +16,5 @@
         "ServiceTypes": [
             "KWin/Effect"
         ]
-    },
-    "X-KDE-ConfigModule": "kwin_shaders_config"
+    }
 }

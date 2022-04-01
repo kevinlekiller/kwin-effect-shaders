@@ -24,6 +24,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <kwineffects.h>
 #include <QFileSystemWatcher>
+#include <QSettings>
+#include "ShadersUI.h"
 
 namespace KWin {
 
@@ -43,23 +45,28 @@ public:
 private:
     GLShader* m_shader;
     bool m_allWindows;
-    bool m_blacklistEn = false;
-    bool m_whitelistEn = false;
     bool m_shadersLoaded = false;
     bool m_shadersBeingConfigured = false;
-    qint64 m_kwinrcLastModified = 0;
-    const QString m_settingsName = "1_settings.glsl";
-    QString m_kwinrcPath;
+    bool m_blacklistEn = false;
+    bool m_whitelistEn = false;
+    const QString m_shaderSettingsName = "1_settings.glsl";
     QString m_shaderPath;
-    QStringList m_blacklist;
-    QStringList m_whitelist;
     QList<EffectWindow*> m_windows;
     QFileSystemWatcher m_shaderPathWatcher;
+    ShadersUI m_shadersUI;
+    QStringList m_blacklist;
+    QStringList m_whitelist;
+    QSettings *m_settings;
 
     void resetWindows();
-    void reconfigureSettings();
+    void updateStatusCount();
+    void processBlacklist(QString);
+    void processWhitelist(QString);
+    void processShaderPath(QString);
 
 private Q_SLOTS:
+    void slotUILaunch();
+    void slotUIClosed();
     void slotReconfigureShader();
     void slotToggleScreenShaders();
     void slotToggleWindowShaders();
