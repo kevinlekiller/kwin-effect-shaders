@@ -17,14 +17,26 @@ public:
     QString getWhitelist();
     QString getShaderPath();
     bool getDefaultEnabled();
+    QByteArray getShadersText();
     void setBlacklist(QString);
     void setWhitelist(QString);
     void setShaderPath(QString);
     void setDefaultEnabled(bool);
     void setNumWindowsStatus(int);
+    void setShadersText(QByteArray);
+
+Q_SIGNALS:
+    void signalShaderSaveRequested();
+    void signalSettingsSaveRequested();
 
 private:
     Ui::ShadersUI* ui;
+    //int m_shadersTextScrollPos = 0;
+
+private Q_SLOTS:
+    void slotWindowClosed();
+    void slotShaderSaveRequested();
+    void slotSettingsSaveRequested();
 };
 
 #endif // SHADERSUI_H

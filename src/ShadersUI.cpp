@@ -1,8 +1,29 @@
 #include "ShadersUI.h"
 #include "ui_ShadersUI.h"
+//#include <QScrollBar> // The plugin doesn't load when included.
 
 ShadersUI::ShadersUI(QWidget *parent) : QDialog(parent), ui(new Ui::ShadersUI) {
     ui->setupUi(this);
+    connect(this, &QDialog::finished, this, &ShadersUI::slotWindowClosed);
+    connect(ui->button_CloseWindow, &QDialogButtonBox::clicked, this, &QDialog::accept);
+    connect(ui->button_ShadersSave, &QDialogButtonBox::clicked, this, &ShadersUI::slotShaderSaveRequested);
+    connect(ui->button_SettingsSave, &QDialogButtonBox::clicked, this, &ShadersUI::slotSettingsSaveRequested);
+}
+
+ShadersUI::~ShadersUI() {
+    delete ui;
+}
+
+void ShadersUI::slotWindowClosed() {
+    //m_shadersTextScrollPos = ui->val_ShadersText->verticalScrollBar()->value();
+}
+
+void ShadersUI::slotShaderSaveRequested() {
+    emit signalShaderSaveRequested();
+}
+
+void ShadersUI::slotSettingsSaveRequested() {
+    emit signalSettingsSaveRequested();
 }
 
 void ShadersUI::setBlacklist(QString value) {
@@ -14,7 +35,7 @@ void ShadersUI::setWhitelist(QString value) {
 }
 
 void ShadersUI::setShaderPath(QString value) {
-    ui->val_ShaderPath->setText(value);
+    ui->val_ShaderPath->setPlainText(value);
 }
 
 void ShadersUI::setDefaultEnabled(bool value) {
@@ -22,7 +43,12 @@ void ShadersUI::setDefaultEnabled(bool value) {
 }
 
 void ShadersUI::setNumWindowsStatus(int numWindows) {
-    ui->val_windowsShaders->setText(QVariant(numWindows).toString());
+    ui->val_Status->setText(QVariant(numWindows).toString());
+}
+
+void ShadersUI::setShadersText(QByteArray text) {
+    //ui->val_ShadersText->verticalScrollBar()->setValue(m_shadersTextScrollPos);
+    ui->val_ShadersText->setPlainText(text);
 }
 
 QString ShadersUI::getBlacklist() {
@@ -34,13 +60,15 @@ QString ShadersUI::getWhitelist() {
 }
 
 QString ShadersUI::getShaderPath() {
-    return ui->val_ShaderPath->text();
+    return ui->val_ShaderPath->toPlainText();
 }
 
 bool ShadersUI::getDefaultEnabled() {
     return ui->val_DefaultEnabled->isChecked();
 }
 
-ShadersUI::~ShadersUI() {
-    delete ui;
+QByteArray ShadersUI::getShadersText() {
+    return QVariant(ui->val_ShadersText->toPlainText()).toByteArray();
 }
+
+

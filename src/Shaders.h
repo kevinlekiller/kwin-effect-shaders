@@ -49,7 +49,9 @@ private:
     bool m_shadersBeingConfigured = false;
     bool m_blacklistEn = false;
     bool m_whitelistEn = false;
+    qint64 m_settingsModified = 0;
     const QString m_shaderSettingsName = "1_settings.glsl";
+    QString m_shaderSettingsPath;
     QString m_shaderPath;
     QList<EffectWindow*> m_windows;
     QFileSystemWatcher m_shaderPathWatcher;
@@ -57,6 +59,7 @@ private:
     QStringList m_blacklist;
     QStringList m_whitelist;
     QSettings *m_settings;
+    QHash<QString, QHash<qint64, QByteArray>> m_shaderArr;
 
     void resetWindows();
     void updateStatusCount();
@@ -67,6 +70,8 @@ private:
 private Q_SLOTS:
     void slotUILaunch();
     void slotUIClosed();
+    void slotUIShaderSaveRequested();
+    void slotUISettingsSaveRequested();
     void slotReconfigureShader();
     void slotToggleScreenShaders();
     void slotToggleWindowShaders();

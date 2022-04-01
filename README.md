@@ -65,7 +65,7 @@ Clone the shader files to somewhere in your home directory:
 
     git clone https://github.com/kevinlekiller/kwin-effect-shaders_shaders ~/.local/share/kwin-effect-shaders_shaders
 
-Set the `Shader Path` by opening the configuration window (see "Keyboard Shortcuts").
+Set the `Shader Path` by opening the configuration UI (see "Keyboard Shortcuts").
 
 For example `/home/kevin/.local/share/kwin-effect-shaders_shaders`
 
@@ -87,20 +87,18 @@ To change these:
 ![Keyboard Shortcuts](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/keyboard_shortcuts.png)
 
 ## Modifying The Shader Settings
-Go to the directory where your shader files are, by default `~/.local/share/kwin-effect-shaders_shaders`
+Copy `1_settings.glsl.example` to `1_settings.glsl` : `cp ~/.local/share/kwin-effect-shaders_shaders/1_settings.glsl.example ~/.local/share/kwin-effect-shaders_shaders/1_settings.glsl`
 
-Copy `1_settings.glsl.example` to `1_settings.glsl` : `cp 1_settings.glsl.example 1_settings.glsl`
+Open the configuration UI (see Keyboard Shortcuts), go to the Shaders tab.
 
-Modify the `1_settings.glsl` file.
-
-Modifying the file while shaders are enabled will automatically reload the settings.
+Change the settings you want, click Save.
 
 For example, to enable the Adaptive Sharpen shader:
 
-![1_settings.glsl edit](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shader_settings.png)
+![1_settings.glsl edit](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shaders_tab.png)
 
 ## Blacklisting Applications
-In the configuration window, you can add application(s), if more than 1, seperate them with a comma.
+In the configuration UI, you can add application(s), if more than 1, seperate them with a comma.
 
 For example: `plasmashell,Firefox`
 
@@ -109,7 +107,7 @@ This will block the Plasma desktop and Firefox from being processed.
 The list is not case sensitive.
 
 ## Whitelisting Applications
-In the configuration window, you can add application(s), if more than 1, seperate them with a comma.
+In the configuration UI, you can add application(s), if more than 1, seperate them with a comma.
 
 For example: `kate,kcalc`
 

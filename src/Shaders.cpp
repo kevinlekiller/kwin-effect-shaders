@@ -55,6 +55,10 @@ ShadersEffect::ShadersEffect() : m_shader(nullptr), m_allWindows(false) {
     processWhitelist(m_settings->value("Whitelist").toString());
     processShaderPath(m_settings->value("ShaderPath").toString());
 
+    connect(&m_shadersUI, &ShadersUI::signalShaderSaveRequested, this, &ShadersEffect::slotUIShaderSaveRequested);
+    connect(&m_shadersUI, &ShadersUI::signalSettingsSaveRequested, this, &ShadersEffect::slotUISettingsSaveRequested);
+    connect(&m_shadersUI, &QDialog::finished, this, &ShadersEffect::slotUIClosed);
+
     // If the setting "Enable by default" is enabled, trigger the effect on first run.
     if (m_settings->value("DefaultEnabled").toBool()) {
         allWindowShortcut->trigger();
@@ -98,6 +102,8 @@ void ShadersEffect::processShaderPath(QString shaderPath) {
             return;
         }
         m_settings->setValue("ShaderPath", m_shaderPath);
+        m_shaderSettingsPath = m_shaderPath;
+        m_shaderSettingsPath.append(m_shaderSettingsName);
         if (m_shaderPathWatcher.addPath(m_shaderPath)) {
             connect(&m_shaderPathWatcher, &QFileSystemWatcher::directoryChanged, this, &ShadersEffect::slotReconfigureShader);
         }
@@ -121,6 +127,24 @@ void ShadersEffect::updateStatusCount() {
     m_shadersUI.setNumWindowsStatus(m_windows.count() + (int) m_allWindows);
 }
 
+void ShadersEffect::slotUIShaderSaveRequested() {
+    QFile settingsFile(m_shaderSettingsPath);
+    if (!settingsFile.open(QFile::WriteOnly | QFile::Truncate)) {
+        return;
+    }
+    settingsFile.write(m_shadersUI.getShadersText());
+    settingsFile.close();
+    slotReconfigureShader();
+}
+
+void ShadersEffect::slotUISettingsSaveRequested() {
+    processShaderPath(m_shadersUI.getShaderPath());
+    processBlacklist(m_shadersUI.getBlacklist());
+    processWhitelist(m_shadersUI.getWhitelist());
+    m_settings->setValue("DefaultEnabled", m_shadersUI.getDefaultEnabled());
+    m_settings->sync();
+}
+
 void ShadersEffect::slotUILaunch() {
     if (m_shadersUI.isVisible()) {
         return;
@@ -135,17 +159,12 @@ void ShadersEffect::slotUILaunch() {
     m_shadersUI.setWhitelist(m_whitelist.join(","));
     m_shadersUI.setDefaultEnabled(m_settings->value("DefaultEnabled").toBool());
     updateStatusCount();
-    connect(&m_shadersUI, &QDialog::finished, this, &ShadersEffect::slotUIClosed);
+    m_shadersUI.setShadersText(m_shaderArr.value(m_shaderSettingsPath).value(m_settingsModified));
     m_shadersUI.open();
 }
 
 void ShadersEffect::slotUIClosed() {
-    disconnect(&m_shadersUI, &QDialog::finished, this, &ShadersEffect::slotUIClosed);
-    m_settings->sync();
-    processShaderPath(m_shadersUI.getShaderPath());
-    processBlacklist(m_shadersUI.getBlacklist());
-    processWhitelist(m_shadersUI.getWhitelist());
-    m_settings->setValue("DefaultEnabled", m_shadersUI.getDefaultEnabled());
+
 }
 
 // Build shader if needed.
@@ -171,16 +190,28 @@ void ShadersEffect::slotReconfigureShader() {
             continue;
         }
 
-        QFile shaderFile(curFile);
-        if (!shaderFile.exists() || !shaderFile.open(QFile::ReadOnly)) {
-            resetWindows();
-            return;
+        QFileInfo shaderFileInfo(curFile);
+        qint64 lastModified = shaderFileInfo.lastModified().currentSecsSinceEpoch();
+        QByteArray shaderBuf;
+        if (m_shaderArr.contains(curFile) && m_shaderArr.value(curFile).contains(lastModified)) {
+            shaderBuf = m_shaderArr.value(curFile).value(lastModified);
+        } else {
+            QFile shaderFile(curFile);
+            if (!shaderFile.exists() || !shaderFile.open(QFile::ReadOnly)) {
+                resetWindows();
+                return;
+            }
+
+            shaderBuf = shaderFile.readAll();
+            shaderFile.close();
+            QHash <qint64, QByteArray> shaderHash;
+            shaderHash.insert(lastModified, shaderBuf);
+            m_shaderArr.insert(curFile, shaderHash);
         }
 
-        QByteArray shaderBuf = shaderFile.readAll();
-        shaderFile.close();
 
         if (curFile.endsWith(m_shaderSettingsName)) {
+            m_settingsModified = lastModified;
             fragmentBuf.append(shaderBuf);
             vertexBuf.append(shaderBuf);
             continue;

@@ -6,237 +6,171 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>481</width>
-    <height>509</height>
+    <width>501</width>
+    <height>559</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QDialogButtonBox" name="buttonBox">
-   <property name="geometry">
-    <rect>
-     <x>390</x>
-     <y>470</y>
-     <width>81</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Horizontal</enum>
-   </property>
-   <property name="standardButtons">
-    <set>QDialogButtonBox::Ok</set>
-   </property>
-  </widget>
-  <widget class="QTabWidget" name="tabWidget">
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>481</width>
-     <height>471</height>
-    </rect>
-   </property>
-   <property name="currentIndex">
-    <number>0</number>
-   </property>
-   <property name="movable">
-    <bool>false</bool>
-   </property>
-   <widget class="QWidget" name="tab_Settings">
-    <attribute name="title">
-     <string>Settings</string>
-    </attribute>
-    <widget class="QPlainTextEdit" name="val_Blacklist">
-     <property name="geometry">
-      <rect>
-       <x>140</x>
-       <y>50</y>
-       <width>315</width>
-       <height>70</height>
-      </rect>
+  <property name="sizeGripEnabled">
+   <bool>false</bool>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="1" column="1">
+    <widget class="QDialogButtonBox" name="button_CloseWindow">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Ok</set>
      </property>
-     <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Applications in this list will not be processed.&lt;/p&gt;&lt;p&gt;Seperate applications by comma.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-     <property name="plainText">
-      <string/>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_Blacklist">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>50</y>
-       <width>50</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Blacklist</string>
-     </property>
-    </widget>
-    <widget class="QPlainTextEdit" name="val_Whitelist">
-     <property name="geometry">
-      <rect>
-       <x>140</x>
-       <y>130</y>
-       <width>315</width>
-       <height>70</height>
-      </rect>
-     </property>
-     <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Applications outside of this list will not be processed.&lt;/p&gt;&lt;p&gt;Seperate applications by a comma.&lt;/p&gt;&lt;p&gt;Useful if you use &amp;quot;Enabled By Default&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="val_ShaderPath">
-     <property name="geometry">
-      <rect>
-       <x>140</x>
-       <y>10</y>
-       <width>315</width>
-       <height>26</height>
-      </rect>
-     </property>
-     <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Custom path to use for shaders.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_DefaultEnabled">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>220</y>
-       <width>116</width>
-       <height>18</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Enabled By Default</string>
-     </property>
-    </widget>
-    <widget class="QCheckBox" name="val_DefaultEnabled">
-     <property name="enabled">
+     <property name="centerButtons">
       <bool>true</bool>
      </property>
-     <property name="geometry">
-      <rect>
-       <x>144</x>
-       <y>220</y>
-       <width>301</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If this is enabled, all windows will be processed when you log in, you can still disable the effect using the keyboard shortcut.&lt;/p&gt;&lt;p&gt;You can use the Whitelist or Blacklist in conjunction with this.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="checked">
-      <bool>false</bool>
-     </property>
     </widget>
-    <widget class="QLabel" name="label_Whitelist">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>130</y>
-       <width>54</width>
-       <height>31</height>
-      </rect>
+   </item>
+   <item row="0" column="0" colspan="2">
+    <widget class="QTabWidget" name="Status">
+     <property name="currentIndex">
+      <number>0</number>
      </property>
-     <property name="text">
-      <string>Whitelist</string>
-     </property>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Settings</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="1" column="1">
+        <widget class="QPlainTextEdit" name="val_Blacklist">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Applications in this list will not be processed.&lt;/p&gt;&lt;p&gt;Seperate applications by comma.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="plainText">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QPlainTextEdit" name="val_ShaderPath"/>
+       </item>
+       <item row="3" column="1">
+        <widget class="QCheckBox" name="val_DefaultEnabled">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If this is enabled, all windows will be processed when you log in, you can still disable the effect using the keyboard shortcut.&lt;/p&gt;&lt;p&gt;You can use the Whitelist or Blacklist in conjunction with this.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_ShaderPath">
+         <property name="text">
+          <string>Shader Path</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_Whitelist">
+         <property name="text">
+          <string>Whitelist</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_Blacklist">
+         <property name="text">
+          <string>Blacklist</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_DefaultEnabled">
+         <property name="text">
+          <string>Enable on Login</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QPlainTextEdit" name="val_Whitelist">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Applications outside of this list will not be processed.&lt;/p&gt;&lt;p&gt;Seperate applications by a comma.&lt;/p&gt;&lt;p&gt;Useful if you use &amp;quot;Enabled By Default&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1" alignment="Qt::AlignRight">
+        <widget class="QDialogButtonBox" name="button_SettingsSave">
+         <property name="standardButtons">
+          <set>QDialogButtonBox::Save</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab2">
+      <attribute name="title">
+       <string>Status</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="0" alignment="Qt::AlignTop">
+        <widget class="QLabel" name="label_Status">
+         <property name="text">
+          <string>Windows with shaders enabled:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" alignment="Qt::AlignTop">
+        <widget class="QLabel" name="val_Status">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab3">
+      <attribute name="title">
+       <string>Shaders</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="0" column="0">
+        <widget class="QTextEdit" name="val_ShadersText">
+         <property name="acceptRichText">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" alignment="Qt::AlignBottom">
+        <widget class="QDialogButtonBox" name="button_ShadersSave">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="standardButtons">
+          <set>QDialogButtonBox::Save</set>
+         </property>
+         <property name="centerButtons">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
-    <widget class="QLabel" name="label_ShaderPath">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>10</y>
-       <width>75</width>
-       <height>26</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Shader Path</string>
-     </property>
-    </widget>
-   </widget>
-   <widget class="QWidget" name="tab_Status">
-    <attribute name="title">
-     <string>Status</string>
-    </attribute>
-    <widget class="QLabel" name="label_windowsShaders">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>10</y>
-       <width>261</width>
-       <height>18</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Amount of windows with shaders enabled:</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="val_windowsShaders">
-     <property name="geometry">
-      <rect>
-       <x>300</x>
-       <y>10</y>
-       <width>58</width>
-       <height>18</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </widget>
-  </widget>
+   </item>
+  </layout>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>rejected()</signal>
-   <receiver>ShadersUI</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>286</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>accepted()</signal>
-   <receiver>ShadersUI</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>157</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
