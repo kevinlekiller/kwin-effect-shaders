@@ -1,6 +1,8 @@
 #include "ShadersUI.h"
 #include "ui_ShadersUI.h"
 //#include <QScrollBar> // The plugin doesn't load when included.
+#include <QPushButton>
+
 
 ShadersUI::ShadersUI(QWidget *parent) : QDialog(parent), ui(new Ui::ShadersUI) {
     ui->setupUi(this);
@@ -20,10 +22,12 @@ void ShadersUI::slotWindowClosed() {
 }
 
 void ShadersUI::slotShaderSaveRequested() {
+    ui->button_ShadersSave->button(QDialogButtonBox::Save)->setText("Save");
     emit signalShaderSaveRequested();
 }
 
 void ShadersUI::slotShaderTestRequested() {
+    ui->button_ShadersSave->button(QDialogButtonBox::Save)->setText("(*) Save");
     emit signalShaderTestRequested();
 }
 
