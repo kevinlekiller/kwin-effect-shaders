@@ -69,7 +69,6 @@ private:
     void processBlacklist(QString);
     void processWhitelist(QString);
     void processShaderPath(QString);
-    void generateShaderFromBuffer();
 
 private Q_SLOTS:
     void slotUILaunch();
