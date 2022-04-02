@@ -8,8 +8,8 @@ ShadersUI::ShadersUI(QWidget *parent) : QDialog(parent), ui(new Ui::ShadersUI) {
     ui->setupUi(this);
     connect(this, &QDialog::finished, this, &ShadersUI::slotWindowClosed);
     connect(ui->button_CloseWindow, &QDialogButtonBox::clicked, this, &QDialog::accept);
-    connect(ui->button_ShadersSave, &QDialogButtonBox::clicked, this, &ShadersUI::slotShaderSaveRequested);
-    connect(ui->button_ShadersTest, &QDialogButtonBox::clicked, this, &ShadersUI::slotShaderTestRequested);
+    connect(ui->button_ShaderSave, &QDialogButtonBox::clicked, this, &ShadersUI::slotShaderSaveRequested);
+    connect(ui->button_ShaderTest, &QDialogButtonBox::clicked, this, &ShadersUI::slotShaderTestRequested);
     connect(ui->button_SettingsSave, &QDialogButtonBox::clicked, this, &ShadersUI::slotSettingsSaveRequested);
 }
 
@@ -22,12 +22,12 @@ void ShadersUI::slotWindowClosed() {
 }
 
 void ShadersUI::slotShaderSaveRequested() {
-    ui->button_ShadersSave->button(QDialogButtonBox::Save)->setText("Save");
+    ui->button_ShaderSave->button(QDialogButtonBox::Save)->setText("Save");
     emit signalShaderSaveRequested();
 }
 
 void ShadersUI::slotShaderTestRequested() {
-    ui->button_ShadersSave->button(QDialogButtonBox::Save)->setText("(*) Save");
+    ui->button_ShaderSave->button(QDialogButtonBox::Save)->setText("(*) Save");
     emit signalShaderTestRequested();
 }
 

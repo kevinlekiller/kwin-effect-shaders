@@ -87,11 +87,11 @@ To change these:
 ![Keyboard Shortcuts](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/keyboard_shortcuts.png)
 
 ## Modifying The Shader Settings
-Copy `1_settings.glsl.example` to `1_settings.glsl` : `cp ~/.local/share/kwin-effect-shaders_shaders/1_settings.glsl.example ~/.local/share/kwin-effect-shaders_shaders/1_settings.glsl`
-
 Open the configuration UI (see Keyboard Shortcuts), go to the Shaders tab.
 
 Change the settings you want, click Save.
+
+Alternatively, you can open the 1_settings.glsl file in a text editor (`~/.local/share/kwin-effect-shaders_shaders/1_settings.glsl`).
 
 For example, to enable the Adaptive Sharpen shader:
 

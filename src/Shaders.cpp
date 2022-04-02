@@ -98,13 +98,25 @@ void ShadersEffect::processShaderPath(QString shaderPath) {
         }
         m_shaderPath = shaderPath;
         QDir shadersDir(shaderPath);
-        if (!shadersDir.isReadable() || !shadersDir.exists(m_shaderSettingsName)) {
+        if (!shadersDir.isReadable()) {
             resetWindows();
             return;
         }
-        m_settings->setValue("ShaderPath", m_shaderPath);
         m_shaderSettingsPath = m_shaderPath;
         m_shaderSettingsPath.append(m_shaderSettingsName);
+        if (!shadersDir.exists(m_shaderSettingsName)) {
+            QString exampleName = m_shaderSettingsPath;
+            exampleName.append(".example");
+            QFile exampleFile(exampleName);
+            if (!exampleFile.exists() || !exampleFile.copy(m_shaderSettingsPath)) {
+                exampleFile.close();
+                m_shaderSettingsPath = "";
+                resetWindows();
+                return;
+            }
+            exampleFile.close();
+        }
+        m_settings->setValue("ShaderPath", m_shaderPath);
         if (m_shaderPathWatcher.addPath(m_shaderPath)) {
             connect(&m_shaderPathWatcher, &QFileSystemWatcher::directoryChanged, this, &ShadersEffect::slotReconfigureShader);
         }
@@ -191,7 +203,7 @@ void  ShadersEffect::generateShaderFromBuffer() {
     if (m_shaderArr.empty()) {
         return;
     }
-    //m_shadersBeingConfigured = true;
+    m_shadersBeingConfigured = true;
     QByteArray fragmentBuf, vertexBuf;
     QMapIterator<QString, QHash<qint64, QByteArray>> shaders(m_shaderArr);
     while (shaders.hasNext()) {

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>501</width>
-    <height>559</height>
+    <height>628</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -39,7 +39,7 @@
    <item row="0" column="0" colspan="2">
     <widget class="QTabWidget" name="Status">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab_Settings">
       <attribute name="title">
@@ -138,13 +138,6 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0" alignment="Qt::AlignTop">
-        <widget class="QLabel" name="label_ShaderCompiled">
-         <property name="text">
-          <string>Shader compiled:</string>
-         </property>
-        </widget>
-       </item>
        <item row="2" column="1" alignment="Qt::AlignTop">
         <widget class="QLabel" name="val_ShaderCompiled">
          <property name="text">
@@ -152,9 +145,16 @@
          </property>
         </widget>
        </item>
+       <item row="2" column="0" alignment="Qt::AlignTop">
+        <widget class="QLabel" name="label_ShaderCompiled">
+         <property name="text">
+          <string>Shader compiled:</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_Shaders">
+     <widget class="QWidget" name="tab_Advanced">
       <attribute name="title">
        <string>Shaders</string>
       </attribute>
@@ -167,7 +167,7 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QDialogButtonBox" name="button_ShadersTest">
+        <widget class="QDialogButtonBox" name="button_ShaderTest">
          <property name="toolTip">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Apply does not save changes to the file.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
@@ -177,7 +177,7 @@
         </widget>
        </item>
        <item row="1" column="1" alignment="Qt::AlignRight|Qt::AlignBottom">
-        <widget class="QDialogButtonBox" name="button_ShadersSave">
+        <widget class="QDialogButtonBox" name="button_ShaderSave">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>

@@ -34,6 +34,7 @@ namespace KWin {
  */
 class ShadersEffect : public Effect {
     Q_OBJECT
+
 public:
     ShadersEffect();
     ~ShadersEffect() override;

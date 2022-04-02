@@ -32,7 +32,6 @@ sudo make install
 
 if [[ ! -d ${SHADERSPATH} ]]; then
     git clone https://github.com/kevinlekiller/kwin-effect-shaders_shaders "$SHADERSPATH" || exit $?
-    cp -f "$SHADERSPATH/1_settings.glsl.example" "$SHADERSPATH/1_settings.glsl"
 fi
 
 mkdir -p "$CONFIGPATH"
