@@ -73,7 +73,6 @@ private:
 
 private Q_SLOTS:
     void slotUILaunch();
-    void slotUIClosed();
     void slotUIShaderTestRequested();
     void slotUIShaderSaveRequested();
     void slotUISettingsSaveRequested();

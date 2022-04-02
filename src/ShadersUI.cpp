@@ -1,13 +1,11 @@
 #include "ShadersUI.h"
 #include "ui_ShadersUI.h"
-//#include <QScrollBar> // The plugin doesn't load when included.
 #include <QPushButton>
 
 
 ShadersUI::ShadersUI(QWidget *parent) : QDialog(parent), ui(new Ui::ShadersUI) {
     ui->setupUi(this);
-    connect(this, &QDialog::finished, this, &ShadersUI::slotWindowClosed);
-    connect(ui->button_CloseWindow, &QDialogButtonBox::clicked, this, &QDialog::accept);
+    connect(ui->button_CloseWindow, &QDialogButtonBox::clicked, this, &ShadersUI::slotHideWindow);
     connect(ui->button_ShaderSave, &QDialogButtonBox::clicked, this, &ShadersUI::slotShaderSaveRequested);
     connect(ui->button_ShaderTest, &QDialogButtonBox::clicked, this, &ShadersUI::slotShaderTestRequested);
     connect(ui->button_SettingsSave, &QDialogButtonBox::clicked, this, &ShadersUI::slotSettingsSaveRequested);
@@ -17,8 +15,9 @@ ShadersUI::~ShadersUI() {
     delete ui;
 }
 
-void ShadersUI::slotWindowClosed() {
-    //m_shadersTextScrollPos = ui->val_ShadersText->verticalScrollBar()->value();
+void ShadersUI::slotHideWindow() {
+    hide();
+    emit signalWindowHidden();
 }
 
 void ShadersUI::slotShaderSaveRequested() {
@@ -60,7 +59,6 @@ void ShadersUI::setShaderCompiled(bool compiled) {
 }
 
 void ShadersUI::setShadersText(QByteArray text) {
-    //ui->val_ShadersText->verticalScrollBar()->setValue(m_shadersTextScrollPos);
     ui->val_ShadersText->setPlainText(text);
 }
 

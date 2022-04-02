@@ -30,13 +30,13 @@ Q_SIGNALS:
     void signalShaderTestRequested();
     void signalShaderSaveRequested();
     void signalSettingsSaveRequested();
+    void signalWindowHidden();
 
 private:
     Ui::ShadersUI* ui;
-    //int m_shadersTextScrollPos = 0;
 
 private Q_SLOTS:
-    void slotWindowClosed();
+    void slotHideWindow();
     void slotShaderTestRequested();
     void slotShaderSaveRequested();
     void slotSettingsSaveRequested();

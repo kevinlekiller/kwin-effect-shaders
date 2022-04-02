@@ -39,6 +39,8 @@ ShadersEffect::ShadersEffect() : m_shader(nullptr), m_allWindows(false) {
     effects->registerGlobalShortcut(Qt::CTRL + Qt::META + Qt::Key_Z, curWindowShortcut);
     connect(curWindowShortcut, &QAction::triggered, this, &ShadersEffect::slotToggleWindowShaders);
 
+    m_shadersUI.setWindowTitle("Shaders Configuration UI");
+
     QAction* shadersUIShortcut = new QAction(this);
     shadersUIShortcut->setObjectName(QStringLiteral("ShadersUI"));
     shadersUIShortcut->setText(i18n("Shaders Effect: Opens the configuration UI"));
@@ -58,7 +60,6 @@ ShadersEffect::ShadersEffect() : m_shader(nullptr), m_allWindows(false) {
     connect(&m_shadersUI, &ShadersUI::signalShaderTestRequested, this, &ShadersEffect::slotUIShaderTestRequested);
     connect(&m_shadersUI, &ShadersUI::signalShaderSaveRequested, this, &ShadersEffect::slotUIShaderSaveRequested);
     connect(&m_shadersUI, &ShadersUI::signalSettingsSaveRequested, this, &ShadersEffect::slotUISettingsSaveRequested);
-    connect(&m_shadersUI, &QDialog::finished, this, &ShadersEffect::slotUIClosed);
 
     // If the setting "Enable by default" is enabled, trigger the effect on first run.
     if (m_settings->value("DefaultEnabled").toBool()) {
@@ -74,6 +75,7 @@ ShadersEffect::~ShadersEffect() {
 // Check if blacklist is enabled.
 void ShadersEffect::processBlacklist(QString blacklist) {
     m_blacklist = blacklist.trimmed().toLower().split(",");
+    m_shadersUI.setBlacklist(blacklist);
     m_settings->setValue("Blacklist", m_blacklist);
     m_blacklistEn = !blacklist.isEmpty();
 }
@@ -81,6 +83,7 @@ void ShadersEffect::processBlacklist(QString blacklist) {
 // Check if whitelist is enabled.
 void ShadersEffect::processWhitelist(QString whitelist) {
     m_whitelist = whitelist.trimmed().toLower().split(",");
+    m_shadersUI.setWhitelist(whitelist);
     m_settings->setValue("Whitelist", m_whitelist);
     m_whitelistEn = !whitelist.isEmpty();
 }
@@ -102,6 +105,7 @@ void ShadersEffect::processShaderPath(QString shaderPath) {
             resetWindows();
             return;
         }
+        m_shadersUI.setShaderPath(m_shaderPath);
         m_shaderSettingsPath = m_shaderPath;
         m_shaderSettingsPath.append(m_shaderSettingsName);
         if (!shadersDir.exists(m_shaderSettingsName)) {
@@ -171,18 +175,18 @@ void ShadersEffect::slotUILaunch() {
     if (shaderPath.endsWith("/")) {
         shaderPath.chop(1);
     }
-    m_shadersUI.setWindowTitle("Shaders Configuration UI");
     m_shadersUI.setShaderPath(shaderPath);
-    m_shadersUI.setBlacklist(m_blacklist.join(","));
-    m_shadersUI.setWhitelist(m_whitelist.join(","));
     m_shadersUI.setDefaultEnabled(m_settings->value("DefaultEnabled").toBool());
-    updateStatusCount();
-    m_shadersUI.setShadersText(m_shaderSettingsBuf);
+    if (QString::compare(m_shadersUI.getShadersText(), m_shaderSettingsBuf) != 0) {
+        m_shadersUI.setShadersText(m_shaderSettingsBuf);
+    }
     m_shadersUI.setShaderCompiled(m_shadersLoaded);
-    m_shadersUI.open();
-}
-
-void ShadersEffect::slotUIClosed() {
+    if (m_shadersUI.isHidden()) {
+        m_shadersUI.show();
+    } else {
+        m_shadersUI.open();
+    }
+    updateStatusCount();
 
 }
 
