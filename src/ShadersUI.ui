@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>ShadersUI</class>
  <widget class="QDialog" name="ShadersUI">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -16,8 +19,11 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
+  <property name="focusPolicy">
+   <enum>Qt::StrongFocus</enum>
+  </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Shaders Configuration UI</string>
   </property>
   <property name="sizeGripEnabled">
    <bool>false</bool>
@@ -124,10 +130,10 @@
        <string>Status</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
-       <item row="0" column="1" alignment="Qt::AlignTop">
-        <widget class="QLabel" name="val_Status">
+       <item row="2" column="0" alignment="Qt::AlignTop">
+        <widget class="QLabel" name="label_ShaderCompiled">
          <property name="text">
-          <string/>
+          <string>Shader compiled:</string>
          </property>
         </widget>
        </item>
@@ -145,10 +151,10 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0" alignment="Qt::AlignTop">
-        <widget class="QLabel" name="label_ShaderCompiled">
+       <item row="0" column="1" alignment="Qt::AlignTop">
+        <widget class="QLabel" name="val_Status">
          <property name="text">
-          <string>Shader compiled:</string>
+          <string/>
          </property>
         </widget>
        </item>

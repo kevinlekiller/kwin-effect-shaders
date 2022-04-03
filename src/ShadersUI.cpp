@@ -2,7 +2,6 @@
 #include "ui_ShadersUI.h"
 #include <QPushButton>
 
-
 ShadersUI::ShadersUI(QWidget *parent) : QDialog(parent), ui(new Ui::ShadersUI) {
     ui->setupUi(this);
     connect(ui->button_CloseWindow, &QDialogButtonBox::clicked, this, &ShadersUI::slotHideWindow);
@@ -16,6 +15,7 @@ ShadersUI::~ShadersUI() {
 }
 
 void ShadersUI::slotHideWindow() {
+    //m_UIPosition = pos();
     hide();
     emit signalWindowHidden();
 }
@@ -32,6 +32,18 @@ void ShadersUI::slotShaderTestRequested() {
 
 void ShadersUI::slotSettingsSaveRequested() {
     emit signalSettingsSaveRequested();
+}
+
+void ShadersUI::displayUI() {
+    if (!isHidden()) {
+        open();
+        return;
+    }
+    /* https://github.com/kevinlekiller/kwin-effect-shaders/issues/2
+    if (!m_UIPosition.isNull()) {
+        move(m_UIPosition);
+    }*/
+    show();
 }
 
 void ShadersUI::setBlacklist(QString value) {
@@ -81,5 +93,3 @@ bool ShadersUI::getDefaultEnabled() {
 QByteArray ShadersUI::getShadersText() {
     return QVariant(ui->val_ShadersText->toPlainText()).toByteArray();
 }
-
-

@@ -162,6 +162,8 @@ ex. on Steam game: `pp_jimenezmlaa_color=32 %command%`
 Add more shaders.
 
 ## Screenshots
+[CAS + Tonemap](https://cdn.knightlab.com/libs/juxtapose/latest/embed/index.html?uid=9f8f759e-b2e4-11ec-b5bb-6595d9b17862)
+
 [Debanding](https://cdn.knightlab.com/libs/juxtapose/latest/embed/index.html?uid=ae7aca12-941d-11ec-a554-13fc6baea232)
 
 [Debanding](https://cdn.knightlab.com/libs/juxtapose/latest/embed/index.html?uid=ff817972-92b2-11ec-a554-13fc6baea232)

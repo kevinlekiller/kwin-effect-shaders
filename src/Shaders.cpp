@@ -24,7 +24,6 @@ ShadersEffect::ShadersEffect() : m_shader(nullptr), m_allWindows(false) {
         return;
     }
 
-    m_shadersUI.setWindowTitle("Shaders Configuration UI");
     // Initialize settings.
     m_settings = new QSettings("kevinlekiller", "ShadersEffect");
 
@@ -216,13 +215,8 @@ void ShadersEffect::slotUILaunch() {
         m_shadersUI.setShadersText(m_shaderSettingsBuf);
     }
     m_shadersUI.setShaderCompiled(m_shadersLoaded);
-    if (m_shadersUI.isHidden()) {
-        m_shadersUI.show();
-    } else {
-        m_shadersUI.open();
-    }
+    m_shadersUI.displayUI();
     updateStatusCount();
-
 }
 
 // Attempt to compile the shader.
