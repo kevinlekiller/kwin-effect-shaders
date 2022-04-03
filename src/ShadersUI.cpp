@@ -71,7 +71,9 @@ void ShadersUI::setShaderCompiled(bool compiled) {
 }
 
 void ShadersUI::setShadersText(QByteArray text) {
-    ui->val_ShadersText->setPlainText(text);
+    if (QString::compare(QVariant(ui->val_ShadersText->toPlainText()).toByteArray(), text) != 0) {
+        ui->val_ShadersText->setPlainText(text);
+    }
 }
 
 QString ShadersUI::getBlacklist() {

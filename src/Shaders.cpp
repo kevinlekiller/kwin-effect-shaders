@@ -228,9 +228,7 @@ void ShadersEffect::slotUILaunch() {
     }
     m_shadersUI.setShaderPath(shaderPath);
     m_shadersUI.setDefaultEnabled(m_settings->value("DefaultEnabled").toBool());
-    if (QString::compare(m_shadersUI.getShadersText(), m_shaderSettingsBuf) != 0) {
-        m_shadersUI.setShadersText(m_shaderSettingsBuf);
-    }
+    m_shadersUI.setShadersText(m_shaderSettingsBuf);
     m_shadersUI.setShaderCompiled(m_shadersLoaded);
     m_shadersUI.displayUI();
     updateStatusCount();
