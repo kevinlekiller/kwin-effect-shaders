@@ -194,8 +194,7 @@ void ShadersEffect::slotUIShaderSaveRequested() {
     if (!settingsFile.open(QFile::WriteOnly | QFile::Truncate)) {
         return;
     }
-    m_shaderSettingsBuf = m_shadersUI.getShadersText();
-    settingsFile.write(m_shaderSettingsBuf);
+    settingsFile.write(m_shadersUI.getShadersText());
     settingsFile.close();
     slotPopulateShaderBuffers();
 }
@@ -228,7 +227,6 @@ void ShadersEffect::slotUILaunch() {
     }
     m_shadersUI.setShaderPath(shaderPath);
     m_shadersUI.setDefaultEnabled(m_settings->value("DefaultEnabled").toBool());
-    m_shadersUI.setShadersText(m_shaderSettingsBuf);
     m_shadersUI.setShaderCompiled(m_shadersLoaded);
     m_shadersUI.displayUI();
     updateStatusCount();
@@ -276,9 +274,7 @@ void ShadersEffect::slotPopulateShaderBuffers() {
         m_shaderArr.insert(curFile, shaderHash);
 
         if (curFile.endsWith(m_shaderSettingsName)) {
-            m_settingsModified = lastModified;
-            m_shaderSettingsBuf = shaderBuf;
-            m_shadersUI.setShadersText(m_shaderSettingsBuf);
+            m_shadersUI.setShadersText(shaderBuf);
             continue;
         }
     }
@@ -302,9 +298,9 @@ void ShadersEffect::slotGenerateShaderFromBuffers() {
         shaders.next();
         QString curFile = shaders.key();
         if (curFile.endsWith(m_shaderSettingsName)) {
-            m_shaderSettingsBuf = m_shadersUI.getShadersText();
-            fragmentBuf.prepend(m_shaderSettingsBuf);
-            vertexBuf.prepend(m_shaderSettingsBuf);
+            QByteArray settingsBuf = m_shadersUI.getShadersText();
+            fragmentBuf.prepend(settingsBuf);
+            vertexBuf.prepend(settingsBuf);
             continue;
         }
         bool isFrag = curFile.endsWith(".frag");

@@ -51,9 +51,7 @@ private:
     bool m_shadersBeingBuffered = false;
     bool m_blacklistEn = false;
     bool m_whitelistEn = false;
-    qint64 m_settingsModified = 0;
     const QString m_shaderSettingsName = "1_settings.glsl";
-    QByteArray m_shaderSettingsBuf;
     QString m_shaderSettingsPath;
     QString m_shaderPath;
     QList<EffectWindow*> m_windows;
