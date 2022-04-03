@@ -38,6 +38,7 @@ Q_SIGNALS:
 private:
     Ui::ShadersUI* ui;
     //QPoint m_UIPosition;
+    void setEnabledShaders();
 
 private Q_SLOTS:
     void slotHideWindow();
