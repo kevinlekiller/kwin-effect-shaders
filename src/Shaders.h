@@ -47,8 +47,6 @@ private:
     GLShader* m_shader;
     bool m_allWindows;
     bool m_shadersLoaded = false;
-    bool m_shadersBeingConfigured = false;
-    bool m_shadersBeingBuffered = false;
     bool m_blacklistEn = false;
     bool m_whitelistEn = false;
     const QString m_shaderSettingsName = "1_settings.glsl";
@@ -72,6 +70,7 @@ private Q_SLOTS:
     void slotUILaunch();
     void slotUIShaderSaveRequested();
     void slotUISettingsSaveRequested();
+    void slotUIToggledAllWindows(bool);
     void slotPopulateShaderBuffers();
     void slotGenerateShaderFromBuffers();
     void slotToggleScreenShaders();

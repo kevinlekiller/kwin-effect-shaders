@@ -8,6 +8,7 @@ ShadersUI::ShadersUI(QWidget *parent) : QDialog(parent), ui(new Ui::ShadersUI) {
     connect(ui->button_ShaderSave, &QDialogButtonBox::clicked, this, &ShadersUI::slotShaderSaveRequested);
     connect(ui->button_ShaderTest, &QDialogButtonBox::clicked, this, &ShadersUI::slotShaderTestRequested);
     connect(ui->button_SettingsSave, &QDialogButtonBox::clicked, this, &ShadersUI::slotSettingsSaveRequested);
+    connect(ui->val_allWindows, &QCheckBox::stateChanged, this, &ShadersUI::slotAllWindowsToggled);
 }
 
 ShadersUI::~ShadersUI() {
@@ -32,6 +33,10 @@ void ShadersUI::slotShaderTestRequested() {
 
 void ShadersUI::slotSettingsSaveRequested() {
     emit signalSettingsSaveRequested();
+}
+
+void ShadersUI::slotAllWindowsToggled(int state) {
+    emit signalAllWindowsToggled(state == Qt::Checked ? true : false);
 }
 
 void ShadersUI::displayUI() {
@@ -74,6 +79,10 @@ void ShadersUI::setShadersText(QByteArray text) {
     if (QString::compare(QVariant(ui->val_ShadersText->toPlainText()).toByteArray(), text) != 0) {
         ui->val_ShadersText->setPlainText(text);
     }
+}
+
+void ShadersUI::setAllWindows(bool allWindows) {
+    ui->val_allWindows->setChecked(allWindows);
 }
 
 QString ShadersUI::getBlacklist() {

@@ -25,12 +25,14 @@ public:
     void setNumWindowsStatus(int);
     void setShaderCompiled(bool);
     void setShadersText(QByteArray);
+    void setAllWindows(bool);
     void displayUI();
 
 Q_SIGNALS:
     void signalShaderTestRequested();
     void signalShaderSaveRequested();
     void signalSettingsSaveRequested();
+    void signalAllWindowsToggled(bool);
     void signalWindowHidden();
 
 private:
@@ -42,6 +44,7 @@ private Q_SLOTS:
     void slotShaderTestRequested();
     void slotShaderSaveRequested();
     void slotSettingsSaveRequested();
+    void slotAllWindowsToggled(int);
 };
 
 #endif // SHADERSUI_H

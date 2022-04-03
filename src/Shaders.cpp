@@ -1,4 +1,4 @@
-/*
+﻿/*
     KWin - the KDE window manager
     This file is part of the KDE project.
     SPDX-FileCopyrightText: 2007 Rivo Laks <rivolaks@hot.ee>
@@ -62,6 +62,7 @@ ShadersEffect::ShadersEffect() : m_shader(nullptr), m_allWindows(false) {
     connect(&m_shadersUI, &ShadersUI::signalShaderTestRequested, this, &ShadersEffect::slotGenerateShaderFromBuffers);
     connect(&m_shadersUI, &ShadersUI::signalShaderSaveRequested, this, &ShadersEffect::slotUIShaderSaveRequested);
     connect(&m_shadersUI, &ShadersUI::signalSettingsSaveRequested, this, &ShadersEffect::slotUISettingsSaveRequested);
+    connect(&m_shadersUI, &ShadersUI::signalAllWindowsToggled, this, &ShadersEffect::slotUIToggledAllWindows);
 
     // If the setting "Enable by default" is enabled, trigger the effect on first run.
     if (m_settings->value("DefaultEnabled").toBool()) {
@@ -167,8 +168,6 @@ void ShadersEffect::resetWindows() {
     m_windows.clear();
     m_allWindows = false;
     m_shadersLoaded = false;
-    m_shadersBeingConfigured = false;
-    m_shadersBeingBuffered = false;
     effects->addRepaintFull();
 }
 
@@ -238,11 +237,6 @@ void ShadersEffect::slotUILaunch() {
  * @brief ShadersEffect::slotPopulateShaderBuffers
  */
 void ShadersEffect::slotPopulateShaderBuffers() {
-    // In case this is triggered multiple times in a fast succession.
-    if (m_shadersBeingBuffered) {
-        return;
-    }
-    m_shadersBeingBuffered = true;
 
     QDir shadersDir(m_shaderPath);
     shadersDir.setFilter(QDir::Files | QDir::NoDotAndDotDot);
@@ -278,7 +272,6 @@ void ShadersEffect::slotPopulateShaderBuffers() {
             continue;
         }
     }
-    m_shadersBeingBuffered = false;
     slotGenerateShaderFromBuffers();
 }
 
@@ -291,7 +284,6 @@ void ShadersEffect::slotGenerateShaderFromBuffers() {
     if (m_shaderArr.empty()) {
         return;
     }
-    m_shadersBeingConfigured = true;
     QByteArray fragmentBuf, vertexBuf;
     QMapIterator<QString, QHash<qint64, QByteArray>> shaders(m_shaderArr);
     while (shaders.hasNext()) {
@@ -324,7 +316,6 @@ void ShadersEffect::slotGenerateShaderFromBuffers() {
     }
     m_shadersLoaded = true;
     effects->addRepaintFull();
-    m_shadersBeingConfigured = false;
 }
 
 /**
@@ -370,6 +361,7 @@ void ShadersEffect::drawWindow(EffectWindow* w, int mask, const QRegion &region,
         return;
     }
     ShaderManager::instance()->pushShader(m_shader);
+    m_shader->setUniform(m_shader->uniformLocation("modelViewProjectionMatrix"), data.modelViewMatrix());
     m_shader->setUniform(m_shader->uniformLocation("g_Random"), (float) drand48());
     data.shader = m_shader;
     effects->drawWindow(w, mask, region, data);
@@ -398,6 +390,22 @@ void ShadersEffect::slotToggleScreenShaders() {
         return;
     }
     m_allWindows = !m_allWindows;
+    m_shadersUI.setAllWindows(m_allWindows);
+    updateStatusCount();
+    effects->addRepaintFull();
+}
+
+/**
+ * User toggled shader to all windows from UI.
+ *
+ * @brief ShadersEffect::slotUIToggledAllWindows
+ * @param status
+ */
+void ShadersEffect::slotUIToggledAllWindows(bool status) {
+    if (!m_shadersLoaded) {
+        return;
+    }
+    m_allWindows = status;
     updateStatusCount();
     effects->addRepaintFull();
 }
