@@ -18,12 +18,12 @@ Q_LOGGING_CATEGORY(KWIN_SHADERS, "kwin4_effect_shaders", QtWarningMsg)
 
 namespace KWin {
 
+/**
+ * Construct.
+ *
+ * @brief ShadersEffect::ShadersEffect
+ */
 ShadersEffect::ShadersEffect() : m_shader(nullptr), m_allWindows(false) {
-    // Check if this plugin is supported on the user's configuration.
-    if (!supported()) {
-        return;
-    }
-
     // Initialize settings.
     m_settings = new QSettings("kevinlekiller", "ShadersEffect");
 
@@ -59,7 +59,7 @@ ShadersEffect::ShadersEffect() : m_shader(nullptr), m_allWindows(false) {
     connect(curWindowShortcut, &QAction::triggered, this, &ShadersEffect::slotToggleWindowShaders);
     connect(shadersUIShortcut, &QAction::triggered, this, &ShadersEffect::slotUILaunch);
     connect(effects, &EffectsHandler::windowClosed, this, &ShadersEffect::slotWindowClosed);
-    connect(&m_shadersUI, &ShadersUI::signalShaderTestRequested, this, &ShadersEffect::slotUIShaderTestRequested);
+    connect(&m_shadersUI, &ShadersUI::signalShaderTestRequested, this, &ShadersEffect::slotGenerateShaderFromBuffers);
     connect(&m_shadersUI, &ShadersUI::signalShaderSaveRequested, this, &ShadersEffect::slotUIShaderSaveRequested);
     connect(&m_shadersUI, &ShadersUI::signalSettingsSaveRequested, this, &ShadersEffect::slotUISettingsSaveRequested);
 
@@ -69,12 +69,24 @@ ShadersEffect::ShadersEffect() : m_shader(nullptr), m_allWindows(false) {
     }
 }
 
+/**
+ * Destruct.
+ *
+ * @brief ShadersEffect::~ShadersEffect
+ */
 ShadersEffect::~ShadersEffect() {
     delete m_settings;
     delete m_shader;
 }
 
-// Parse user blacklist setting.
+/**
+ * Process user specified blacklist.
+ * The blacklist should be the names of window names seperated by a comma.
+ * The blacklist is used to determine if a window name is blacklisted from being processed.
+ *
+ * @brief ShadersEffect::processBlacklist
+ * @param blacklist -> The blacklist to process.
+ */
 void ShadersEffect::processBlacklist(QString blacklist) {
     m_blacklist = blacklist.trimmed().toLower().split(",");
     m_shadersUI.setBlacklist(blacklist);
@@ -82,7 +94,14 @@ void ShadersEffect::processBlacklist(QString blacklist) {
     m_blacklistEn = !blacklist.isEmpty();
 }
 
-// Parse user whitelist setting.
+/**
+ * Process user specified whitelist.
+ * The whitelist should be the names of window names seperated by a comma.
+ * The whitelist only allows windows with specified name to be processed.
+ *
+ * @brief ShadersEffect::processWhitelist
+ * @param whitelist -> The whitelist to process.
+ */
 void ShadersEffect::processWhitelist(QString whitelist) {
     m_whitelist = whitelist.trimmed().toLower().split(",");
     m_shadersUI.setWhitelist(whitelist);
@@ -90,7 +109,15 @@ void ShadersEffect::processWhitelist(QString whitelist) {
     m_whitelistEn = !whitelist.isEmpty();
 }
 
-// Parse user shader path setting.
+/**
+ * Process user specified shader path.
+ * The path should contain glsl files ending with glsl, frag and vert extensions.
+ * The path must contain the 1_settings.glsl.example file.
+ * If the path looks valid, the slotPopulateShaderBuffers() function is executed.
+ *
+ * @brief ShadersEffect::processShaderPath
+ * @param shaderPath -> The shader path to process.
+ */
 void ShadersEffect::processShaderPath(QString shaderPath) {
     shaderPath = shaderPath.trimmed();
     if (!shaderPath.endsWith("/")) {
@@ -99,7 +126,7 @@ void ShadersEffect::processShaderPath(QString shaderPath) {
     if (QString::compare(m_shaderPath, shaderPath) != 0) {
         if (m_shaderPathWatcher.directories().contains(m_shaderPath)) {
             m_shaderPathWatcher.removePath(m_shaderPath);
-            disconnect(&m_shaderPathWatcher, &QFileSystemWatcher::directoryChanged, this, &ShadersEffect::slotReconfigureShader);
+            disconnect(&m_shaderPathWatcher, &QFileSystemWatcher::directoryChanged, this, &ShadersEffect::slotPopulateShaderBuffers);
         }
         m_shaderPath = shaderPath;
         QDir shadersDir(shaderPath);
@@ -124,22 +151,32 @@ void ShadersEffect::processShaderPath(QString shaderPath) {
         }
         m_settings->setValue("ShaderPath", m_shaderPath);
         if (m_shaderPathWatcher.addPath(m_shaderPath)) {
-            connect(&m_shaderPathWatcher, &QFileSystemWatcher::directoryChanged, this, &ShadersEffect::slotReconfigureShader);
+            connect(&m_shaderPathWatcher, &QFileSystemWatcher::directoryChanged, this, &ShadersEffect::slotPopulateShaderBuffers);
         }
-        slotReconfigureShader();
+        slotPopulateShaderBuffers();
     }
 }
 
-// Reset values to default.
+/**
+ * If any step of the shader detection / generation process fails,
+ * some variables are reset to their default.
+ *
+ * @brief ShadersEffect::resetWindows
+ */
 void ShadersEffect::resetWindows() {
     m_windows.clear();
     m_allWindows = false;
     m_shadersLoaded = false;
     m_shadersBeingConfigured = false;
+    m_shadersBeingBuffered = false;
     effects->addRepaintFull();
 }
 
-// Set number of windows with shaders enabled for UI.
+/**
+ * Tells the UI the number of windows which are being processed.
+ *
+ * @brief ShadersEffect::updateStatusCount
+ */
 void ShadersEffect::updateStatusCount() {
     if (!m_shadersUI.isVisible()) {
         return;
@@ -147,8 +184,116 @@ void ShadersEffect::updateStatusCount() {
     m_shadersUI.setNumWindowsStatus(m_windows.count() + (int) m_allWindows);
 }
 
-// Regenerate shader using cached values.
-void ShadersEffect::slotUIShaderTestRequested() {
+/**
+ * The user wants to save their modifications to the shader settings file.
+ *
+ * @brief ShadersEffect::slotUIShaderSaveRequested
+ */
+void ShadersEffect::slotUIShaderSaveRequested() {
+    QFile settingsFile(m_shaderSettingsPath);
+    if (!settingsFile.open(QFile::WriteOnly | QFile::Truncate)) {
+        return;
+    }
+    m_shaderSettingsBuf = m_shadersUI.getShadersText();
+    settingsFile.write(m_shaderSettingsBuf);
+    settingsFile.close();
+    slotPopulateShaderBuffers();
+}
+
+/**
+ * The user wants to save main program settings.
+ *
+ * @brief ShadersEffect::slotUISettingsSaveRequested
+ */
+void ShadersEffect::slotUISettingsSaveRequested() {
+    processShaderPath(m_shadersUI.getShaderPath());
+    processBlacklist(m_shadersUI.getBlacklist());
+    processWhitelist(m_shadersUI.getWhitelist());
+    m_settings->setValue("DefaultEnabled", m_shadersUI.getDefaultEnabled());
+    m_settings->sync();
+}
+
+/**
+ * Passes some variables to the UI instance, then opens the UI.
+ *
+ * @brief ShadersEffect::slotUILaunch
+ */
+void ShadersEffect::slotUILaunch() {
+    if (m_shadersUI.isVisible()) {
+        return;
+    }
+    QString shaderPath = m_shaderPath;
+    if (shaderPath.endsWith("/")) {
+        shaderPath.chop(1);
+    }
+    m_shadersUI.setShaderPath(shaderPath);
+    m_shadersUI.setDefaultEnabled(m_settings->value("DefaultEnabled").toBool());
+    if (QString::compare(m_shadersUI.getShadersText(), m_shaderSettingsBuf) != 0) {
+        m_shadersUI.setShadersText(m_shaderSettingsBuf);
+    }
+    m_shadersUI.setShaderCompiled(m_shadersLoaded);
+    m_shadersUI.displayUI();
+    updateStatusCount();
+}
+
+/**
+ * Reads shader files from m_shaderPath and stores in them in buffer.
+ *
+ * @brief ShadersEffect::slotPopulateShaderBuffers
+ */
+void ShadersEffect::slotPopulateShaderBuffers() {
+    // In case this is triggered multiple times in a fast succession.
+    if (m_shadersBeingBuffered) {
+        return;
+    }
+    m_shadersBeingBuffered = true;
+
+    QDir shadersDir(m_shaderPath);
+    shadersDir.setFilter(QDir::Files | QDir::NoDotAndDotDot);
+    shadersDir.setSorting(QDir::Name | QDir::IgnoreCase);
+
+    QFileInfoList shadersList = shadersDir.entryInfoList();
+    for (int i = 0; i < shadersList.size(); ++i) {
+        QString curFile = shadersList.at(i).absoluteFilePath();
+        if (!curFile.endsWith(".frag") && !curFile.endsWith(".vert") && !curFile.endsWith(".glsl")) {
+            continue;
+        }
+
+        QFileInfo shaderFileInfo(curFile);
+        qint64 lastModified = shaderFileInfo.lastModified().currentSecsSinceEpoch();
+        if (m_shaderArr.contains(curFile) && m_shaderArr.value(curFile).contains(lastModified)) {
+            continue;
+        }
+
+        QFile shaderFile(curFile);
+        if (!shaderFile.exists() || !shaderFile.open(QFile::ReadOnly)) {
+            resetWindows();
+            return;
+        }
+        QByteArray shaderBuf = shaderFile.readAll();
+        shaderFile.close();
+
+        QHash <qint64, QByteArray> shaderHash;
+        shaderHash.insert(lastModified, shaderBuf);
+        m_shaderArr.insert(curFile, shaderHash);
+
+        if (curFile.endsWith(m_shaderSettingsName)) {
+            m_settingsModified = lastModified;
+            m_shaderSettingsBuf = shaderBuf;
+            m_shadersUI.setShadersText(m_shaderSettingsBuf);
+            continue;
+        }
+    }
+    m_shadersBeingBuffered = false;
+    slotGenerateShaderFromBuffers();
+}
+
+/**
+ * Try to compile the shader from the buffers.
+ *
+ * @brief ShadersEffect::slotGenerateShaderFromBuffers
+ */
+void ShadersEffect::slotGenerateShaderFromBuffers() {
     if (m_shaderArr.empty()) {
         return;
     }
@@ -176,52 +321,7 @@ void ShadersEffect::slotUIShaderTestRequested() {
             vertexBuf.append(shaderValues.value());
         }
     }
-    compileShader(&vertexBuf, &fragmentBuf);
-}
-
-// Commit changes to shader settings.
-void ShadersEffect::slotUIShaderSaveRequested() {
-    QFile settingsFile(m_shaderSettingsPath);
-    if (!settingsFile.open(QFile::WriteOnly | QFile::Truncate)) {
-        return;
-    }
-    m_shaderSettingsBuf = m_shadersUI.getShadersText();
-    settingsFile.write(m_shaderSettingsBuf);
-    settingsFile.close();
-    slotReconfigureShader();
-}
-
-// Save user settings.
-void ShadersEffect::slotUISettingsSaveRequested() {
-    processShaderPath(m_shadersUI.getShaderPath());
-    processBlacklist(m_shadersUI.getBlacklist());
-    processWhitelist(m_shadersUI.getWhitelist());
-    m_settings->setValue("DefaultEnabled", m_shadersUI.getDefaultEnabled());
-    m_settings->sync();
-}
-
-// Launch the UI.
-void ShadersEffect::slotUILaunch() {
-    if (m_shadersUI.isVisible()) {
-        return;
-    }
-    QString shaderPath = m_shaderPath;
-    if (shaderPath.endsWith("/")) {
-        shaderPath.chop(1);
-    }
-    m_shadersUI.setShaderPath(shaderPath);
-    m_shadersUI.setDefaultEnabled(m_settings->value("DefaultEnabled").toBool());
-    if (QString::compare(m_shadersUI.getShadersText(), m_shaderSettingsBuf) != 0) {
-        m_shadersUI.setShadersText(m_shaderSettingsBuf);
-    }
-    m_shadersUI.setShaderCompiled(m_shadersLoaded);
-    m_shadersUI.displayUI();
-    updateStatusCount();
-}
-
-// Attempt to compile the shader.
-void ShadersEffect::compileShader(QByteArray *vertex, QByteArray *fragment) {
-    m_shader = ShaderManager::instance()->generateCustomShader(ShaderTrait::MapTexture, *vertex, *fragment);
+    m_shader = ShaderManager::instance()->generateCustomShader(ShaderTrait::MapTexture, vertexBuf, fragmentBuf);
 
     // Shader is invalid.
     if (!m_shader->isValid()) {
@@ -233,68 +333,14 @@ void ShadersEffect::compileShader(QByteArray *vertex, QByteArray *fragment) {
     m_shadersBeingConfigured = false;
 }
 
-// Check if shader data on file is changed, update buffers.
-void ShadersEffect::slotReconfigureShader() {
-    // In case this is triggered multiple times in a fast succession.
-    if (m_shadersBeingConfigured) {
-        return;
-    }
-    m_shadersBeingConfigured = true;
-    // Iterate shaders files and append them to their respectful buffers.
-    QDir shadersDir(m_shaderPath);
-    shadersDir.setFilter(QDir::Files | QDir::NoDotAndDotDot);
-    shadersDir.setSorting(QDir::Name | QDir::IgnoreCase);
-    QFileInfoList shadersList = shadersDir.entryInfoList();
-    QByteArray fragmentBuf, vertexBuf;
-    for (int i = 0; i < shadersList.size(); ++i) {
-        QString curFile = shadersList.at(i).absoluteFilePath();
-
-        bool isFrag = curFile.endsWith(".frag");
-        bool isVert = curFile.endsWith(".vert");
-        bool isGlsl = curFile.endsWith(".glsl");
-        if (!isFrag && !isVert && !isGlsl) {
-            continue;
-        }
-
-        QFileInfo shaderFileInfo(curFile);
-        qint64 lastModified = shaderFileInfo.lastModified().currentSecsSinceEpoch();
-        QByteArray shaderBuf;
-        if (m_shaderArr.contains(curFile) && m_shaderArr.value(curFile).contains(lastModified)) {
-            shaderBuf = m_shaderArr.value(curFile).value(lastModified);
-        } else {
-            QFile shaderFile(curFile);
-            if (!shaderFile.exists() || !shaderFile.open(QFile::ReadOnly)) {
-                resetWindows();
-                return;
-            }
-
-            shaderBuf = shaderFile.readAll();
-            shaderFile.close();
-            QHash <qint64, QByteArray> shaderHash;
-            shaderHash.insert(lastModified, shaderBuf);
-            m_shaderArr.insert(curFile, shaderHash);
-        }
-
-        if (curFile.endsWith(m_shaderSettingsName)) {
-            m_settingsModified = lastModified;
-            m_shaderSettingsBuf = shaderBuf;
-            fragmentBuf.prepend(shaderBuf);
-            vertexBuf.prepend(shaderBuf);
-            continue;
-        }
-
-        if (isFrag || isGlsl) {
-            fragmentBuf.append(shaderBuf);
-        }
-
-        if (isVert || isGlsl) {
-            vertexBuf.append(shaderBuf);
-        }
-    }
-    compileShader(&vertexBuf, &fragmentBuf);
-}
-
-// Checks for GLSL 140 support.
+/**
+ * Tells KWin if the plugin should be loaded or not.
+ *
+ * @brief ShadersEffect::supported
+ * @return
+ *   true -> If the user's device has GLSL 1.40 support.
+ *  false -> If not the above.
+ */
 bool ShadersEffect::supported() {
 #ifdef KWIN_HAVE_OPENGLES
     return false;
@@ -304,7 +350,16 @@ bool ShadersEffect::supported() {
 #endif
 }
 
-// Draw the window with the requested shader.
+/**
+ * This is an overriden function which allows us to apply the shader to the requested window(s).
+ * The shader is only applied to whitelisted, non blacklisted and requested windows.
+ *
+ * @brief ShadersEffect::drawWindow
+ * @param w
+ * @param mask
+ * @param region
+ * @param data
+ */
 void ShadersEffect::drawWindow(EffectWindow* w, int mask, const QRegion &region, WindowPaintData& data) {
     bool useShader = m_shadersLoaded && m_allWindows != m_windows.contains(w);
     // Check if window is blacklisted or whitelisted.
@@ -327,29 +382,42 @@ void ShadersEffect::drawWindow(EffectWindow* w, int mask, const QRegion &region,
     ShaderManager::instance()->popShader();
 }
 
-// Window was closed, remove from array.
+/**
+ * When a window closes, stop tracking it.
+ *
+ * @brief ShadersEffect::slotWindowClosed
+ * @param w
+ */
 void ShadersEffect::slotWindowClosed(EffectWindow* w) {
     m_windows.removeOne(w);
     updateStatusCount();
 }
 
-// User activated keybind to toggle shader on all windows.
+/**
+ * When the user activates the keyboard shortcut, we mark all
+ * windows as wanting or not wanting the shader applied to it.
+ *
+ * @brief ShadersEffect::slotToggleScreenShaders
+ */
 void ShadersEffect::slotToggleScreenShaders() {
     if (!m_shadersLoaded) {
         return;
     }
-    // Toggle if user wants shaders on all windows or not.
     m_allWindows = !m_allWindows;
     updateStatusCount();
     effects->addRepaintFull();
 }
 
-// User activated keybind to toggle shader on active window.
+/**
+ * When the user activates the keyboard shortcut, we mark the
+ * window as wanting or not wanting the shader applied to it.
+ *
+ * @brief ShadersEffect::slotToggleWindowShaders
+ */
 void ShadersEffect::slotToggleWindowShaders() {
     if (!m_shadersLoaded || !effects->activeWindow()) {
         return;
     }
-    // Toggle if user wants shaders on active window or not.
     if (m_windows.contains(effects->activeWindow())) {
         m_windows.removeOne(effects->activeWindow());
     } else {
@@ -359,7 +427,14 @@ void ShadersEffect::slotToggleWindowShaders() {
     effects->activeWindow()->addRepaintFull();
 }
 
-// If shaders are active on any window.
+/**
+ * Return if any window has the shader applied to it.
+ *
+ * @brief ShadersEffect::isActive
+ * @return
+ *    true -> At least one window has the shader applied to it.
+ *   false -> No window has the shader applied to it.
+ */
 bool ShadersEffect::isActive() const {
     return m_shadersLoaded && (m_allWindows || !m_windows.isEmpty());
 }

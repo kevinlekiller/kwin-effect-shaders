@@ -48,6 +48,7 @@ private:
     bool m_allWindows;
     bool m_shadersLoaded = false;
     bool m_shadersBeingConfigured = false;
+    bool m_shadersBeingBuffered = false;
     bool m_blacklistEn = false;
     bool m_whitelistEn = false;
     qint64 m_settingsModified = 0;
@@ -63,7 +64,6 @@ private:
     QSettings *m_settings;
     QMap<QString, QHash<qint64, QByteArray>> m_shaderArr;
 
-    void compileShader(QByteArray *, QByteArray *);
     void resetWindows();
     void updateStatusCount();
     void processBlacklist(QString);
@@ -72,10 +72,10 @@ private:
 
 private Q_SLOTS:
     void slotUILaunch();
-    void slotUIShaderTestRequested();
     void slotUIShaderSaveRequested();
     void slotUISettingsSaveRequested();
-    void slotReconfigureShader();
+    void slotPopulateShaderBuffers();
+    void slotGenerateShaderFromBuffers();
     void slotToggleScreenShaders();
     void slotToggleWindowShaders();
     void slotWindowClosed(KWin::EffectWindow *w);
