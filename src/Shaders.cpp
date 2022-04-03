@@ -361,8 +361,9 @@ void ShadersEffect::drawWindow(EffectWindow* w, int mask, const QRegion &region,
         return;
     }
     ShaderManager::instance()->pushShader(m_shader);
-    m_shader->setUniform(m_shader->uniformLocation("modelViewProjectionMatrix"), data.modelViewMatrix());
-    m_shader->setUniform(m_shader->uniformLocation("g_Random"), (float) drand48());
+    m_shader->setUniform("g_Random", (float) drand48());
+    m_shader->setUniform("g_TextureSize", QVector2D(effects->virtualScreenSize().width(), effects->virtualScreenSize().height()));
+    m_shader->setUniform("modelViewProjectionMatrix", data.projectionMatrix());
     data.shader = m_shader;
     effects->drawWindow(w, mask, region, data);
     ShaderManager::instance()->popShader();
