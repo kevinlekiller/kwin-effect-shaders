@@ -93,7 +93,7 @@ Click on the shader you want to enable, click Apply. Click save if you want to w
 
 You can also enable `Auto Apply` in the Settings tab, which will automatically apply the settings.
 
-![Shaders tab](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shaders_tab.png)
+![Shaders tab](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shader_configuration.png)
 
 ## Blacklisting Applications
 In the configuration UI, you can add application(s), if more than 1, seperate them with a comma.
