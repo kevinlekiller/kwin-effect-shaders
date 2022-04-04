@@ -52,9 +52,9 @@ https://aur.archlinux.org/packages/kwin-effect-shaders-git
 ## Enabling The KWin Desktop Effect
 `System Settings -> Workspace -> Workspace Behavior -> Desktop Effects -> Appearance -> Shaders`
 
-Put a checkmark in the box and click accept.
+Put a checkmark in the box and click `Apply`.
 
-By default all shaders are disabled, see `Modifying The Shader Settings`.
+By default all shaders are disabled, see [Modifying The Shader Settings](#modifying-the-shader-settings).
 
 ![Desktop Effects](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/settings1.png)
 
@@ -67,7 +67,7 @@ Clone the shader files to somewhere in your home directory:
 
 If you use the default location for the shaders, it will be automatically detected.
 
-If you use a custom location, set the `Shader Path` by opening the configuration UI (see "Keyboard Shortcuts").
+If you use a custom location, set the `Shader Path` by opening the configuration UI (see [Keyboard Shortcuts](#keyboard-shortcuts)).
 
 ![Set shaders path](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shader_path.png)
 
@@ -87,16 +87,16 @@ To change these:
 ![Keyboard Shortcuts](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/keyboard_shortcuts.png)
 
 ## Modifying The Shader Settings
-Open the configuration UI (see Keyboard Shortcuts), go to the Shaders tab.
+Open the configuration UI (see [Keyboard Shortcuts](#keyboard-shortcuts)), go to the `Shaders` tab.
 
-Click on the shader you want to enable, click Apply. Click save if you want to write the changes to the settings file.
+Click on the shader you want to enable, click `Apply`. Click `Save` if you want to write the changes to the settings file.
 
-You can also enable `Auto Apply` in the Settings tab, which will automatically apply the settings.
+You can also enable `Auto Apply` in the `Settings` tab, which will automatically apply the settings.
 
 ![Shaders tab](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shader_configuration.png)
 
 ## Blacklisting Applications
-In the configuration UI, you can add application(s), if more than 1, seperate them with a comma.
+In the configuration UI, in the `Settings` tab, you can add application(s), if more than 1, seperate them with a comma.
 
 For example: `plasmashell,Firefox`
 
@@ -105,7 +105,7 @@ This will block the Plasma desktop and Firefox from being processed.
 The list is not case sensitive.
 
 ## Whitelisting Applications
-In the configuration UI, you can add application(s), if more than 1, seperate them with a comma.
+In the configuration UI, in the `Settings` tab, you can add application(s), if more than 1, seperate them with a comma.
 
 For example: `kate,kcalc`
 
@@ -113,9 +113,9 @@ Only Kcalc and Kate will be processed.
 
 The list is not case sensitive.
 
-This is useful if you use the Enabled by Default option.
+This is useful if you use the `Enabled by Default` option.
 
-You can use the Blacklist at the same time as the Whitelist.
+You can use the `Blacklist` at the same time as the `Whitelist`.
 
 ## Finding Application Names
 To find an application name to use in the blacklist or whitelist, follow these steps:
@@ -128,18 +128,18 @@ Click `Detect Window Properties`, click the application.
 
 The application name is first string in the `Whole window class` (delimited by the space character).
 
-For example, with kate, the "Whole window class" is `kate org.kde.kate`, so the name to put in the blacklist or whitelist would be kate.
+For example, with kate, the "Whole window class" is `kate org.kde.kate`, so the name to put in the `Blacklist` or `Whitelist` would be kate.
 
 Another example, lutris, the whole window class is `lutris` so the name would be lutris.
 
 ![find_application_name](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/find_application_name.png)
 
 ## Enabling On Login
-In the configuration window you can set the "Enabled By Default" option.
+In the configuration UI, in the `Settings` tab, you can set the `Enabled By Default` option.
 
 This will process all applications on login.
 
-You can exclude applications by using the Blacklist and/or Whitelist.
+You can exclude applications by using the `Blacklist` and/or `Whitelist`.
 
 ## Notes
 Note that X11 disables compositing in full screen applications, use Wayland if possible.
