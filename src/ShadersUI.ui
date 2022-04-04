@@ -48,7 +48,7 @@
    <item row="0" column="0" colspan="2">
     <widget class="QTabWidget" name="Status">
      <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If the shader has succesfully compiled or not.&lt;/p&gt;&lt;p&gt;The shader can compile succsefully but still have errors in it, which usually causes the output to turn white.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="currentIndex">
       <number>2</number>
