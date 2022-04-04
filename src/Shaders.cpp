@@ -351,6 +351,19 @@ bool ShadersEffect::supported() {
  * @param presentTime
  */
 void ShadersEffect::prePaintWindow(EffectWindow* w, WindowPrePaintData& data, std::chrono::milliseconds presentTime) {
+    effects->prePaintWindow(w, data, presentTime);
+}
+
+/**
+ * Overriden function.
+ *
+ * @brief ShadersEffect::paintWindow
+ * @param w
+ * @param mask
+ * @param region
+ * @param data
+ */
+void ShadersEffect::paintWindow(EffectWindow* w, int mask, const QRegion region, WindowPaintData& data) {
     m_useShader = m_shadersLoaded && m_allWindows != m_windows.contains(w);
     // Check if window is blacklisted or whitelisted.
     if (m_useShader && (m_blacklistEn || m_whitelistEn)) {
@@ -361,20 +374,6 @@ void ShadersEffect::prePaintWindow(EffectWindow* w, WindowPrePaintData& data, st
             m_useShader = false;
         }
     }
-    effects->prePaintWindow(w, data, presentTime);
-}
-
-/**
- * This is an overriden function which allows us to apply the shader to the requested window(s).
- * The shader is only applied to whitelisted, non blacklisted and requested windows.
- *
- * @brief ShadersEffect::drawWindow
- * @param w
- * @param mask
- * @param region
- * @param data
- */
-void ShadersEffect::paintWindow(EffectWindow* w, int mask, const QRegion region, WindowPaintData& data) {
     if (!m_useShader) {
         effects->paintWindow(w, mask, region, data);
         return;
