@@ -34,9 +34,6 @@
   <layout class="QGridLayout" name="gridLayout">
    <item row="1" column="1">
     <widget class="QDialogButtonBox" name="button_CloseWindow">
-     <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Closes the window, does not save any values, use Save if you need to do so.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
      <property name="standardButtons">
       <set>QDialogButtonBox::Ok</set>
      </property>
@@ -47,9 +44,6 @@
    </item>
    <item row="0" column="0" colspan="2">
     <widget class="QTabWidget" name="Status">
-     <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
      <property name="currentIndex">
       <number>2</number>
      </property>
