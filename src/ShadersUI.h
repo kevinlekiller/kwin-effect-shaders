@@ -2,6 +2,7 @@
 #define SHADERSUI_H
 
 #include <QDialog>
+#include <QTableWidgetItem>
 
 namespace Ui {
 class ShadersUI;
@@ -17,17 +18,21 @@ public:
     QString getWhitelist();
     QString getShaderPath();
     bool getDefaultEnabled();
+    bool getAutoApply();
     QByteArray getShadersText();
     void setBlacklist(QString);
     void setWhitelist(QString);
     void setShaderPath(QString);
     void setDefaultEnabled(bool);
+    void setAutoApply(bool);
     void setNumWindowsStatus(int);
     void setShaderCompiled(bool);
     void setShadersText(QByteArray);
     void setShadersText(QString);
     void setAllWindows(bool);
     void displayUI();
+
+    bool m_autoApply = false;
 
 Q_SIGNALS:
     void signalShaderTestRequested();
@@ -37,13 +42,14 @@ Q_SIGNALS:
     void signalWindowHidden();
 
 private:
-    Ui::ShadersUI* ui;
-    //QPoint m_UIPosition;
     void parseSettingsBuffer();
     void setUIShaderValues();
     void setUIEnabledShaders();
     void updateShaderOrder();
     void setSaveButtonText(bool);
+
+    Ui::ShadersUI* ui;
+    //QPoint m_UIPosition;
 
 private Q_SLOTS:
     void slotHideWindow();
@@ -53,6 +59,8 @@ private Q_SLOTS:
     void slotMoveShaderDown();
     void slotSettingsSaveRequested();
     void slotAllWindowsToggled(int);
+    void slotToggleShader(int, int);
+    void slotEditShaderSetting(QTableWidgetItem  *);
 };
 
 #endif // SHADERSUI_H

@@ -51,6 +51,7 @@ private:
     bool m_shadersLoaded = false;
     bool m_blacklistEn = false;
     bool m_whitelistEn = false;
+    bool m_autoApply = false;
     bool m_useShader;
     const QString m_shaderSettingsName = "1_settings.glsl";
     QString m_shaderSettingsPath;

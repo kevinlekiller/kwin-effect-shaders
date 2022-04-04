@@ -6,14 +6,18 @@
 ShadersUI::ShadersUI(QWidget *parent) : QDialog(parent), ui(new Ui::ShadersUI) {
     ui->setupUi(this);
     connect(ui->button_CloseWindow, &QDialogButtonBox::clicked, this, &ShadersUI::slotHideWindow);
-    connect(ui->button_ShaderSave, &QDialogButtonBox::clicked, this, &ShadersUI::slotShaderSaveRequested);
+    connect(ui->button_AdvancedSave, &QDialogButtonBox::clicked, this, &ShadersUI::slotShaderSaveRequested);
     connect(ui->button_OrderSave, &QDialogButtonBox::clicked, this, &ShadersUI::slotShaderSaveRequested);
-    connect(ui->button_ShaderApply, &QDialogButtonBox::clicked, this, &ShadersUI::slotShaderTestRequested);
+    connect(ui->button_ShadersSave, &QDialogButtonBox::clicked, this, &ShadersUI::slotShaderSaveRequested);
+    connect(ui->button_AdvancedApply, &QDialogButtonBox::clicked, this, &ShadersUI::slotShaderTestRequested);
     connect(ui->button_OrderApply, &QDialogButtonBox::clicked, this, &ShadersUI::slotShaderTestRequested);
+    connect(ui->button_ShadersApply, &QDialogButtonBox::clicked, this, &ShadersUI::slotShaderTestRequested);
     connect(ui->button_SettingsSave, &QDialogButtonBox::clicked, this, &ShadersUI::slotSettingsSaveRequested);
     connect(ui->val_allWindows, &QCheckBox::stateChanged, this, &ShadersUI::slotAllWindowsToggled);
     connect(ui->button_MoveShaderUp, &QPushButton::clicked, this, &ShadersUI::slotMoveShaderUp);
     connect(ui->button_MoveShaderDown, &QPushButton::clicked, this, &ShadersUI::slotMoveShaderDown);
+    connect(ui->table_Shaders, &QTableWidget::cellClicked, this, &ShadersUI::slotToggleShader);
+    connect(ui->table_Shaders, &QTableWidget::itemChanged, this, &ShadersUI::slotEditShaderSetting);
 }
 
 ShadersUI::~ShadersUI() {
@@ -28,19 +32,20 @@ void ShadersUI::slotHideWindow() {
 
 void ShadersUI::setSaveButtonText(bool modified) {
     QString saveText = modified ? "(*) Save" : "Save";
-    ui->button_ShaderSave->button(QDialogButtonBox::Save)->setText(saveText);
+    ui->button_AdvancedSave->button(QDialogButtonBox::Save)->setText(saveText);
+    ui->button_ShadersSave->button(QDialogButtonBox::Save)->setText(saveText);
     ui->button_OrderSave->button(QDialogButtonBox::Save)->setText(saveText);
 }
 
 void ShadersUI::slotShaderSaveRequested() {
-    setSaveButtonText(false);
     setUIShaderValues();
+    setSaveButtonText(false);
     emit signalShaderSaveRequested();
 }
 
 void ShadersUI::slotShaderTestRequested() {
-    setSaveButtonText(true);
     setUIShaderValues();
+    setSaveButtonText(true);
     emit signalShaderTestRequested();
 }
 
@@ -64,6 +69,59 @@ void ShadersUI::slotSettingsSaveRequested() {
 
 void ShadersUI::slotAllWindowsToggled(int state) {
     emit signalAllWindowsToggled(state == Qt::Checked ? true : false);
+}
+
+void ShadersUI::slotToggleShader(int row, int column) {
+    QString settingName = ui->table_Shaders->item(row, 0)->text().trimmed();
+    if (!settingName.startsWith("SHADER_")) {
+        return;
+    }
+
+    QString value = ui->table_Shaders->item(row, 1)->text();
+    int on = QString::compare(value, "On");
+    if (on != 0 && QString::compare(value, "Off") != 0) {
+        return;
+    }
+
+    QString replacement = ui->table_Shaders->item(row, 0)->text().remove(0, 7);
+    QString shadersText = ui->val_ShadersText->toPlainText();
+    QString regex = "^#define\\s+";
+    regex.append(replacement).append("_ENABLED\\s+\\d+");
+    QRegularExpression replaceRegex(regex);
+    replaceRegex.setPatternOptions(QRegularExpression::MultilineOption);
+    replacement.prepend("#define ").append("_ENABLED ").append(on == 0 ? "0" : "1");
+    shadersText.replace(replaceRegex, replacement);
+    setShadersText(shadersText);
+}
+
+void ShadersUI::slotEditShaderSetting(QTableWidgetItem *item) {
+    if (item->column() == 0) {
+        return;
+    }
+
+    QString settingName = ui->table_Shaders->item(item->row(), 0)->text().trimmed();
+    if (settingName.startsWith("SHADER_")) {
+        return;
+    }
+
+    QString settingValue = item->text().trimmed();
+    if (settingValue.isEmpty()) {
+        return;
+    }
+
+    QString replacement, regex;
+    if (settingValue.startsWith("vec3(")) {
+        replacement.append("uniform vec3 ").append(settingName).append(" = ").append(settingValue).append(";");
+        regex.append("^uniform\\s+vec3\\s+").append(settingName).append("\\s+=\\s+.+?").append(";");
+    } else {
+        replacement.append("#define ").append(settingName).append(" ").append(settingValue);
+        regex.append("^#define\\s+").append(settingName).append("\\s+[\\d.]+");
+    }
+    QRegularExpression replaceRegex(regex);
+    replaceRegex.setPatternOptions(QRegularExpression::MultilineOption);
+    QString shadersText = ui->val_ShadersText->toPlainText();
+    shadersText.replace(replaceRegex, replacement);
+    setShadersText(shadersText);
 }
 
 void ShadersUI::displayUI() {
@@ -92,6 +150,11 @@ void ShadersUI::setShaderPath(QString value) {
 
 void ShadersUI::setDefaultEnabled(bool value) {
     ui->val_DefaultEnabled->setChecked(value);
+}
+
+void ShadersUI::setAutoApply(bool value) {
+    m_autoApply = value;
+    ui->val_AutoApply->setChecked(value);
 }
 
 void ShadersUI::setNumWindowsStatus(int numWindows) {
@@ -150,15 +213,21 @@ void ShadersUI::parseSettingsBuffer() {
     if (lines.empty()) {
         return;
     }
+    int curTableRow = 0;
+    ui->table_Shaders->clearContents();
+    ui->table_Shaders->setRowCount(curTableRow);
+
     QRegularExpression enabledRegex("^#define\\s+([A-Z0-9_]+)_ENABLED\\s+(\\d)");
     QRegularExpression setting1Regex("^#define\\s+([A-Z0-9_]+)\\s+(\\S+)");
-    QRegularExpression setting2Regex("^uniform\\s+(.+?)\\s+=\\s+(.+?)$");
-    bool foundOrder = false, foundDefine = false;
-    QMap<QString, QMap<QString, QString>> settings;
+    QRegularExpression setting2Regex("^uniform\\s+.+?\\s+([A-Z0-9_]+)\\s+=\\s+(.+?);\\s*$");
+
+    disconnect(ui->table_Shaders, &QTableWidget::itemChanged, this, &ShadersUI::slotEditShaderSetting);
+    bool foundOrder = false, foundDefine = false, curShaderEnabled = false;
     QStringList shaderOrder;
     QString curShader, enabledShaders;
     for (int i = 0; i < lines.size(); ++i) {
         QString curLine = lines.at(i).trimmed();
+
         if (!foundOrder) {
             if (curLine.startsWith("SHADERS);")) {
                 foundOrder = true;
@@ -173,43 +242,68 @@ void ShadersUI::parseSettingsBuffer() {
                 continue;
             }
         }
+
         if (!foundDefine) {
             QRegularExpressionMatch matches = enabledRegex.match(curLine);
             if (matches.hasMatch()) {
-               QMap<QString, QString> enabled;
-               enabled.insert("Enabled", matches.captured(2));
-               curShader = matches.captured(1);
-               settings.insert(curShader, enabled);
-               if (matches.captured(2).toInt() == 1) {
-                   enabledShaders.append(curShader).append(", ");
+               curShader = matches.captured(1).prepend("SHADER_");
+               curShaderEnabled = matches.captured(2).toInt() == 1;
+               ui->table_Shaders->insertRow(curTableRow);
+               QTableWidgetItem *curShaderItem = new QTableWidgetItem(curShader);
+               curShaderItem->setFlags(curShaderItem->flags() & ~Qt::ItemIsEditable);
+               ui->table_Shaders->setItem(curTableRow, 0, curShaderItem);
+               QTableWidgetItem *settingItem = new QTableWidgetItem(curShaderEnabled ? "On" : "Off");
+               settingItem->setFlags(settingItem->flags() & ~Qt::ItemIsEditable);
+               ui->table_Shaders->setItem(curTableRow, 1, settingItem);
+               curTableRow++;
+               if (curShaderEnabled) {
+                   QString shortShader;
+                   shortShader.append(curShader).remove(0, 7);
+                   enabledShaders.append(shortShader).append(", ");
                }
                foundDefine = true;
             }
             continue;
         }
+
         if (curLine.startsWith("#endif")) {
             foundDefine = false;
             continue;
         }
+
+        if (!curShaderEnabled) {
+            continue;
+        }
+
         if (curLine.startsWith("#define")) {
             QRegularExpressionMatch matches = setting1Regex.match(curLine);
             if (matches.hasMatch()) {
-               QMap<QString, QString> setting;
-               setting.insert(matches.captured(1), matches.captured(2));
-               settings.insert(curShader, setting);
+                ui->table_Shaders->insertRow(curTableRow);
+                QTableWidgetItem *nameItem = new QTableWidgetItem(matches.captured(1));
+                nameItem->setFlags(nameItem->flags() & ~Qt::ItemIsEditable);
+                QTableWidgetItem *settingItem = new QTableWidgetItem(matches.captured(2));
+                ui->table_Shaders->setItem(curTableRow, 0, nameItem);
+                ui->table_Shaders->setItem(curTableRow, 1, settingItem);
+                curTableRow++;
             }
             continue;
         }
+
         if (curLine.startsWith("uniform")) {
             // Does not work: QRegularExpressionMatch matches = isUniform ? setting2Regex.match(curLine) : setting1Regex.match(curLine);
             QRegularExpressionMatch matches = setting2Regex.match(curLine);
             if (matches.hasMatch()) {
-               QMap<QString, QString> setting;
-               setting.insert(matches.captured(1), matches.captured(2));
-               settings.insert(curShader, setting);
+                ui->table_Shaders->insertRow(curTableRow);
+                QTableWidgetItem *nameItem = new QTableWidgetItem(matches.captured(1));
+                nameItem->setFlags(nameItem->flags() & ~Qt::ItemIsEditable);
+                QTableWidgetItem *settingItem = new QTableWidgetItem(matches.captured(2));
+                ui->table_Shaders->setItem(curTableRow, 0, nameItem);
+                ui->table_Shaders->setItem(curTableRow, 1, settingItem);
+                curTableRow++;
             }
         }
     }
+    connect(ui->table_Shaders, &QTableWidget::itemChanged, this, &ShadersUI::slotEditShaderSetting);
     // Set enabled shaders list on the status tab.
     if (enabledShaders.endsWith(", ")) {
         enabledShaders.chop(2);
@@ -218,6 +312,11 @@ void ShadersUI::parseSettingsBuffer() {
     // Set the data on the shader order tab.
     ui->val_ShaderOrder->clear();
     ui->val_ShaderOrder->addItems(shaderOrder);
+
+    if (m_autoApply) {
+        setSaveButtonText(true);
+        emit signalShaderTestRequested();
+    }
 }
 
 QString ShadersUI::getBlacklist() {
@@ -234,6 +333,12 @@ QString ShadersUI::getShaderPath() {
 
 bool ShadersUI::getDefaultEnabled() {
     return ui->val_DefaultEnabled->isChecked();
+}
+
+bool ShadersUI::getAutoApply() {
+    bool value = ui->val_AutoApply->isChecked();
+    m_autoApply = value;
+    return value;
 }
 
 QByteArray ShadersUI::getShadersText() {

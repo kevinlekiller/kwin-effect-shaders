@@ -215,6 +215,7 @@ void ShadersEffect::slotUISettingsSaveRequested() {
     processBlacklist(m_shadersUI.getBlacklist());
     processWhitelist(m_shadersUI.getWhitelist());
     m_settings->setValue("DefaultEnabled", m_shadersUI.getDefaultEnabled());
+    m_settings->setValue("AutoApply", m_shadersUI.getAutoApply());
     m_settings->sync();
 }
 
@@ -233,6 +234,7 @@ void ShadersEffect::slotUILaunch() {
     }
     m_shadersUI.setShaderPath(shaderPath);
     m_shadersUI.setDefaultEnabled(m_settings->value("DefaultEnabled").toBool());
+    m_shadersUI.setAutoApply(m_settings->value("AutoApply").toBool());
     m_shadersUI.setShaderCompiled(m_shadersLoaded);
     m_shadersUI.displayUI();
     updateStatusCount();

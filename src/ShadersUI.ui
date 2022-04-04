@@ -47,28 +47,31 @@
    </item>
    <item row="0" column="0" colspan="2">
     <widget class="QTabWidget" name="Status">
+     <property name="toolTip">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If the shader has succesfully compiled or not.&lt;/p&gt;&lt;p&gt;The shader can compile succsefully but still have errors in it, which usually causes the output to turn white.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
      <property name="currentIndex">
-      <number>4</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab_Settings">
       <attribute name="title">
        <string>Settings</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="1" column="1">
-        <widget class="QPlainTextEdit" name="val_Blacklist">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_ShaderPath">
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Applications in this list will not be processed.&lt;/p&gt;&lt;p&gt;Seperate applications by comma.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The path where the shader files are stored, must be the real full path.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
-         <property name="plainText">
-          <string/>
+         <property name="text">
+          <string>Shader Path</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="QPlainTextEdit" name="val_ShaderPath">
-         <property name="acceptDrops">
-          <bool>true</bool>
+       <item row="2" column="1">
+        <widget class="QPlainTextEdit" name="val_Whitelist">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Applications outside of this list will not be processed.&lt;/p&gt;&lt;p&gt;Seperate applications by a comma.&lt;/p&gt;&lt;p&gt;Useful if you use &amp;quot;Enabled By Default&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
         </widget>
        </item>
@@ -88,15 +91,21 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_ShaderPath">
-         <property name="text">
-          <string>Shader Path</string>
+       <item row="1" column="1">
+        <widget class="QPlainTextEdit" name="val_Blacklist">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Applications in this list will not be processed.&lt;/p&gt;&lt;p&gt;Seperate applications by comma.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="plainText">
+          <string/>
          </property>
         </widget>
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="label_Whitelist">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Applications outside of this list will not be processed.&lt;/p&gt;&lt;p&gt;Seperate applications by a comma.&lt;/p&gt;&lt;p&gt;Useful if you use &amp;quot;Enabled By Default&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
          <property name="text">
           <string>Whitelist</string>
          </property>
@@ -104,6 +113,9 @@
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="label_Blacklist">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Applications in this list will not be processed.&lt;/p&gt;&lt;p&gt;Seperate applications by comma.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
          <property name="text">
           <string>Blacklist</string>
          </property>
@@ -111,22 +123,48 @@
        </item>
        <item row="3" column="0">
         <widget class="QLabel" name="label_DefaultEnabled">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If this is enabled, all windows will be processed when you log in, you can still disable the effect using the keyboard shortcut.&lt;/p&gt;&lt;p&gt;You can use the Whitelist or Blacklist in conjunction with this.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
          <property name="text">
           <string>Enable on Login</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
-        <widget class="QPlainTextEdit" name="val_Whitelist">
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Applications outside of this list will not be processed.&lt;/p&gt;&lt;p&gt;Seperate applications by a comma.&lt;/p&gt;&lt;p&gt;Useful if you use &amp;quot;Enabled By Default&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1" alignment="Qt::AlignRight">
+       <item row="5" column="0" colspan="2">
         <widget class="QDialogButtonBox" name="button_SettingsSave">
          <property name="standardButtons">
           <set>QDialogButtonBox::Save</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QPlainTextEdit" name="val_ShaderPath">
+         <property name="acceptDrops">
+          <bool>true</bool>
+         </property>
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The path where the shader files are stored, must be the real full path.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_AutoApply">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;On the Shaders tab, if you change a value and this is enabled, it is applied instantly, without clicking the Apply button.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string>Auto Apply</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QCheckBox" name="val_AutoApply">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;On the Shaders tab, if you change a value and this is enabled, it is applied instantly, without clicking the Apply button.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string/>
          </property>
         </widget>
        </item>
@@ -137,17 +175,23 @@
        <string>Status</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
-       <item row="0" column="1" alignment="Qt::AlignTop">
-        <widget class="QCheckBox" name="val_allWindows">
+       <item row="3" column="0" alignment="Qt::AlignTop">
+        <widget class="QLabel" name="label_ShaderCompiled">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If the shader has succesfully compiled or not.&lt;/p&gt;&lt;p&gt;The shader can compile succsefully but still have errors in it, which usually causes the output to turn white.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
          <property name="text">
-          <string/>
+          <string>Shader compiled:</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="1" alignment="Qt::AlignTop">
-        <widget class="QLabel" name="val_ShaderCompiled">
+       <item row="0" column="0" alignment="Qt::AlignTop">
+        <widget class="QLabel" name="label_allWiindows">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the same as the keyboard shortcut that enables the effect on all windows (CTRL+META+X by default).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
          <property name="text">
-          <string/>
+          <string>Globally enabled:</string>
          </property>
         </widget>
        </item>
@@ -161,41 +205,56 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="0" alignment="Qt::AlignTop">
-        <widget class="QLabel" name="label_ShaderCompiled">
-         <property name="text">
-          <string>Shader compiled:</string>
+       <item row="3" column="1" alignment="Qt::AlignTop">
+        <widget class="QLabel" name="val_ShaderCompiled">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If the shader has succesfully compiled or not.&lt;/p&gt;&lt;p&gt;The shader can compile succsefully but still have errors in it, which usually causes the output to turn white.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
-        </widget>
-       </item>
-       <item row="0" column="0" alignment="Qt::AlignTop">
-        <widget class="QLabel" name="label_allWiindows">
-         <property name="text">
-          <string>Globally enabled:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1" alignment="Qt::AlignTop">
-        <widget class="QLabel" name="val_Status">
          <property name="text">
           <string/>
          </property>
         </widget>
        </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="label_enabledShaders">
+       <item row="0" column="1" alignment="Qt::AlignTop">
+        <widget class="QCheckBox" name="val_allWindows">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the same as the keyboard shortcut that enables the effect on all windows (CTRL+META+X by default).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
          <property name="text">
-          <string>Enabled shaders:</string>
+          <string/>
          </property>
         </widget>
        </item>
-       <item row="4" column="1">
+       <item row="4" column="1" alignment="Qt::AlignTop">
         <widget class="QLabel" name="val_enabledShaders">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is a list of all the current shaders turned to &amp;quot;On&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
          <property name="text">
           <string/>
          </property>
          <property name="wordWrap">
           <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0" alignment="Qt::AlignTop">
+        <widget class="QLabel" name="label_enabledShaders">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is a list of all the current shaders turned to &amp;quot;On&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string>Enabled shaders:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1" alignment="Qt::AlignTop">
+        <widget class="QLabel" name="val_Status">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This can be inaccurate if &amp;quot;Globally enabled&amp;quot; is enabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string/>
          </property>
         </widget>
        </item>
@@ -206,14 +265,60 @@
        <string>Shaders</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_5">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Not functional yet. Use the advanced tab.</string>
+       <item row="1" column="1">
+        <widget class="QDialogButtonBox" name="button_ShadersSave">
+         <property name="standardButtons">
+          <set>QDialogButtonBox::Save</set>
          </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
+         <property name="centerButtons">
+          <bool>true</bool>
          </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QDialogButtonBox" name="button_ShadersApply">
+         <property name="standardButtons">
+          <set>QDialogButtonBox::Apply</set>
+         </property>
+         <property name="centerButtons">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" colspan="2">
+        <widget class="QTableWidget" name="table_Shaders">
+         <property name="mouseTracking">
+          <bool>true</bool>
+         </property>
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You can left click on the shader name of the status (On / Off) to enable / disable a shader.&lt;/p&gt;&lt;p&gt;You can left click a value and change it, when done you can click apply.&lt;/p&gt;&lt;p&gt;To save the changes to the settings file, click save.&lt;/p&gt;&lt;p&gt;If you have made changes but not saved anything, the Save button will display a star.&lt;/p&gt;&lt;p&gt;You can find the description of values in the advanced tab.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="editTriggers">
+          <set>QAbstractItemView::AllEditTriggers</set>
+         </property>
+         <property name="showDropIndicator" stdset="0">
+          <bool>false</bool>
+         </property>
+         <property name="alternatingRowColors">
+          <bool>false</bool>
+         </property>
+         <property name="columnCount">
+          <number>2</number>
+         </property>
+         <attribute name="horizontalHeaderCascadingSectionResizes">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="horizontalHeaderDefaultSectionSize">
+          <number>220</number>
+         </attribute>
+         <attribute name="horizontalHeaderStretchLastSection">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+         <column/>
+         <column/>
         </widget>
        </item>
       </layout>
@@ -227,6 +332,9 @@
         <widget class="QListWidget" name="val_ShaderOrder">
          <property name="acceptDrops">
           <bool>false</bool>
+         </property>
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You can move up or down a shader to change which order it will executed in.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="editTriggers">
           <set>QAbstractItemView::NoEditTriggers</set>
@@ -312,13 +420,16 @@
       <layout class="QGridLayout" name="gridLayout_4">
        <item row="0" column="0" colspan="2">
         <widget class="QTextEdit" name="val_ShadersText">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the shader settings file.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
          <property name="acceptRichText">
           <bool>false</bool>
          </property>
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QDialogButtonBox" name="button_ShaderApply">
+        <widget class="QDialogButtonBox" name="button_AdvancedApply">
          <property name="toolTip">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Apply does not save changes to the file.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
@@ -328,7 +439,7 @@
         </widget>
        </item>
        <item row="1" column="1" alignment="Qt::AlignRight|Qt::AlignBottom">
-        <widget class="QDialogButtonBox" name="button_ShaderSave">
+        <widget class="QDialogButtonBox" name="button_AdvancedSave">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>

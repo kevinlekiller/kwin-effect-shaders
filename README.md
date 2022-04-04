@@ -69,9 +69,7 @@ If you use the default location for the shaders, it will be automatically detect
 
 If you use a custom location, set the `Shader Path` by opening the configuration UI (see "Keyboard Shortcuts").
 
-For example `/home/kevin/.local/share/kwin-effect-shaders_shaders`
-
-![Shaders path directory](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shaders_ui.png)
+![Set shaders path](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shader_path.png)
 
 ## Keyboard Shortcuts
 NOTE: The keyboard shortcuts might be disabled by default.
@@ -91,13 +89,11 @@ To change these:
 ## Modifying The Shader Settings
 Open the configuration UI (see Keyboard Shortcuts), go to the Shaders tab.
 
-Change the settings you want, click Save.
+Click on the shader you want to enable, click Apply. Click save if you want to write the changes to the settings file.
 
-Alternatively, you can open the 1_settings.glsl file in a text editor (`~/.local/share/kwin-effect-shaders_shaders/1_settings.glsl`).
+You can also enable `Auto Apply` in the Settings tab, which will automatically apply the settings.
 
-For example, to enable the Adaptive Sharpen shader:
-
-![1_settings.glsl edit](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shaders_tab.png)
+![Shaders tab](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shaders_tab.png)
 
 ## Blacklisting Applications
 In the configuration UI, you can add application(s), if more than 1, seperate them with a comma.
