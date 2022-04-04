@@ -38,7 +38,9 @@ class ShadersEffect : public Effect {
 public:
     ShadersEffect();
     ~ShadersEffect() override;
-    void drawWindow(EffectWindow* w, int mask, const QRegion &region, WindowPaintData& data) override;
+    void prePaintWindow(EffectWindow* w, WindowPrePaintData& data, std::chrono::milliseconds presentTime) override;
+    void paintWindow(EffectWindow* w, int mask, const QRegion region, WindowPaintData& data) override;
+    void postPaintWindow(EffectWindow* w) override;
     bool isActive() const override;
     int requestedEffectChainPosition() const override;
     static bool supported();
@@ -49,6 +51,7 @@ private:
     bool m_shadersLoaded = false;
     bool m_blacklistEn = false;
     bool m_whitelistEn = false;
+    bool m_useShader;
     const QString m_shaderSettingsName = "1_settings.glsl";
     QString m_shaderSettingsPath;
     QString m_shaderPath;

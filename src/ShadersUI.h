@@ -40,6 +40,9 @@ private:
     Ui::ShadersUI* ui;
     //QPoint m_UIPosition;
     void parseSettingsBuffer();
+    void setUIShaderValues();
+    void setUIEnabledShaders();
+    void updateShaderOrder();
     void setSaveButtonText(bool);
 
 private Q_SLOTS:

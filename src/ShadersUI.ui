@@ -153,8 +153,11 @@
        </item>
        <item row="1" column="0" alignment="Qt::AlignTop">
         <widget class="QLabel" name="label_Status">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This can be inaccurate if &amp;quot;Globally enabled&amp;quot; is enabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
          <property name="text">
-          <string>Windows with shaders enabled:</string>
+          <string>Windows being tracked:</string>
          </property>
         </widget>
        </item>

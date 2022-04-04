@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-set(SHADERS kwin4_effect_shaders)
+set(SHADERS kwin_effect_shaders)
 
 project(${SHADERS})
 

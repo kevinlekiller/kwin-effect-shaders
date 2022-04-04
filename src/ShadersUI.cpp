@@ -34,13 +34,13 @@ void ShadersUI::setSaveButtonText(bool modified) {
 
 void ShadersUI::slotShaderSaveRequested() {
     setSaveButtonText(false);
-    parseSettingsBuffer();
+    setUIShaderValues();
     emit signalShaderSaveRequested();
 }
 
 void ShadersUI::slotShaderTestRequested() {
     setSaveButtonText(true);
-    parseSettingsBuffer();
+    setUIShaderValues();
     emit signalShaderTestRequested();
 }
 
@@ -105,14 +105,14 @@ void ShadersUI::setShaderCompiled(bool compiled) {
 void ShadersUI::setShadersText(QByteArray text) {
     if (QString::compare(QVariant(ui->val_ShadersText->toPlainText()).toByteArray(), text) != 0) {
         ui->val_ShadersText->setPlainText(text);
-        parseSettingsBuffer();
+        setUIShaderValues();
     }
 }
 
 void ShadersUI::setShadersText(QString text) {
     if (QString::compare(ui->val_ShadersText->toPlainText(), text) != 0) {
         ui->val_ShadersText->setPlainText(text);
-        parseSettingsBuffer();
+        setUIShaderValues();
     }
 }
 
@@ -120,35 +120,33 @@ void ShadersUI::setAllWindows(bool allWindows) {
     ui->val_allWindows->setChecked(allWindows);
 }
 
-void ShadersUI::parseSettingsBuffer() {
-    QRegularExpression regex("#define\\s{1,5}([A-Z0-9_]+)_ENABLED\\s{0,5}1");
+void ShadersUI::setUIShaderValues() {
+    updateShaderOrder();
+    parseSettingsBuffer();
+}
+
+/**
+ * If the user moves shaders up or down, update that here.
+ * @brief ShadersUI::updateShaderOrder
+ */
+void ShadersUI::updateShaderOrder() {
+    if (!ui->val_ShaderOrder->count()) {
+        return;
+    }
     QString shadersText = ui->val_ShadersText->toPlainText();
-    if (regex.isValid()) {
-        QRegularExpressionMatchIterator iterator = regex.globalMatch(shadersText);
-        QString shaders;
-        while (iterator.hasNext()) {
-            QRegularExpressionMatch match = iterator.next();
-            shaders.append(match.captured(1)).append(", ");
-        }
-        if (!shaders.isEmpty()) {
-            shaders.chop(2);
-            ui->val_enabledShaders->setText(shaders);
-        }
+    QString order = "const int SHADER_ORDER[SHADERS+1] = int[] ( // Don't change this line.\n\n";
+    for (int i = 0; i < ui->val_ShaderOrder->count(); ++i) {
+           order.append("    SHADER_").append(ui->val_ShaderOrder->item(i)->text()).append(",\n");
     }
+    order.append("\nSHADERS); //");
+    QRegularExpression orderRegex("^const\\s+int\\s+SHADER_ORDER.+?^SHADERS\\);\\s+//");
+    orderRegex.setPatternOptions(QRegularExpression::DotMatchesEverythingOption | QRegularExpression::MultilineOption);
+    shadersText = shadersText.replace(orderRegex, order);
+    setShadersText(shadersText);
+}
 
-    if (ui->val_ShaderOrder->count()) {
-        QString order = "const int SHADER_ORDER[SHADERS+1] = int[] ( // Don't change this line.\n\n";
-        for (int i = 0; i < ui->val_ShaderOrder->count(); ++i) {
-               order.append("    ").append(ui->val_ShaderOrder->item(i)->text()).append(",\n");
-        }
-        order.append("\nSHADERS); //");
-        QRegularExpression orderRegex("^const\\s+int\\s+SHADER_ORDER.+?^SHADERS\\);\\s+//");
-        orderRegex.setPatternOptions(QRegularExpression::DotMatchesEverythingOption | QRegularExpression::MultilineOption);
-        shadersText = shadersText.replace(orderRegex, order);
-        setShadersText(shadersText);
-    }
-
-    QStringList lines = shadersText.split("\n");
+void ShadersUI::parseSettingsBuffer() {
+    QStringList lines = ui->val_ShadersText->toPlainText().split("\n");
     if (lines.empty()) {
         return;
     }
@@ -158,7 +156,7 @@ void ShadersUI::parseSettingsBuffer() {
     bool foundOrder = false, foundDefine = false;
     QMap<QString, QMap<QString, QString>> settings;
     QStringList shaderOrder;
-    QString curShader;
+    QString curShader, enabledShaders;
     for (int i = 0; i < lines.size(); ++i) {
         QString curLine = lines.at(i).trimmed();
         if (!foundOrder) {
@@ -167,6 +165,7 @@ void ShadersUI::parseSettingsBuffer() {
                 continue;
             }
             if (curLine.startsWith("SHADER_")) {
+                curLine.remove(0, 7);
                 if (curLine.endsWith(",")) {
                     curLine.chop(1);
                 }
@@ -181,6 +180,9 @@ void ShadersUI::parseSettingsBuffer() {
                enabled.insert("Enabled", matches.captured(2));
                curShader = matches.captured(1);
                settings.insert(curShader, enabled);
+               if (matches.captured(2).toInt() == 1) {
+                   enabledShaders.append(curShader).append(", ");
+               }
                foundDefine = true;
             }
             continue;
@@ -208,6 +210,12 @@ void ShadersUI::parseSettingsBuffer() {
             }
         }
     }
+    // Set enabled shaders list on the status tab.
+    if (enabledShaders.endsWith(", ")) {
+        enabledShaders.chop(2);
+        ui->val_enabledShaders->setText(enabledShaders);
+    }
+    // Set the data on the shader order tab.
     ui->val_ShaderOrder->clear();
     ui->val_ShaderOrder->addItems(shaderOrder);
 }

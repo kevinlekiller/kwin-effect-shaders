@@ -1,4 +1,4 @@
-﻿/*
+/*
     KWin - the KDE window manager
     This file is part of the KDE project.
     SPDX-FileCopyrightText: 2007 Rivo Laks <rivolaks@hot.ee>
@@ -14,7 +14,7 @@
 #include <KGlobalAccel>
 #include <KLocalizedString>
 
-Q_LOGGING_CATEGORY(KWIN_SHADERS, "kwin4_effect_shaders", QtWarningMsg)
+Q_LOGGING_CATEGORY(KWIN_SHADERS, "kwin_effect_shaders", QtWarningMsg)
 
 namespace KWin {
 
@@ -343,6 +343,28 @@ bool ShadersEffect::supported() {
 }
 
 /**
+ * Overriden function.
+ *
+ * @brief ShadersEffect::prePaintWindow
+ * @param w
+ * @param data
+ * @param presentTime
+ */
+void ShadersEffect::prePaintWindow(EffectWindow* w, WindowPrePaintData& data, std::chrono::milliseconds presentTime) {
+    m_useShader = m_shadersLoaded && m_allWindows != m_windows.contains(w);
+    // Check if window is blacklisted or whitelisted.
+    if (m_useShader && (m_blacklistEn || m_whitelistEn)) {
+        QString windowName = w->windowClass().trimmed().split(" ")[0];
+        if ((m_blacklistEn && m_blacklist.contains(windowName, Qt::CaseInsensitive)) ||
+            (m_whitelistEn && !m_whitelist.contains(windowName, Qt::CaseInsensitive))
+        ) {
+            m_useShader = false;
+        }
+    }
+    effects->prePaintWindow(w, data, presentTime);
+}
+
+/**
  * This is an overriden function which allows us to apply the shader to the requested window(s).
  * The shader is only applied to whitelisted, non blacklisted and requested windows.
  *
@@ -352,28 +374,27 @@ bool ShadersEffect::supported() {
  * @param region
  * @param data
  */
-void ShadersEffect::drawWindow(EffectWindow* w, int mask, const QRegion &region, WindowPaintData& data) {
-    bool useShader = m_shadersLoaded && m_allWindows != m_windows.contains(w);
-    // Check if window is blacklisted or whitelisted.
-    if (useShader && (m_blacklistEn || m_whitelistEn)) {
-        QString windowName = w->windowClass().trimmed().split(" ")[0];
-        if ((m_blacklistEn && m_blacklist.contains(windowName, Qt::CaseInsensitive)) ||
-            (m_whitelistEn && !m_whitelist.contains(windowName, Qt::CaseInsensitive))
-        ) {
-            useShader = false;
-        }
-    }
-    if (!useShader) {
-        effects->drawWindow(w, mask, region, data);
+void ShadersEffect::paintWindow(EffectWindow* w, int mask, const QRegion region, WindowPaintData& data) {
+    if (!m_useShader) {
+        effects->paintWindow(w, mask, region, data);
         return;
     }
-    ShaderManager::instance()->pushShader(m_shader);
+    ShaderBinder bind(m_shader);
     m_shader->setUniform("g_Random", (float) drand48());
     m_shader->setUniform("g_TextureSize", QVector2D(effects->virtualScreenSize().width(), effects->virtualScreenSize().height()));
     m_shader->setUniform("modelViewProjectionMatrix", data.projectionMatrix());
     data.shader = m_shader;
-    effects->drawWindow(w, mask, region, data);
-    ShaderManager::instance()->popShader();
+    effects->paintWindow(w, mask, region, data);
+}
+
+/**
+ * Overriden function.
+ *
+ * @brief ShadersEffect::postPaintWindow
+ * @param w
+ */
+void ShadersEffect::postPaintWindow(EffectWindow* w) {
+    effects->postPaintWindow(w);
 }
 
 /**
