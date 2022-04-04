@@ -121,6 +121,13 @@ void ShadersEffect::processWhitelist(QString whitelist) {
  */
 void ShadersEffect::processShaderPath(QString shaderPath) {
     shaderPath = shaderPath.trimmed();
+    if (shaderPath.isEmpty()) {
+        shaderPath = QStandardPaths::locate(QStandardPaths::DataLocation, "kwin-effect-shaders_shaders", QStandardPaths::LocateDirectory);
+        if (shaderPath.isEmpty()) {
+            resetWindows();
+            return;
+        }
+    }
     if (!shaderPath.endsWith("/")) {
         shaderPath.append("/");
     }

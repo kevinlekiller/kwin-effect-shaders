@@ -65,7 +65,9 @@ Clone the shader files to somewhere in your home directory:
 
     git clone https://github.com/kevinlekiller/kwin-effect-shaders_shaders ~/.local/share/kwin-effect-shaders_shaders
 
-Set the `Shader Path` by opening the configuration UI (see "Keyboard Shortcuts").
+If you use the default location for the shaders, it will be automatically detected.
+
+If you use a custom location, set the `Shader Path` by opening the configuration UI (see "Keyboard Shortcuts").
 
 For example `/home/kevin/.local/share/kwin-effect-shaders_shaders`
 

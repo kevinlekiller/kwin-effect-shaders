@@ -25,6 +25,7 @@ public:
     void setNumWindowsStatus(int);
     void setShaderCompiled(bool);
     void setShadersText(QByteArray);
+    void setShadersText(QString);
     void setAllWindows(bool);
     void displayUI();
 
@@ -38,12 +39,15 @@ Q_SIGNALS:
 private:
     Ui::ShadersUI* ui;
     //QPoint m_UIPosition;
-    void setEnabledShaders();
+    void parseSettingsBuffer();
+    void setSaveButtonText(bool);
 
 private Q_SLOTS:
     void slotHideWindow();
     void slotShaderTestRequested();
     void slotShaderSaveRequested();
+    void slotMoveShaderUp();
+    void slotMoveShaderDown();
     void slotSettingsSaveRequested();
     void slotAllWindowsToggled(int);
 };

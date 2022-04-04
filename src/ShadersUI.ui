@@ -22,6 +22,9 @@
   <property name="focusPolicy">
    <enum>Qt::StrongFocus</enum>
   </property>
+  <property name="acceptDrops">
+   <bool>false</bool>
+  </property>
   <property name="windowTitle">
    <string>Shaders Configuration UI</string>
   </property>
@@ -45,7 +48,7 @@
    <item row="0" column="0" colspan="2">
     <widget class="QTabWidget" name="Status">
      <property name="currentIndex">
-      <number>2</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="tab_Settings">
       <attribute name="title">
@@ -63,7 +66,11 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QPlainTextEdit" name="val_ShaderPath"/>
+        <widget class="QPlainTextEdit" name="val_ShaderPath">
+         <property name="acceptDrops">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
        <item row="3" column="1">
         <widget class="QCheckBox" name="val_DefaultEnabled">
@@ -191,9 +198,113 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_Advanced">
+     <widget class="QWidget" name="tab_Shaders">
       <attribute name="title">
        <string>Shaders</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_5">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Not functional yet. Use the advanced tab.</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_ShaderOrder">
+      <attribute name="title">
+       <string>Shader Order</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_6">
+       <item row="0" column="0" colspan="2">
+        <widget class="QListWidget" name="val_ShaderOrder">
+         <property name="acceptDrops">
+          <bool>false</bool>
+         </property>
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <property name="showDropIndicator" stdset="0">
+          <bool>false</bool>
+         </property>
+         <property name="dragEnabled">
+          <bool>false</bool>
+         </property>
+         <property name="dragDropMode">
+          <enum>QAbstractItemView::NoDragDrop</enum>
+         </property>
+         <property name="defaultDropAction">
+          <enum>Qt::IgnoreAction</enum>
+         </property>
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
+         <property name="sortingEnabled">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QPushButton" name="button_MoveShaderUp">
+         <property name="text">
+          <string>Up</string>
+         </property>
+         <property name="shortcut">
+          <string>Up</string>
+         </property>
+         <property name="autoRepeat">
+          <bool>true</bool>
+         </property>
+         <property name="default">
+          <bool>false</bool>
+         </property>
+         <property name="flat">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QPushButton" name="button_MoveShaderDown">
+         <property name="text">
+          <string>Down</string>
+         </property>
+         <property name="shortcut">
+          <string>Down</string>
+         </property>
+         <property name="autoRepeat">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QDialogButtonBox" name="button_OrderSave">
+         <property name="standardButtons">
+          <set>QDialogButtonBox::Save</set>
+         </property>
+         <property name="centerButtons">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QDialogButtonBox" name="button_OrderApply">
+         <property name="standardButtons">
+          <set>QDialogButtonBox::Apply</set>
+         </property>
+         <property name="centerButtons">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_Advanced">
+      <attribute name="title">
+       <string>Advanced</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_4">
        <item row="0" column="0" colspan="2">
@@ -204,7 +315,7 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QDialogButtonBox" name="button_ShaderTest">
+        <widget class="QDialogButtonBox" name="button_ShaderApply">
          <property name="toolTip">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Apply does not save changes to the file.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
