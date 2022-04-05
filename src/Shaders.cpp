@@ -25,7 +25,7 @@ namespace KWin {
  */
 ShadersEffect::ShadersEffect() : m_shader(nullptr), m_allWindows(false) {
     // Initialize settings.
-    m_settings = new QSettings("kevinlekiller", "ShadersEffect");
+    m_settings = new QSettings("kevinlekiller", "kwin_effect_shaders");
 
     // Fetch settings.
     processBlacklist(m_settings->value("Blacklist").toString());
@@ -122,7 +122,7 @@ void ShadersEffect::processWhitelist(QString whitelist) {
 void ShadersEffect::processShaderPath(QString shaderPath) {
     shaderPath = shaderPath.trimmed();
     if (shaderPath.isEmpty()) {
-        shaderPath = QStandardPaths::locate(QStandardPaths::DataLocation, "kwin-effect-shaders_shaders", QStandardPaths::LocateDirectory);
+        shaderPath = QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kwin-effect-shaders_shaders", QStandardPaths::LocateDirectory);
         if (shaderPath.isEmpty()) {
             resetWindows();
             return;

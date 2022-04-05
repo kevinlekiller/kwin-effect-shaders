@@ -23,7 +23,6 @@ ShadersUI::ShadersUI(QWidget *parent) : QDialog(parent), ui(new Ui::ShadersUI) {
 ShadersUI::~ShadersUI() {
     delete ui;
 }
-
 void ShadersUI::slotHideWindow() {
     //m_UIPosition = pos();
     hide();
