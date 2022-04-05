@@ -157,7 +157,9 @@ If you have a AMD  gpu, see https://docs.mesa3d.org/gallium/postprocess.html#cur
 ex. on Steam game: `pp_jimenezmlaa_color=32 %command%`
 
 ## TODO
-Add more shaders.
+Try to have each shader run on its own, which would solve some issues. -> Currently my knowledge of OpenGL is limit, from what I can understand, this requires creating / using frame and vertex buffer objects.
+
+Add some kind of profile system, where a user could have different settings for different games.
 
 ## Screenshots
 [CAS + Tonemap](https://cdn.knightlab.com/libs/juxtapose/latest/embed/index.html?uid=9f8f759e-b2e4-11ec-b5bb-6595d9b17862)
