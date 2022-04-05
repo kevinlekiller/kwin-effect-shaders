@@ -28,8 +28,8 @@ ShadersEffect::ShadersEffect() : m_shader(nullptr), m_allWindows(false) {
     m_settings = new QSettings("kevinlekiller", "kwin_effect_shaders");
 
     // Fetch settings.
-    processBlacklist(m_settings->value("Blacklist").toString());
-    processWhitelist(m_settings->value("Whitelist").toString());
+    processBWList(m_settings->value("Blacklist").toString(), false);
+    processBWList(m_settings->value("Whitelist").toString(), true);
     processShaderPath(m_settings->value("ShaderPath").toString());
 
     // Setup keyboard shortcuts.
@@ -81,33 +81,28 @@ ShadersEffect::~ShadersEffect() {
 }
 
 /**
- * Process user specified blacklist.
- * The blacklist should be the names of window names seperated by a comma.
- * The blacklist is used to determine if a window name is blacklisted from being processed.
- *
- * @brief ShadersEffect::processBlacklist
- * @param blacklist -> The blacklist to process.
- */
-void ShadersEffect::processBlacklist(QString blacklist) {
-    m_blacklist = blacklist.trimmed().toLower().split(",");
-    m_shadersUI.setBlacklist(blacklist);
-    m_settings->setValue("Blacklist", m_blacklist);
-    m_blacklistEn = !blacklist.isEmpty();
-}
-
-/**
- * Process user specified whitelist.
- * The whitelist should be the names of window names seperated by a comma.
- * The whitelist only allows windows with specified name to be processed.
+ * Process user specified white or black list.
+ * The list should be the names of window names seperated by a comma.
+ * The list only allows windows with specified name to be processed.
  *
  * @brief ShadersEffect::processWhitelist
  * @param whitelist -> The whitelist to process.
  */
-void ShadersEffect::processWhitelist(QString whitelist) {
-    m_whitelist = whitelist.trimmed().toLower().split(",");
-    m_shadersUI.setWhitelist(whitelist);
-    m_settings->setValue("Whitelist", m_whitelist);
-    m_whitelistEn = !whitelist.isEmpty();
+void ShadersEffect::processBWList(QString list, bool isWhitelist) {
+    QStringList llist = list.trimmed().toLower().split(",");
+    if (isWhitelist) {
+        m_whitelist = llist;
+        m_shadersUI.setWhitelist(list);
+        m_whitelistEn = !list.isEmpty();
+    } else {
+        m_blacklist = llist;
+        m_shadersUI.setBlacklist(list);
+        m_blacklistEn = !list.isEmpty();
+    }
+    QString listType = isWhitelist ? "Whitelist" : "Blacklist";
+    if (QString::compare(list, m_settings->value(listType).toString()) != 0) {
+        m_settings->setValue(listType, list);
+    }
 }
 
 /**
@@ -212,8 +207,8 @@ void ShadersEffect::slotUIShaderSaveRequested() {
  */
 void ShadersEffect::slotUISettingsSaveRequested() {
     processShaderPath(m_shadersUI.getShaderPath());
-    processBlacklist(m_shadersUI.getBlacklist());
-    processWhitelist(m_shadersUI.getWhitelist());
+    processBWList(m_shadersUI.getBlacklist(), false);
+    processBWList(m_shadersUI.getWhitelist(), true);
     m_settings->setValue("DefaultEnabled", m_shadersUI.getDefaultEnabled());
     m_settings->setValue("AutoApply", m_shadersUI.getAutoApply());
     m_settings->sync();

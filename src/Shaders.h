@@ -66,8 +66,7 @@ private:
 
     void resetWindows();
     void updateStatusCount();
-    void processBlacklist(QString);
-    void processWhitelist(QString);
+    void processBWList(QString, bool);
     void processShaderPath(QString);
 
 private Q_SLOTS:
