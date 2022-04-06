@@ -144,6 +144,9 @@ void ShadersUI::setWhitelist(QString value) {
 }
 
 void ShadersUI::setShaderPath(QString value) {
+    if (value.endsWith("/")) {
+        value.chop(1);
+    }
     ui->val_ShaderPath->setPlainText(value);
 }
 

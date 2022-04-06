@@ -90,16 +90,19 @@ ShadersEffect::~ShadersEffect() {
  */
 void ShadersEffect::processBWList(QString list, bool isWhitelist) {
     QStringList llist = list.trimmed().toLower().split(",");
+    QString listType;
     if (isWhitelist) {
+        listType = "Whitelist";
         m_whitelist = llist;
         m_shadersUI.setWhitelist(list);
         m_whitelistEn = !list.isEmpty();
     } else {
+        listType = "Blacklist";
         m_blacklist = llist;
         m_shadersUI.setBlacklist(list);
         m_blacklistEn = !list.isEmpty();
     }
-    QString listType = isWhitelist ? "Whitelist" : "Blacklist";
+
     if (QString::compare(list, m_settings->value(listType).toString()) != 0) {
         m_settings->setValue(listType, list);
     }
@@ -224,15 +227,12 @@ void ShadersEffect::slotUILaunch() {
         return;
     }
     QString shaderPath = m_shaderPath;
-    if (shaderPath.endsWith("/")) {
-        shaderPath.chop(1);
-    }
     m_shadersUI.setShaderPath(shaderPath);
     m_shadersUI.setDefaultEnabled(m_settings->value("DefaultEnabled").toBool());
     m_shadersUI.setAutoApply(m_settings->value("AutoApply").toBool());
     m_shadersUI.setShaderCompiled(m_shadersLoaded);
-    m_shadersUI.displayUI();
     updateStatusCount();
+    m_shadersUI.displayUI();
 }
 
 /**
@@ -241,7 +241,6 @@ void ShadersEffect::slotUILaunch() {
  * @brief ShadersEffect::slotPopulateShaderBuffers
  */
 void ShadersEffect::slotPopulateShaderBuffers() {
-
     QDir shadersDir(m_shaderPath);
     shadersDir.setFilter(QDir::Files | QDir::NoDotAndDotDot);
     shadersDir.setSorting(QDir::Name | QDir::IgnoreCase);
@@ -255,12 +254,15 @@ void ShadersEffect::slotPopulateShaderBuffers() {
 
         QFileInfo shaderFileInfo(curFile);
         qint64 lastModified = shaderFileInfo.lastModified().currentSecsSinceEpoch();
-        if (m_shaderArr.contains(curFile) && m_shaderArr.value(curFile).contains(lastModified)) {
-            continue;
+        if (m_shaderArr.contains(curFile)) {
+            if (m_shaderArr.value(curFile).contains(lastModified)) {
+                continue;
+            }
+            m_shaderArr.remove(curFile);
         }
 
         QFile shaderFile(curFile);
-        if (!shaderFile.exists() || !shaderFile.open(QFile::ReadOnly)) {
+        if (!shaderFile.open(QFile::ReadOnly)) {
             resetWindows();
             return;
         }
@@ -299,15 +301,13 @@ void ShadersEffect::slotGenerateShaderFromBuffers() {
             vertexBuf.prepend(settingsBuf);
             continue;
         }
-        bool isFrag = curFile.endsWith(".frag");
-        bool isVert = curFile.endsWith(".vert");
         bool isGlsl = curFile.endsWith(".glsl");
         QHashIterator<qint64, QByteArray> shaderValues(shaders.value());
         shaderValues.next();
-        if (isGlsl || isFrag) {
+        if (isGlsl || curFile.endsWith(".frag")) {
             fragmentBuf.append(shaderValues.value());
         }
-        if (isGlsl || isVert) {
+        if (isGlsl || curFile.endsWith(".vert")) {
             vertexBuf.append(shaderValues.value());
         }
     }

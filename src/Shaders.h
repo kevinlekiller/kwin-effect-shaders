@@ -47,6 +47,8 @@ public:
 
 private:
     GLShader* m_shader;
+    QSettings *m_settings;
+    ShadersUI m_shadersUI;
     bool m_allWindows;
     bool m_shadersLoaded = false;
     bool m_blacklistEn = false;
@@ -58,10 +60,8 @@ private:
     QString m_shaderPath;
     QList<EffectWindow*> m_windows;
     QFileSystemWatcher m_shaderPathWatcher;
-    ShadersUI m_shadersUI;
     QStringList m_blacklist;
     QStringList m_whitelist;
-    QSettings *m_settings;
     QMap<QString, QHash<qint64, QByteArray>> m_shaderArr;
 
     void resetWindows();
