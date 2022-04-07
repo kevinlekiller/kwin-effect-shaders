@@ -26,7 +26,7 @@
 namespace KWin {
 
 /**
- * Applies fragment shaders to the display.
+ * @brief Applies fragment / vertex shaders to the display.
  */
 class ShadersEffect : public Effect {
     Q_OBJECT

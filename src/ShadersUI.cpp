@@ -21,9 +21,8 @@
 #include <QRegularExpression>
 
 /**
- * Construct.
+ * @brief Construct.
  *
- * @brief ShadersUI::ShadersUI
  * @param parent
  */
 ShadersUI::ShadersUI(QWidget *parent) : QDialog(parent), ui(new Ui::ShadersUI) {
@@ -44,18 +43,14 @@ ShadersUI::ShadersUI(QWidget *parent) : QDialog(parent), ui(new Ui::ShadersUI) {
 }
 
 /**
- * Destruct.
- *
- * @brief ShadersUI::~ShadersUI
+ * @brief Destruct.
  */
 ShadersUI::~ShadersUI() {
     delete ui;
 }
 
 /**
- * Hides the UI.
- *
- * @brief ShadersUI::slotHideWindow
+ * @brief Hides the UI.
  */
 void ShadersUI::slotHideWindow() {
     //m_UIPosition = pos();
@@ -64,10 +59,9 @@ void ShadersUI::slotHideWindow() {
 }
 
 /**
- * Set the text on the save buttons.
+ * @brief Set the text on the save buttons.
  *
- * @brief ShadersUI::setSaveButtonText
- * @param modified
+ * @param modified -> If the shader settings were modified or not.
  */
 void ShadersUI::setSaveButtonText(bool modified) {
     QString saveText = modified ? "(*) Save" : "Save";
@@ -77,9 +71,7 @@ void ShadersUI::setSaveButtonText(bool modified) {
 }
 
 /**
- * User requested saving the shader settings.
- *
- * @brief ShadersUI::slotShaderSaveRequested
+ * @brief User requested saving the shader settings.
  */
 void ShadersUI::slotShaderSaveRequested() {
     setUIShaderValues();
@@ -88,9 +80,7 @@ void ShadersUI::slotShaderSaveRequested() {
 }
 
 /**
- * User requested testing shader settings.
- *
- * @brief ShadersUI::slotShaderTestRequested
+ * @brief User requested testing shader settings.
  */
 void ShadersUI::slotShaderTestRequested() {
     setUIShaderValues();
@@ -99,9 +89,7 @@ void ShadersUI::slotShaderTestRequested() {
 }
 
 /**
- * User requested moving shader up in order list.
- *
- * @brief ShadersUI::slotMoveShaderUp
+ * @brief User requested moving shader up in order list.
  */
 void ShadersUI::slotMoveShaderUp() {
     int row = ui->val_ShaderOrder->currentRow();
@@ -111,9 +99,7 @@ void ShadersUI::slotMoveShaderUp() {
 }
 
 /**
- * User requested moving shader down in order list.
- *
- * @brief ShadersUI::slotMoveShaderDown
+ * @brief User requested moving shader down in order list.
  */
 void ShadersUI::slotMoveShaderDown() {
     int row = ui->val_ShaderOrder->currentRow();
@@ -123,19 +109,16 @@ void ShadersUI::slotMoveShaderDown() {
 }
 
 /**
- * User requested saving main settings.
- *
- * @brief ShadersUI::slotSettingsSaveRequested
+ * @brief User requested saving main settings.
  */
 void ShadersUI::slotSettingsSaveRequested() {
     emit signalSettingsSaveRequested();
 }
 
 /**
- * User requested to enable the effect.
+ * @brief User requested to enable the effect.
  *
- * @brief ShadersUI::slotToggleEffect
- * @param state
+ * @param state -> The state of the checkbox.
  */
 void ShadersUI::slotToggleEffect(int state) {
     bool checked = state == Qt::Checked ? true : false;
@@ -144,11 +127,10 @@ void ShadersUI::slotToggleEffect(int state) {
 }
 
 /**
- * User requested to enable or disable a shader.
+ * @brief User requested to enable or disable a shader.
  *
- * @brief ShadersUI::slotToggleShader
- * @param row
- * @param column
+ * @param row    -> The row in the shader table.
+ * @param column -> The column in the shader table.
  */
 void ShadersUI::slotToggleShader(int row, int column) {
     QString settingName = ui->table_Shaders->item(row, 0)->text().trimmed();
@@ -174,10 +156,9 @@ void ShadersUI::slotToggleShader(int row, int column) {
 }
 
 /**
- * User wants to edit a shader setting.
+ * @brief User wants to edit a shader setting.
  *
- * @brief ShadersUI::slotEditShaderSetting
- * @param item
+ * @param item -> The item in the shader table.
  */
 void ShadersUI::slotEditShaderSetting(QTableWidgetItem *item) {
     if (item->column() == 0) {
@@ -210,9 +191,7 @@ void ShadersUI::slotEditShaderSetting(QTableWidgetItem *item) {
 }
 
 /**
- * Displays the UI if it's not hidden.
- *
- * @brief ShadersUI::displayUI
+ * @brief Displays the UI if it's not hidden.
  */
 void ShadersUI::displayUI() {
     if (!isHidden()) {
@@ -227,30 +206,27 @@ void ShadersUI::displayUI() {
 }
 
 /**
- * Sets the blacklist to the UI.
+ * @brief Sets the blacklist to the UI.
  *
- * @brief ShadersUI::setBlacklist
- * @param blacklist
+ * @param blacklist -> The list.
  */
 void ShadersUI::setBlacklist(QString blacklist) {
     ui->val_Blacklist->setPlainText(blacklist);
 }
 
 /**
- * Sets the whitelist to the UI.
+ * @brief Sets the whitelist to the UI.
  *
- * @brief ShadersUI::setWhitelist
- * @param whitelist
+ * @param whitelist -> The list
  */
 void ShadersUI::setWhitelist(QString whitelist) {
     ui->val_Whitelist->setPlainText(whitelist);
 }
 
 /**
- * Sets the shader path on the UI.
+ * @brief Sets the shader path on the UI.
  *
- * @brief ShadersUI::setShaderPath
- * @param shaderpath
+ * @param shaderpath -> The path.
  */
 void ShadersUI::setShaderPath(QString shaderpath) {
     if (shaderpath.endsWith("/")) {
@@ -260,30 +236,27 @@ void ShadersUI::setShaderPath(QString shaderpath) {
 }
 
 /**
- * Sets an error message on the UI.
+ * @brief Sets an error message on the UI.
  *
- * @brief ShadersUI::setError
- * @param error
+ * @param error -> The error message.
  */
 void ShadersUI::setError(QString error) {
     ui->val_Error->setText(error);
 }
 
 /**
- * Sets if the "defaut enabled" option is enabled to the UI.
+ * @brief Sets if the "defaut enabled" option is enabled to the UI.
  *
- * @brief ShadersUI::setDefaultEnabled
- * @param value
+ * @param value -> If it's enabled or not.
  */
 void ShadersUI::setDefaultEnabled(bool value) {
     ui->val_DefaultEnabled->setChecked(value);
 }
 
 /**
- * Sets if the "auto apply" option is enabled to the ui.
+ * @brief Sets if the "auto apply" option is enabled to the ui.
  *
- * @brief ShadersUI::setAutoApply
- * @param value
+ * @param value -> If it's enable or not.
  */
 void ShadersUI::setAutoApply(bool value) {
     m_autoApply = value;
@@ -291,20 +264,18 @@ void ShadersUI::setAutoApply(bool value) {
 }
 
 /**
- * Sets if the shader is compiled to the UI.
+ * @brief Sets if the shader is compiled to the UI.
  *
- * @brief ShadersUI::setShaderCompiled
- * @param compiled
+ * @param compiled -> Is the shader compiled?
  */
 void ShadersUI::setShaderCompiled(bool compiled) {
     ui->val_ShaderCompiled->setText(compiled ? "Yes" : "No");
 }
 
 /**
- * Sets the shader settings text to the advanced UI tab.
+ * @brief Sets the shader settings text to the advanced UI tab.
  *
- * @brief ShadersUI::setShadersText
- * @param text
+ * @param text -> The text with the shader settings.
  */
 void ShadersUI::setShadersText(QByteArray text) {
     if (QString::compare(QVariant(ui->val_ShadersText->toPlainText()).toByteArray(), text) != 0) {
@@ -314,10 +285,9 @@ void ShadersUI::setShadersText(QByteArray text) {
 }
 
 /**
- * Sets the shader settings text to the advanced UI tab.
+ * @brief Sets the shader settings text to the advanced UI tab.
  *
- * @brief ShadersUI::setShadersText
- * @param text
+ * @param text -> The text with the shader settings.
  */
 void ShadersUI::setShadersText(QString text) {
     if (QString::compare(ui->val_ShadersText->toPlainText(), text) != 0) {
@@ -327,19 +297,16 @@ void ShadersUI::setShadersText(QString text) {
 }
 
 /**
- * Sets the checkmark to checked or unchecked based on the current status of the effect.
+ * @brief Sets the checkmark to checked or unchecked based on the current status of the effect.
  *
- * @brief ShadersUI::setEffectEnabled
- * @param status
+ * @param status -> The current status.
  */
 void ShadersUI::setEffectEnabled(bool status) {
     ui->val_EnableEffect->setChecked(status);
 }
 
 /**
- * Reprocesses some UI variables if the shader settings were modified.
- *
- * @brief ShadersUI::setUIShaderValues
+ * @brief Reprocesses some UI variables if the shader settings were modified.
  */
 void ShadersUI::setUIShaderValues() {
     updateShaderOrder();
@@ -347,9 +314,7 @@ void ShadersUI::setUIShaderValues() {
 }
 
 /**
- * If the user moves shaders up or down, update that here.
- *
- * @brief ShadersUI::updateShaderOrder
+ * @brief If the user moves shaders up or down, update that here.
  */
 void ShadersUI::updateShaderOrder() {
     if (!ui->val_ShaderOrder->count()) {
@@ -368,9 +333,7 @@ void ShadersUI::updateShaderOrder() {
 }
 
 /**
- * Process the shader settings, set variables to the UI.
- *
- * @brief ShadersUI::parseSettingsBuffer
+ * @brief Process the shader settings, set variables to the UI.
  */
 void ShadersUI::parseSettingsBuffer() {
     QStringList lines = ui->val_ShadersText->toPlainText().split("\n");
@@ -484,50 +447,45 @@ void ShadersUI::parseSettingsBuffer() {
 }
 
 /**
- * Returns the blacklist from the UI.
+ * @brief Returns the blacklist from the UI.
  *
- * @brief ShadersUI::getBlacklist
- * @return
+ * @return The blacklist.
  */
 QString ShadersUI::getBlacklist() {
     return ui->val_Blacklist->toPlainText();
 }
 
 /**
- * Returns the whitelist from the UI.
+ * @brief Returns the whitelist from the UI.
  *
- * @brief ShadersUI::getWhitelist
- * @return
+ * @return The whitelist.
  */
 QString ShadersUI::getWhitelist() {
     return ui->val_Whitelist->toPlainText();
 }
 
 /**
- * Returns the shader path from the UI.
+ * @brief Returns the shader path from the UI.
  *
- * @brief ShadersUI::getShaderPath
- * @return
+ * @return The path.
  */
 QString ShadersUI::getShaderPath() {
     return ui->val_ShaderPath->toPlainText();
 }
 
 /**
- * Returns the status of the "default enabled" setting from the UI.
+ * @brief Returns the status of the "default enabled" setting from the UI.
  *
- * @brief ShadersUI::getDefaultEnabled
- * @return
+ * @return If the checkbox is checked or not.
  */
 bool ShadersUI::getDefaultEnabled() {
     return ui->val_DefaultEnabled->isChecked();
 }
 
 /**
- * Returns the status of the "auto apply " setting from the UI.
+ * @brief Returns the status of the "auto apply " setting from the UI.
  *
- * @brief ShadersUI::getAutoApply
- * @return
+ * @return If the checkbox is checked or not.
  */
 bool ShadersUI::getAutoApply() {
     bool value = ui->val_AutoApply->isChecked();
@@ -536,10 +494,9 @@ bool ShadersUI::getAutoApply() {
 }
 
 /**
- * Returns the current shader settings from the UI.
+ * @brief Returns the current shader settings from the UI.
  *
- * @brief ShadersUI::getShadersText
- * @return
+ * @return The shader settings text.
  */
 QByteArray ShadersUI::getShadersText() {
     return QVariant(ui->val_ShadersText->toPlainText()).toByteArray();

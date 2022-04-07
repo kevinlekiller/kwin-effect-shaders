@@ -25,6 +25,9 @@ namespace Ui {
 class ShadersUI;
 }
 
+/**
+ * @brief The ShadersUI class
+ */
 class ShadersUI : public QDialog {
     Q_OBJECT
 

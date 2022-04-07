@@ -28,9 +28,7 @@ Q_LOGGING_CATEGORY(KWIN_SHADERS, "kwin_effect_shaders", QtWarningMsg)
 namespace KWin {
 
 /**
- * Construct.
- *
- * @brief ShadersEffect::ShadersEffect
+ * @brief Construct.
  */
 ShadersEffect::ShadersEffect() : m_shader(nullptr), m_effectEnabled(false) {
     // Initialize settings.
@@ -71,9 +69,7 @@ ShadersEffect::ShadersEffect() : m_shader(nullptr), m_effectEnabled(false) {
 }
 
 /**
- * Destruct.
- *
- * @brief ShadersEffect::~ShadersEffect
+ * @brief Destruct.
  */
 ShadersEffect::~ShadersEffect() {
     delete m_settings;
@@ -81,11 +77,11 @@ ShadersEffect::~ShadersEffect() {
 }
 
 /**
- * Process user specified white or black list.
+ * @brief Process user specified white or black list.
  * The list should be the names of window names seperated by a comma.
  * The list only allows windows with specified name to be processed.
  *
- * @brief ShadersEffect::processBWList
+ * @param list        -> The list.
  * @param isWhitelist ->
  *             true : Whitelist
  *            false : Blacklist
@@ -111,12 +107,11 @@ void ShadersEffect::processBWList(QString list, bool isWhitelist) {
 }
 
 /**
- * Process user specified shader path.
+ * @brief Process user specified shader path.
  * The path should contain glsl files ending with glsl, frag and vert extensions.
  * The path must contain the 1_settings.glsl.example file.
  * If the path looks valid, the slotPopulateShaderBuffers() function is executed.
  *
- * @brief ShadersEffect::processShaderPath
  * @param shaderPath -> The shader path to process.
  */
 void ShadersEffect::processShaderPath(QString shaderPath) {
@@ -170,10 +165,8 @@ void ShadersEffect::processShaderPath(QString shaderPath) {
 }
 
 /**
- * If any step of the shader detection / generation process fails,
+ * @brief If any step of the shader detection / generation process fails,
  * some variables are reset to their default.
- *
- * @brief ShadersEffect::resetWindows
  */
 void ShadersEffect::resetWindows() {
     m_effectEnabled = false;
@@ -182,9 +175,7 @@ void ShadersEffect::resetWindows() {
 }
 
 /**
- * The user wants to save their modifications to the shader settings file.
- *
- * @brief ShadersEffect::slotUIShaderSaveRequested
+ * @brief The user wants to save their modifications to the shader settings file.
  */
 void ShadersEffect::slotUIShaderSaveRequested() {
     QFile settingsFile(m_shaderSettingsPath);
@@ -198,9 +189,7 @@ void ShadersEffect::slotUIShaderSaveRequested() {
 }
 
 /**
- * The user wants to save main program settings.
- *
- * @brief ShadersEffect::slotUISettingsSaveRequested
+ * @brief The user wants to save main program settings.
  */
 void ShadersEffect::slotUISettingsSaveRequested() {
     processShaderPath(m_shadersUI.getShaderPath());
@@ -212,9 +201,7 @@ void ShadersEffect::slotUISettingsSaveRequested() {
 }
 
 /**
- * Passes some variables to the UI instance, then opens the UI.
- *
- * @brief ShadersEffect::slotUILaunch
+ * @brief Passes some variables to the UI instance, then opens the UI.
  */
 void ShadersEffect::slotUILaunch() {
     if (m_shadersUI.isVisible()) {
@@ -229,9 +216,7 @@ void ShadersEffect::slotUILaunch() {
 }
 
 /**
- * Reads shader files from m_shaderPath and stores in them in buffer.
- *
- * @brief ShadersEffect::slotPopulateShaderBuffers
+ * @brief Reads shader files from m_shaderPath and stores in them in buffer.
  */
 void ShadersEffect::slotPopulateShaderBuffers() {
     QDir shadersDir(m_shaderPath);
@@ -278,9 +263,7 @@ void ShadersEffect::slotPopulateShaderBuffers() {
 }
 
 /**
- * Try to compile the shader from the buffers.
- *
- * @brief ShadersEffect::slotGenerateShaderFromBuffers
+ * @brief Try to compile the shader from the buffers.
  */
 void ShadersEffect::slotGenerateShaderFromBuffers() {
     if (m_shaderArr.empty()) {
@@ -319,12 +302,9 @@ void ShadersEffect::slotGenerateShaderFromBuffers() {
 }
 
 /**
- * Tells KWin if the plugin should be loaded or not.
+ * @brief Tells KWin if the plugin should be loaded or not.
  *
- * @brief ShadersEffect::supported
- * @return
- *   true -> If the user's device has GLSL 1.40 support.
- *  false -> If not the above.
+ * @return bool -> User has support for GLSL version 140.
  */
 bool ShadersEffect::supported() {
 #ifdef KWIN_HAVE_OPENGLES
@@ -336,9 +316,8 @@ bool ShadersEffect::supported() {
 }
 
 /**
- * Overriden function.
+ * @brief Reimplements: KWin::EffectsHandler::prepPaintWindow
  *
- * @brief ShadersEffect::prePaintWindow
  * @param w
  * @param data
  * @param presentTime
@@ -348,9 +327,8 @@ void ShadersEffect::prePaintWindow(EffectWindow* w, WindowPrePaintData& data, st
 }
 
 /**
- * Overriden function.
+ * @brief Reimplements: KWin::EffectsHandler::paintWindow
  *
- * @brief ShadersEffect::paintWindow
  * @param w
  * @param mask
  * @param region
@@ -374,9 +352,8 @@ void ShadersEffect::paintWindow(EffectWindow* w, int mask, const QRegion region,
 }
 
 /**
- * Overriden function.
+ * @brief Reimplements: KWin::EffectsHandler::postPaintWindow
  *
- * @brief ShadersEffect::postPaintWindow
  * @param w
  */
 void ShadersEffect::postPaintWindow(EffectWindow* w) {
@@ -384,18 +361,14 @@ void ShadersEffect::postPaintWindow(EffectWindow* w) {
 }
 
 /**
- * When the user activates the keyboard shortcut, enable or disable the effect.
- *
- * @brief ShadersEffect::slotShortcutToggleEffect
+ * @brief When the user activates the keyboard shortcut, enable or disable the effect.
  */
 void ShadersEffect::slotShortcutToggleEffect() {
     slotToggleEffect(!m_effectEnabled);
 }
 
 /**
- * User wants to enable or disable the effect.
- *
- * @brief ShadersEffect::slotToggleEffect
+ * @brief User wants to enable or disable the effect.
  * @param status
  */
 void ShadersEffect::slotToggleEffect(bool status) {
@@ -408,11 +381,10 @@ void ShadersEffect::slotToggleEffect(bool status) {
 }
 
 /**
- * Return if the effect is enabled.
+ * @brief Return if the effect is enabled.
  * This determines if the overriden paint functions are executed or not.
  *
- * @brief ShadersEffect::isActive
- * @return
+ * @return bool -> The effect is enabled or not.
  */
 bool ShadersEffect::isActive() const {
     return m_effectEnabled;
