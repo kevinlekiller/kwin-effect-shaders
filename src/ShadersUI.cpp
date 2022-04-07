@@ -144,14 +144,14 @@ void ShadersUI::slotToggleShader(int row, int column) {
         return;
     }
 
-    QString replacement = ui->table_Shaders->item(row, 0)->text().remove(0, 7);
     QString shadersText = ui->val_ShadersText->toPlainText();
     QString regex = "^#define\\s+";
-    regex.append(replacement).append("_ENABLED\\s+\\d+");
+    settingName.remove(0, 7);
+    regex.append(settingName).append("_ENABLED\\s+\\d+");
     QRegularExpression replaceRegex(regex);
     replaceRegex.setPatternOptions(QRegularExpression::MultilineOption);
-    replacement.prepend("#define ").append("_ENABLED ").append(on == 0 ? "0" : "1");
-    shadersText.replace(replaceRegex, replacement);
+    settingName.prepend("#define ").append("_ENABLED ").append(on == 0 ? "0" : "1");
+    shadersText.replace(replaceRegex, settingName);
     setShadersText(shadersText);
 }
 
