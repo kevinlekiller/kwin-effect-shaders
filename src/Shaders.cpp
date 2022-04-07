@@ -1,10 +1,19 @@
-/*
-    KWin - the KDE window manager
-    This file is part of the KDE project.
-    SPDX-FileCopyrightText: 2007 Rivo Laks <rivolaks@hot.ee>
-    SPDX-FileCopyrightText: 2008 Lucas Murray <lmurray@undefinedfire.com>
-    SPDX-License-Identifier: GPL-2.0-or-later
-*/
+/**
+ * Copyright (C) 2022  kevinlekiller
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "Shaders.h"
 #include <QAction>
@@ -122,38 +131,39 @@ void ShadersEffect::processShaderPath(QString shaderPath) {
     if (!shaderPath.endsWith("/")) {
         shaderPath.append("/");
     }
-    if (QString::compare(m_shaderPath, shaderPath) != 0) {
-        if (m_shaderPathWatcher.directories().contains(m_shaderPath)) {
-            m_shaderPathWatcher.removePath(m_shaderPath);
-            disconnect(&m_shaderPathWatcher, &QFileSystemWatcher::directoryChanged, this, &ShadersEffect::slotPopulateShaderBuffers);
-        }
-        m_shaderPath = shaderPath;
-        QDir shadersDir(shaderPath);
-        if (!shadersDir.isReadable()) {
+    if (QString::compare(m_shaderPath, shaderPath) == 0) {
+        return;
+    }
+    if (m_shaderPathWatcher.directories().contains(m_shaderPath)) {
+        m_shaderPathWatcher.removePath(m_shaderPath);
+        disconnect(&m_shaderPathWatcher, &QFileSystemWatcher::directoryChanged, this, &ShadersEffect::slotPopulateShaderBuffers);
+    }
+    m_shaderPath = shaderPath;
+    QDir shadersDir(shaderPath);
+    if (!shadersDir.isReadable()) {
+        resetWindows();
+        return;
+    }
+    m_shadersUI.setShaderPath(m_shaderPath);
+    m_shaderSettingsPath = m_shaderPath;
+    m_shaderSettingsPath.append(m_shaderSettingsName);
+    if (!shadersDir.exists(m_shaderSettingsName)) {
+        QString exampleName = m_shaderSettingsPath;
+        exampleName.append(".example");
+        QFile exampleFile(exampleName);
+        if (!exampleFile.exists() || !exampleFile.copy(m_shaderSettingsPath)) {
+            exampleFile.close();
+            m_shaderSettingsPath = "";
             resetWindows();
             return;
         }
-        m_shadersUI.setShaderPath(m_shaderPath);
-        m_shaderSettingsPath = m_shaderPath;
-        m_shaderSettingsPath.append(m_shaderSettingsName);
-        if (!shadersDir.exists(m_shaderSettingsName)) {
-            QString exampleName = m_shaderSettingsPath;
-            exampleName.append(".example");
-            QFile exampleFile(exampleName);
-            if (!exampleFile.exists() || !exampleFile.copy(m_shaderSettingsPath)) {
-                exampleFile.close();
-                m_shaderSettingsPath = "";
-                resetWindows();
-                return;
-            }
-            exampleFile.close();
-        }
-        m_settings->setValue("ShaderPath", m_shaderPath);
-        if (m_shaderPathWatcher.addPath(m_shaderPath)) {
-            connect(&m_shaderPathWatcher, &QFileSystemWatcher::directoryChanged, this, &ShadersEffect::slotPopulateShaderBuffers);
-        }
-        slotPopulateShaderBuffers();
+        exampleFile.close();
     }
+    m_settings->setValue("ShaderPath", m_shaderPath);
+    if (m_shaderPathWatcher.addPath(m_shaderPath)) {
+        connect(&m_shaderPathWatcher, &QFileSystemWatcher::directoryChanged, this, &ShadersEffect::slotPopulateShaderBuffers);
+    }
+    slotPopulateShaderBuffers();
 }
 
 /**
@@ -206,11 +216,11 @@ void ShadersEffect::slotUILaunch() {
     if (m_shadersUI.isVisible()) {
         return;
     }
-    QString shaderPath = m_shaderPath;
-    m_shadersUI.setShaderPath(shaderPath);
+    m_shadersUI.setShaderPath(m_shaderPath);
     m_shadersUI.setDefaultEnabled(m_settings->value("DefaultEnabled").toBool());
     m_shadersUI.setAutoApply(m_settings->value("AutoApply").toBool());
     m_shadersUI.setShaderCompiled(m_shadersLoaded);
+    m_shadersUI.setEffectEnabled(m_effectEnabled);
     m_shadersUI.displayUI();
 }
 
@@ -281,13 +291,11 @@ void ShadersEffect::slotGenerateShaderFromBuffers() {
             continue;
         }
         bool isGlsl = curFile.endsWith(".glsl");
-        QHashIterator<qint64, QByteArray> shaderValues(shaders.value());
-        shaderValues.next();
         if (isGlsl || curFile.endsWith(".frag")) {
-            fragmentBuf.append(shaderValues.value());
+            fragmentBuf.append(shaders.value().values().first());
         }
         if (isGlsl || curFile.endsWith(".vert")) {
-            vertexBuf.append(shaderValues.value());
+            vertexBuf.append(shaders.value().values().first());
         }
     }
     m_shader = ShaderManager::instance()->generateCustomShader(ShaderTrait::MapTexture, vertexBuf, fragmentBuf);
