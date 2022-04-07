@@ -33,12 +33,12 @@ ShadersEffect::ShadersEffect() : m_shader(nullptr), m_effectEnabled(false) {
     processShaderPath(m_settings->value("ShaderPath").toString());
 
     // Setup keyboard shortcuts.
-    QAction* allWindowShortcut = new QAction(this);
-    allWindowShortcut->setObjectName(QStringLiteral("Shaders"));
-    allWindowShortcut->setText(i18n("Shaders Effect: Toggle On or Off the effect"));
-    KGlobalAccel::self()->setDefaultShortcut(allWindowShortcut, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_Z);
-    KGlobalAccel::self()->setShortcut(allWindowShortcut, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_Z);
-    effects->registerGlobalShortcut(Qt::CTRL + Qt::META + Qt::Key_Z, allWindowShortcut);
+    QAction* toggleEffectShortcut = new QAction(this);
+    toggleEffectShortcut->setObjectName(QStringLiteral("ShadersToggle"));
+    toggleEffectShortcut->setText(i18n("Shaders Effect: Toggle On or Off the effect"));
+    KGlobalAccel::self()->setDefaultShortcut(toggleEffectShortcut, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_Z);
+    KGlobalAccel::self()->setShortcut(toggleEffectShortcut, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_Z);
+    effects->registerGlobalShortcut(Qt::CTRL + Qt::META + Qt::Key_Z, toggleEffectShortcut);
 
     QAction* shadersUIShortcut = new QAction(this);
     shadersUIShortcut->setObjectName(QStringLiteral("ShadersUI"));
@@ -48,7 +48,7 @@ ShadersEffect::ShadersEffect() : m_shader(nullptr), m_effectEnabled(false) {
     effects->registerGlobalShortcut(Qt::CTRL + Qt::META + Qt::Key_X, shadersUIShortcut);
 
     // Setup connections.
-    connect(allWindowShortcut, &QAction::triggered, this, &ShadersEffect::slotShortcutToggleEffect);
+    connect(toggleEffectShortcut, &QAction::triggered, this, &ShadersEffect::slotShortcutToggleEffect);
     connect(shadersUIShortcut, &QAction::triggered, this, &ShadersEffect::slotUILaunch);
     connect(&m_shadersUI, &ShadersUI::signalShaderTestRequested, this, &ShadersEffect::slotGenerateShaderFromBuffers);
     connect(&m_shadersUI, &ShadersUI::signalShaderSaveRequested, this, &ShadersEffect::slotUIShaderSaveRequested);
@@ -57,7 +57,7 @@ ShadersEffect::ShadersEffect() : m_shader(nullptr), m_effectEnabled(false) {
 
     // If the setting "Enable by default" is enabled, trigger the effect on first run.
     if (m_settings->value("DefaultEnabled").toBool()) {
-        allWindowShortcut->trigger();
+        toggleEffectShortcut->trigger();
     }
 }
 
@@ -340,15 +340,12 @@ void ShadersEffect::prePaintWindow(EffectWindow* w, WindowPrePaintData& data, st
  * @param data
  */
 void ShadersEffect::paintWindow(EffectWindow* w, int mask, const QRegion region, WindowPaintData& data) {
-    m_useShader = isActive();
-    if (!m_useShader) {
-        effects->paintWindow(w, mask, region, data);
-        return;
-    } else if (m_blacklistEn || m_whitelistEn) {
-        // Check if window is blacklisted or whitelisted.
+    // Check if window is blacklisted or whitelisted.
+    if (m_blacklistEn || m_whitelistEn) {
         QString windowName = w->windowClass().trimmed().split(" ")[0];
         if ((m_blacklistEn && m_blacklist.contains(windowName, Qt::CaseInsensitive)) || (m_whitelistEn && !m_whitelist.contains(windowName, Qt::CaseInsensitive))) {
-            m_useShader = false;
+            effects->paintWindow(w, mask, region, data);
+            return;
         }
     }
     ShaderBinder bind(m_shader);
@@ -375,9 +372,6 @@ void ShadersEffect::postPaintWindow(EffectWindow* w) {
  * @brief ShadersEffect::slotShortcutToggleEffect
  */
 void ShadersEffect::slotShortcutToggleEffect() {
-    if (!m_shadersLoaded) {
-        return;
-    }
     slotToggleEffect(!m_effectEnabled);
 }
 
@@ -397,15 +391,14 @@ void ShadersEffect::slotToggleEffect(bool status) {
 }
 
 /**
- * Return if any window has the shader applied to it.
+ * Return if the effect is enabled.
+ * This determines if the overriden paint functions are executed or not.
  *
  * @brief ShadersEffect::isActive
  * @return
- *    true -> At least one window has the shader applied to it.
- *   false -> No window has the shader applied to it.
  */
 bool ShadersEffect::isActive() const {
-    return m_shadersLoaded && m_effectEnabled;
+    return m_effectEnabled;
 }
 
 } // namespace

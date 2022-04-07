@@ -1,7 +1,8 @@
 # KWin Shader Effects
-KDE Plasma / KWin desktop effect aimed at adding post processing effects to video games using GLSL shaders.
+KDE Plasma plugin aimed at adding post processing effects to video games using GLSL shaders.
 
-Example of FakeHDR + Adaptive Sharpen in Life is Strange 2:  
+Example of FakeHDR and Adaptive Sharpen in Life is Strange 2:
+
 ![Comparison](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/comparison.png)
 
 ## Index
@@ -15,7 +16,7 @@ Example of FakeHDR + Adaptive Sharpen in Life is Strange 2:
 - [Whitelisting Applications](#whitelisting-applications)
 - [Finding Application Names](#finding-application-names)
 - [Enabling On Login](#enabling-on-login)
-- [Disabling The Plasma Desktop Effect](#disabling-the-plasma-desktop-effect)
+- [Disabling The Plugin](#disabling-the-plugin)
 - [Notes](#notes)
 - [TODO](#todo)
 - [Screenshots](#screenshots)
@@ -34,7 +35,7 @@ Example of FakeHDR + Adaptive Sharpen in Life is Strange 2:
 `sudo zypper in -t pattern devel_basis && sudo zypper in cmake extra-cmake-modules kguiaddons-devel kio-devel kwin5-devel kglobalaccel-devel ki18n-devel`
 
 ## Installing
-After installing, log out and in of the session to load the Plasma desktop effect, or restart KWin.
+After installing, log out and in of the session to load the plugin.
 ### From Source:
     git clone https://github.com/kevinlekiller/kwin-effect-shaders
     cd kwin-effect-shader
@@ -54,7 +55,7 @@ Clone the shader files to somewhere in your home directory:
 
     git clone https://github.com/kevinlekiller/kwin-effect-shaders_shaders ~/.local/share/kwin-effect-shaders_shaders
 
-If you use the default location for the shaders, it will be automatically detected.
+If you use the aforementioned default location for the shaders, it will be automatically detected.
 
 If you use a custom location, set the `Shader Path` by opening the configuration UI (see [Keyboard Shortcuts](#keyboard-shortcuts)).
 
@@ -128,21 +129,21 @@ This will process all applications on login.
 
 You can exclude applications by using the `Blacklist` and/or `Whitelist`.
 
-## Disable The Plasma Desktop Effect
-To completely disable the desktop effect:
+## Disabling The Plugin
+To completely disable the plugin:
 
 `System Settings -> Workspace -> Workspace Behavior -> Desktop Effects -> Appearance -> Shaders`
 
 Remove the checkmark in the box and click `Apply`.
 
-![Disable the effect](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/disable_effect.png)
+![Disable the plugin](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/disable_plugin.png)
 
 ## Notes
 Note that X11 disables compositing in full screen applications, use Wayland if possible.
 
 This project was initially created because some games do not support vkBasalt or ReShade.
 
-This desktop effect is a fork of these projects: [kwin-effect-smart-invert](https://github.com/natask/kwin-effect-smart-invert), [invert](https://github.com/KDE/kwin/tree/master/src/effects/invert), [kwin-effects-yet-another-magic-lamp](https://github.com/zzag/kwin-effects-yet-another-magic-lamp).
+This plugin is a fork of these projects: [kwin-effect-smart-invert](https://github.com/natask/kwin-effect-smart-invert), [invert](https://github.com/KDE/kwin/tree/master/src/effects/invert), [kwin-effects-yet-another-magic-lamp](https://github.com/zzag/kwin-effects-yet-another-magic-lamp).
 
 I'm not an expert on OpenGL or glsl, if you are, PR's are welcome.
 
