@@ -179,36 +179,6 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="0" alignment="Qt::AlignTop">
-        <widget class="QLabel" name="label_EnabledShaders">
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is a list of all the current shaders turned to &amp;quot;On&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="text">
-          <string>Enabled shaders:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0" alignment="Qt::AlignTop">
-        <widget class="QLabel" name="label_EnableEffect">
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the same as the keyboard shortcut that toggles on or off the effect (CTRL+META+X by default).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="text">
-          <string>Enable effect:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1" alignment="Qt::AlignTop">
-        <widget class="QLabel" name="val_ShaderCompiled">
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If the shader has succesfully compiled or not.&lt;/p&gt;&lt;p&gt;The shader can compile succsefully but still have errors in it, which usually causes the output to turn white.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
        <item row="3" column="1" alignment="Qt::AlignTop">
         <widget class="QLabel" name="val_EnabledShaders">
          <property name="toolTip">
@@ -229,6 +199,56 @@
          </property>
          <property name="text">
           <string>Shader compiled:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1" alignment="Qt::AlignTop">
+        <widget class="QLabel" name="val_ShaderCompiled">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If the shader has succesfully compiled or not.&lt;/p&gt;&lt;p&gt;The shader can compile succsefully but still have errors in it, which usually causes the output to turn white.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0" alignment="Qt::AlignTop">
+        <widget class="QLabel" name="label_EnabledShaders">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is a list of all the current shaders turned to &amp;quot;On&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string>Enabled shaders:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" alignment="Qt::AlignTop">
+        <widget class="QLabel" name="label_EnableEffect">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the same as the keyboard shortcut that toggles on or off the effect (CTRL+META+X by default).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string>Enable effect:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0" alignment="Qt::AlignTop">
+        <widget class="QLabel" name="label_Error">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If the program runs into an error, it will be displayed here.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string>Error:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1" alignment="Qt::AlignTop">
+        <widget class="QLabel" name="val_Error">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If the program runs into an error, it will be displayed here.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string/>
          </property>
         </widget>
        </item>

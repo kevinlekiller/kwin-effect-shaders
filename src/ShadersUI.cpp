@@ -260,6 +260,16 @@ void ShadersUI::setShaderPath(QString shaderpath) {
 }
 
 /**
+ * Sets an error message on the UI.
+ *
+ * @brief ShadersUI::setError
+ * @param error
+ */
+void ShadersUI::setError(QString error) {
+    ui->val_Error->setText(error);
+}
+
+/**
  * Sets if the "defaut enabled" option is enabled to the UI.
  *
  * @brief ShadersUI::setDefaultEnabled

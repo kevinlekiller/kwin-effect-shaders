@@ -40,6 +40,7 @@ public:
     void setBlacklist(QString);
     void setWhitelist(QString);
     void setShaderPath(QString);
+    void setError(QString);
     void setDefaultEnabled(bool);
     void setAutoApply(bool);
     void setShaderCompiled(bool);

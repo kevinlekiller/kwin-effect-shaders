@@ -125,6 +125,7 @@ void ShadersEffect::processShaderPath(QString shaderPath) {
         shaderPath = QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kwin-effect-shaders_shaders", QStandardPaths::LocateDirectory);
         if (shaderPath.isEmpty()) {
             resetWindows();
+            m_shadersUI.setError("The shader path could not be found.");
             return;
         }
     }
@@ -142,6 +143,7 @@ void ShadersEffect::processShaderPath(QString shaderPath) {
     QDir shadersDir(shaderPath);
     if (!shadersDir.isReadable()) {
         resetWindows();
+        m_shadersUI.setError("The shader directory is not accessible.");
         return;
     }
     m_shadersUI.setShaderPath(m_shaderPath);
@@ -155,6 +157,7 @@ void ShadersEffect::processShaderPath(QString shaderPath) {
             exampleFile.close();
             m_shaderSettingsPath = "";
             resetWindows();
+            m_shadersUI.setError("The 1_settings.glsl.example in the shader directory file is missing.");
             return;
         }
         exampleFile.close();
@@ -186,6 +189,7 @@ void ShadersEffect::resetWindows() {
 void ShadersEffect::slotUIShaderSaveRequested() {
     QFile settingsFile(m_shaderSettingsPath);
     if (!settingsFile.open(QFile::WriteOnly | QFile::Truncate)) {
+        m_shadersUI.setError("The 1_settings.glsl file in the shader directory could not be opened.");
         return;
     }
     settingsFile.write(m_shadersUI.getShadersText());
@@ -253,6 +257,9 @@ void ShadersEffect::slotPopulateShaderBuffers() {
         QFile shaderFile(curFile);
         if (!shaderFile.open(QFile::ReadOnly)) {
             resetWindows();
+            QString error = "Problem reading shader file inside of the shader directory: ";
+            error.append(curFile);
+            m_shadersUI.setError(error);
             return;
         }
         QByteArray shaderBuf = shaderFile.readAll();
@@ -303,9 +310,11 @@ void ShadersEffect::slotGenerateShaderFromBuffers() {
     // Shader is invalid.
     if (!m_shader->isValid()) {
         resetWindows();
+        m_shadersUI.setError("The shader failed to compile.");
         return;
     }
     m_shadersLoaded = true;
+    m_shadersUI.setError("None.");
     effects->addRepaintFull();
 }
 
