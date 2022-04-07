@@ -4,13 +4,10 @@ KDE Plasma / KWin desktop effect aimed at adding post processing effects to vide
 Example of FakeHDR + Adaptive Sharpen in Life is Strange 2:  
 ![Comparison](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/comparison.png)
 
-Example of Vibrance and Levels in KDE Plasma's System Settings:
-![Shaders](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shaders.png)
 ## Index
 - [Requirements](#requirements)
 - [Installing](#installing)
 - [Uninstalling](#uninstalling)
-- [Enabling The KWin Desktop Effect](#enabling-the-kwin-desktop-effect)
 - [Acquiring The Shader Files](#acquiring-the-shader-files)
 - [Keyboard Shortcuts](#keyboard-shortcuts)
 - [Modifying The Shader Settings](#modifying-the-shader-settings)
@@ -18,6 +15,7 @@ Example of Vibrance and Levels in KDE Plasma's System Settings:
 - [Whitelisting Applications](#whitelisting-applications)
 - [Finding Application Names](#finding-application-names)
 - [Enabling On Login](#enabling-on-login)
+- [Disabling The Plasma Desktop Effect](#disabling-the-plasma-desktop-effect)
 - [Notes](#notes)
 - [TODO](#todo)
 - [Screenshots](#screenshots)
@@ -36,7 +34,7 @@ Example of Vibrance and Levels in KDE Plasma's System Settings:
 `sudo zypper in -t pattern devel_basis && sudo zypper in cmake extra-cmake-modules kguiaddons-devel kio-devel kwin5-devel kglobalaccel-devel ki18n-devel`
 
 ## Installing
-After installing, log out and in of the session to load the effect, or restart kwin.
+After installing, log out and in of the session to load the Plasma desktop effect, or restart KWin.
 ### From Source:
     git clone https://github.com/kevinlekiller/kwin-effect-shaders
     cd kwin-effect-shader
@@ -49,15 +47,6 @@ https://aur.archlinux.org/packages/kwin-effect-shaders-git
 ## Uninstalling
     ./install.sh UNINSTALL
 
-## Enabling The KWin Desktop Effect
-`System Settings -> Workspace -> Workspace Behavior -> Desktop Effects -> Appearance -> Shaders`
-
-Put a checkmark in the box and click `Apply`.
-
-By default all shaders are disabled, see [Modifying The Shader Settings](#modifying-the-shader-settings).
-
-![Desktop Effects](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/settings1.png)
-
 ## Acquiring The Shader Files
 If you have ran the `install.sh` script, everything within this section is done automatically.
 
@@ -69,22 +58,20 @@ If you use the default location for the shaders, it will be automatically detect
 
 If you use a custom location, set the `Shader Path` by opening the configuration UI (see [Keyboard Shortcuts](#keyboard-shortcuts)).
 
-![Set shaders path](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shader_path.png)
+![Set a custom shader path](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shader_path.png)
 
 ## Keyboard Shortcuts
 NOTE: The keyboard shortcuts might be disabled by default.
 
-"Shaders Effect: Opens the configuration UI" ; This is set to `CTRL + META + A` by default.
+"Shaders Effect: Opens the configuration UI" ; This is set to `CTRL + META + X` by default.
 
-"Shaders Effect: Toggle Shaders Effect On Current Window" ; This is set to `CTRL + META + Z` by default.
-
-"Shaders Effect: Toggle Shaders Effect On All Windows"    ; This is set to `CTRL + META + X` by default.
+"Shaders Effect: Toggle On or Off the effect" ; This is set to `CTRL + META + Z` by default.
 
 To change these:
 
 `System Settings -> Workspace -> Shortcuts -> Shortcuts -> System Services -> Kwin`
 
-![Keyboard Shortcuts](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/keyboard_shortcuts.png)
+![Modifying keyboard shortcuts](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/keyboard_shortcuts.png)
 
 ## Modifying The Shader Settings
 Open the configuration UI (see [Keyboard Shortcuts](#keyboard-shortcuts)), go to the `Shaders` tab.
@@ -132,7 +119,7 @@ For example, with kate, the "Whole window class" is `kate org.kde.kate`, so the 
 
 Another example, lutris, the whole window class is `lutris` so the name would be lutris.
 
-![find_application_name](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/find_application_name.png)
+![Find the application name](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/find_application_name.png)
 
 ## Enabling On Login
 In the configuration UI, in the `Settings` tab, you can set the `Enabled By Default` option.
@@ -140,6 +127,15 @@ In the configuration UI, in the `Settings` tab, you can set the `Enabled By Defa
 This will process all applications on login.
 
 You can exclude applications by using the `Blacklist` and/or `Whitelist`.
+
+## Disable The Plasma Desktop Effect
+To completely disable the desktop effect:
+
+`System Settings -> Workspace -> Workspace Behavior -> Desktop Effects -> Appearance -> Shaders`
+
+Remove the checkmark in the box and click `Apply`.
+
+![Disable the effect](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/disable_effect.png)
 
 ## Notes
 Note that X11 disables compositing in full screen applications, use Wayland if possible.

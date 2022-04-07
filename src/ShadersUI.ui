@@ -169,8 +169,18 @@
        <string>Status</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout_3">
-       <item row="4" column="0" alignment="Qt::AlignTop">
-        <widget class="QLabel" name="label_enabledShaders">
+       <item row="0" column="1" alignment="Qt::AlignTop">
+        <widget class="QCheckBox" name="val_EnableEffect">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the same as the keyboard shortcut that toggles on or off the effect (CTRL+META+X by default).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0" alignment="Qt::AlignTop">
+        <widget class="QLabel" name="label_EnabledShaders">
          <property name="toolTip">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is a list of all the current shaders turned to &amp;quot;On&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
@@ -179,17 +189,17 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="0" alignment="Qt::AlignTop">
-        <widget class="QLabel" name="label_ShaderCompiled">
+       <item row="0" column="0" alignment="Qt::AlignTop">
+        <widget class="QLabel" name="label_EnableEffect">
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If the shader has succesfully compiled or not.&lt;/p&gt;&lt;p&gt;The shader can compile succsefully but still have errors in it, which usually causes the output to turn white.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the same as the keyboard shortcut that toggles on or off the effect (CTRL+META+X by default).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
-          <string>Shader compiled:</string>
+          <string>Enable effect:</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="1" alignment="Qt::AlignTop">
+       <item row="2" column="1" alignment="Qt::AlignTop">
         <widget class="QLabel" name="val_ShaderCompiled">
          <property name="toolTip">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If the shader has succesfully compiled or not.&lt;/p&gt;&lt;p&gt;The shader can compile succsefully but still have errors in it, which usually causes the output to turn white.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -199,18 +209,8 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="0" alignment="Qt::AlignTop">
-        <widget class="QLabel" name="label_Status">
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This can be inaccurate if &amp;quot;Globally enabled&amp;quot; is enabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="text">
-          <string>Windows being tracked:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1" alignment="Qt::AlignTop">
-        <widget class="QLabel" name="val_enabledShaders">
+       <item row="3" column="1" alignment="Qt::AlignTop">
+        <widget class="QLabel" name="val_EnabledShaders">
          <property name="toolTip">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is a list of all the current shaders turned to &amp;quot;On&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
@@ -222,33 +222,13 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="0" alignment="Qt::AlignTop">
-        <widget class="QLabel" name="label_allWiindows">
+       <item row="2" column="0" alignment="Qt::AlignTop">
+        <widget class="QLabel" name="label_ShaderCompiled">
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the same as the keyboard shortcut that enables the effect on all windows (CTRL+META+X by default).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If the shader has succesfully compiled or not.&lt;/p&gt;&lt;p&gt;The shader can compile succsefully but still have errors in it, which usually causes the output to turn white.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
-          <string>Globally enabled:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1" alignment="Qt::AlignTop">
-        <widget class="QLabel" name="val_Status">
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This can be inaccurate if &amp;quot;Globally enabled&amp;quot; is enabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" alignment="Qt::AlignTop">
-        <widget class="QCheckBox" name="val_allWindows">
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the same as the keyboard shortcut that enables the effect on all windows (CTRL+META+X by default).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="text">
-          <string/>
+          <string>Shader compiled:</string>
          </property>
         </widget>
        </item>

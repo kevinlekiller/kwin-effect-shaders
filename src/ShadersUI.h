@@ -25,11 +25,10 @@ public:
     void setShaderPath(QString);
     void setDefaultEnabled(bool);
     void setAutoApply(bool);
-    void setNumWindowsStatus(int);
     void setShaderCompiled(bool);
     void setShadersText(QByteArray);
     void setShadersText(QString);
-    void setAllWindows(bool);
+    void setEffectEnabled(bool);
     void displayUI();
 
     bool m_autoApply = false;
@@ -38,7 +37,7 @@ Q_SIGNALS:
     void signalShaderTestRequested();
     void signalShaderSaveRequested();
     void signalSettingsSaveRequested();
-    void signalAllWindowsToggled(bool);
+    void signalEffectToggled(bool);
     void signalWindowHidden();
 
 private:
@@ -58,7 +57,7 @@ private Q_SLOTS:
     void slotMoveShaderUp();
     void slotMoveShaderDown();
     void slotSettingsSaveRequested();
-    void slotAllWindowsToggled(int);
+    void slotToggleEffect(int);
     void slotToggleShader(int, int);
     void slotEditShaderSetting(QTableWidgetItem  *);
 };

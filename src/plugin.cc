@@ -18,6 +18,6 @@
 // Own
 #include "Shaders.h"
 
-KWIN_EFFECT_FACTORY_SUPPORTED_ENABLED(KWin::ShadersEffect, "metadata.json", return KWin::ShadersEffect::supported();, return false;)
+KWIN_EFFECT_FACTORY_SUPPORTED_ENABLED(KWin::ShadersEffect, "metadata.json", return KWin::ShadersEffect::supported();, return true;)
 
 #include "plugin.moc"

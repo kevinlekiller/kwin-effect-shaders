@@ -49,7 +49,7 @@ private:
     GLShader* m_shader;
     QSettings *m_settings;
     ShadersUI m_shadersUI;
-    bool m_allWindows;
+    bool m_effectEnabled;
     bool m_shadersLoaded = false;
     bool m_blacklistEn = false;
     bool m_whitelistEn = false;
@@ -58,14 +58,12 @@ private:
     const QString m_shaderSettingsName = "1_settings.glsl";
     QString m_shaderSettingsPath;
     QString m_shaderPath;
-    QList<EffectWindow*> m_windows;
     QFileSystemWatcher m_shaderPathWatcher;
     QStringList m_blacklist;
     QStringList m_whitelist;
     QMap<QString, QHash<qint64, QByteArray>> m_shaderArr;
 
     void resetWindows();
-    void updateStatusCount();
     void processBWList(QString, bool);
     void processShaderPath(QString);
 
@@ -73,12 +71,10 @@ private Q_SLOTS:
     void slotUILaunch();
     void slotUIShaderSaveRequested();
     void slotUISettingsSaveRequested();
-    void slotUIToggledAllWindows(bool);
+    void slotToggleEffect(bool);
     void slotPopulateShaderBuffers();
     void slotGenerateShaderFromBuffers();
-    void slotToggleScreenShaders();
-    void slotToggleWindowShaders();
-    void slotWindowClosed(KWin::EffectWindow *w);
+    void slotShortcutToggleEffect();
 };
 
 inline int ShadersEffect::requestedEffectChainPosition() const {

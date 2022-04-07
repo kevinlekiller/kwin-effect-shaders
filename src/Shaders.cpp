@@ -23,7 +23,7 @@ namespace KWin {
  *
  * @brief ShadersEffect::ShadersEffect
  */
-ShadersEffect::ShadersEffect() : m_shader(nullptr), m_allWindows(false) {
+ShadersEffect::ShadersEffect() : m_shader(nullptr), m_effectEnabled(false) {
     // Initialize settings.
     m_settings = new QSettings("kevinlekiller", "kwin_effect_shaders");
 
@@ -35,34 +35,25 @@ ShadersEffect::ShadersEffect() : m_shader(nullptr), m_allWindows(false) {
     // Setup keyboard shortcuts.
     QAction* allWindowShortcut = new QAction(this);
     allWindowShortcut->setObjectName(QStringLiteral("Shaders"));
-    allWindowShortcut->setText(i18n("Shaders Effect: Toggle Shaders Effect On All Windows"));
-    KGlobalAccel::self()->setDefaultShortcut(allWindowShortcut, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_X);
-    KGlobalAccel::self()->setShortcut(allWindowShortcut, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_X);
-    effects->registerGlobalShortcut(Qt::CTRL + Qt::META + Qt::Key_X, allWindowShortcut);
-
-    QAction* curWindowShortcut = new QAction(this);
-    curWindowShortcut->setObjectName(QStringLiteral("ShadersWindow"));
-    curWindowShortcut->setText(i18n("Shaders Effect: Toggle Shaders Effect On Current Window"));
-    KGlobalAccel::self()->setDefaultShortcut(curWindowShortcut, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_Z);
-    KGlobalAccel::self()->setShortcut(curWindowShortcut, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_Z);
-    effects->registerGlobalShortcut(Qt::CTRL + Qt::META + Qt::Key_Z, curWindowShortcut);
+    allWindowShortcut->setText(i18n("Shaders Effect: Toggle On or Off the effect"));
+    KGlobalAccel::self()->setDefaultShortcut(allWindowShortcut, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_Z);
+    KGlobalAccel::self()->setShortcut(allWindowShortcut, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_Z);
+    effects->registerGlobalShortcut(Qt::CTRL + Qt::META + Qt::Key_Z, allWindowShortcut);
 
     QAction* shadersUIShortcut = new QAction(this);
     shadersUIShortcut->setObjectName(QStringLiteral("ShadersUI"));
     shadersUIShortcut->setText(i18n("Shaders Effect: Opens the configuration UI"));
-    KGlobalAccel::self()->setDefaultShortcut(shadersUIShortcut, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_A);
-    KGlobalAccel::self()->setShortcut(shadersUIShortcut, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_A);
-    effects->registerGlobalShortcut(Qt::CTRL + Qt::META + Qt::Key_A, shadersUIShortcut);
+    KGlobalAccel::self()->setDefaultShortcut(shadersUIShortcut, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_X);
+    KGlobalAccel::self()->setShortcut(shadersUIShortcut, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_X);
+    effects->registerGlobalShortcut(Qt::CTRL + Qt::META + Qt::Key_X, shadersUIShortcut);
 
     // Setup connections.
-    connect(allWindowShortcut, &QAction::triggered, this, &ShadersEffect::slotToggleScreenShaders);
-    connect(curWindowShortcut, &QAction::triggered, this, &ShadersEffect::slotToggleWindowShaders);
+    connect(allWindowShortcut, &QAction::triggered, this, &ShadersEffect::slotShortcutToggleEffect);
     connect(shadersUIShortcut, &QAction::triggered, this, &ShadersEffect::slotUILaunch);
-    connect(effects, &EffectsHandler::windowClosed, this, &ShadersEffect::slotWindowClosed);
     connect(&m_shadersUI, &ShadersUI::signalShaderTestRequested, this, &ShadersEffect::slotGenerateShaderFromBuffers);
     connect(&m_shadersUI, &ShadersUI::signalShaderSaveRequested, this, &ShadersEffect::slotUIShaderSaveRequested);
     connect(&m_shadersUI, &ShadersUI::signalSettingsSaveRequested, this, &ShadersEffect::slotUISettingsSaveRequested);
-    connect(&m_shadersUI, &ShadersUI::signalAllWindowsToggled, this, &ShadersEffect::slotUIToggledAllWindows);
+    connect(&m_shadersUI, &ShadersUI::signalEffectToggled, this, &ShadersEffect::slotToggleEffect);
 
     // If the setting "Enable by default" is enabled, trigger the effect on first run.
     if (m_settings->value("DefaultEnabled").toBool()) {
@@ -85,8 +76,10 @@ ShadersEffect::~ShadersEffect() {
  * The list should be the names of window names seperated by a comma.
  * The list only allows windows with specified name to be processed.
  *
- * @brief ShadersEffect::processWhitelist
- * @param whitelist -> The whitelist to process.
+ * @brief ShadersEffect::processBWList
+ * @param isWhitelist ->
+ *             true : Whitelist
+ *            false : Blacklist
  */
 void ShadersEffect::processBWList(QString list, bool isWhitelist) {
     QStringList llist = list.trimmed().toLower().split(",");
@@ -170,22 +163,9 @@ void ShadersEffect::processShaderPath(QString shaderPath) {
  * @brief ShadersEffect::resetWindows
  */
 void ShadersEffect::resetWindows() {
-    m_windows.clear();
-    m_allWindows = false;
+    m_effectEnabled = false;
     m_shadersLoaded = false;
     effects->addRepaintFull();
-}
-
-/**
- * Tells the UI the number of windows which are being processed.
- *
- * @brief ShadersEffect::updateStatusCount
- */
-void ShadersEffect::updateStatusCount() {
-    if (!m_shadersUI.isVisible()) {
-        return;
-    }
-    m_shadersUI.setNumWindowsStatus(m_windows.count() + (int) m_allWindows);
 }
 
 /**
@@ -231,7 +211,6 @@ void ShadersEffect::slotUILaunch() {
     m_shadersUI.setDefaultEnabled(m_settings->value("DefaultEnabled").toBool());
     m_shadersUI.setAutoApply(m_settings->value("AutoApply").toBool());
     m_shadersUI.setShaderCompiled(m_shadersLoaded);
-    updateStatusCount();
     m_shadersUI.displayUI();
 }
 
@@ -361,19 +340,16 @@ void ShadersEffect::prePaintWindow(EffectWindow* w, WindowPrePaintData& data, st
  * @param data
  */
 void ShadersEffect::paintWindow(EffectWindow* w, int mask, const QRegion region, WindowPaintData& data) {
-    m_useShader = m_shadersLoaded && m_allWindows != m_windows.contains(w);
-    // Check if window is blacklisted or whitelisted.
-    if (m_useShader && (m_blacklistEn || m_whitelistEn)) {
-        QString windowName = w->windowClass().trimmed().split(" ")[0];
-        if ((m_blacklistEn && m_blacklist.contains(windowName, Qt::CaseInsensitive)) ||
-            (m_whitelistEn && !m_whitelist.contains(windowName, Qt::CaseInsensitive))
-        ) {
-            m_useShader = false;
-        }
-    }
+    m_useShader = isActive();
     if (!m_useShader) {
         effects->paintWindow(w, mask, region, data);
         return;
+    } else if (m_blacklistEn || m_whitelistEn) {
+        // Check if window is blacklisted or whitelisted.
+        QString windowName = w->windowClass().trimmed().split(" ")[0];
+        if ((m_blacklistEn && m_blacklist.contains(windowName, Qt::CaseInsensitive)) || (m_whitelistEn && !m_whitelist.contains(windowName, Qt::CaseInsensitive))) {
+            m_useShader = false;
+        }
     }
     ShaderBinder bind(m_shader);
     m_shader->setUniform("g_Random", (float) drand48());
@@ -394,64 +370,30 @@ void ShadersEffect::postPaintWindow(EffectWindow* w) {
 }
 
 /**
- * When a window closes, stop tracking it.
+ * When the user activates the keyboard shortcut, enable or disable the effect.
  *
- * @brief ShadersEffect::slotWindowClosed
- * @param w
+ * @brief ShadersEffect::slotShortcutToggleEffect
  */
-void ShadersEffect::slotWindowClosed(EffectWindow* w) {
-    m_windows.removeOne(w);
-    updateStatusCount();
-}
-
-/**
- * When the user activates the keyboard shortcut, we mark all
- * windows as wanting or not wanting the shader applied to it.
- *
- * @brief ShadersEffect::slotToggleScreenShaders
- */
-void ShadersEffect::slotToggleScreenShaders() {
+void ShadersEffect::slotShortcutToggleEffect() {
     if (!m_shadersLoaded) {
         return;
     }
-    m_allWindows = !m_allWindows;
-    m_shadersUI.setAllWindows(m_allWindows);
-    updateStatusCount();
-    effects->addRepaintFull();
+    slotToggleEffect(!m_effectEnabled);
 }
 
 /**
- * User toggled shader to all windows from UI.
+ * User wants to enable or disable the effect.
  *
- * @brief ShadersEffect::slotUIToggledAllWindows
+ * @brief ShadersEffect::slotToggleEffect
  * @param status
  */
-void ShadersEffect::slotUIToggledAllWindows(bool status) {
+void ShadersEffect::slotToggleEffect(bool status) {
     if (!m_shadersLoaded) {
         return;
     }
-    m_allWindows = status;
-    updateStatusCount();
+    m_effectEnabled = status;
+    m_shadersUI.setEffectEnabled(m_effectEnabled);
     effects->addRepaintFull();
-}
-
-/**
- * When the user activates the keyboard shortcut, we mark the
- * window as wanting or not wanting the shader applied to it.
- *
- * @brief ShadersEffect::slotToggleWindowShaders
- */
-void ShadersEffect::slotToggleWindowShaders() {
-    if (!m_shadersLoaded || !effects->activeWindow()) {
-        return;
-    }
-    if (m_windows.contains(effects->activeWindow())) {
-        m_windows.removeOne(effects->activeWindow());
-    } else {
-        m_windows.append(effects->activeWindow());
-    }
-    updateStatusCount();
-    effects->activeWindow()->addRepaintFull();
 }
 
 /**
@@ -463,7 +405,7 @@ void ShadersEffect::slotToggleWindowShaders() {
  *   false -> No window has the shader applied to it.
  */
 bool ShadersEffect::isActive() const {
-    return m_shadersLoaded && (m_allWindows || !m_windows.isEmpty());
+    return m_shadersLoaded && m_effectEnabled;
 }
 
 } // namespace
