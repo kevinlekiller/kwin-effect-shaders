@@ -205,6 +205,7 @@ void ShadersEffect::slotUISettingsSaveRequested() {
  */
 void ShadersEffect::slotUILaunch() {
     if (m_shadersUI.isVisible()) {
+        m_shadersUI.hideUI();
         return;
     }
     m_shadersUI.setShaderPath(m_shaderPath);

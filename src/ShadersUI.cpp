@@ -50,15 +50,6 @@ ShadersUI::~ShadersUI() {
 }
 
 /**
- * @brief Hides the UI.
- */
-void ShadersUI::slotHideWindow() {
-    //m_UIPosition = pos();
-    hide();
-    emit signalWindowHidden();
-}
-
-/**
  * @brief Set the text on the save buttons.
  *
  * @param modified -> If the shader settings were modified or not.
@@ -148,8 +139,7 @@ void ShadersUI::slotToggleShader(int row, int column) {
     QString regex = "^#define\\s+";
     settingName.remove(0, 7);
     regex.append(settingName).append("_ENABLED\\s+\\d+");
-    QRegularExpression replaceRegex(regex);
-    replaceRegex.setPatternOptions(QRegularExpression::MultilineOption);
+    QRegularExpression replaceRegex(regex, QRegularExpression::MultilineOption);
     settingName.prepend("#define ").append("_ENABLED ").append(on == 0 ? "0" : "1");
     shadersText.replace(replaceRegex, settingName);
     setShadersText(shadersText);
@@ -183,8 +173,7 @@ void ShadersUI::slotEditShaderSetting(QTableWidgetItem *item) {
         replacement.append("#define ").append(settingName).append(" ").append(settingValue);
         regex.append("^#define\\s+").append(settingName).append("\\s+[\\d.]+");
     }
-    QRegularExpression replaceRegex(regex);
-    replaceRegex.setPatternOptions(QRegularExpression::MultilineOption);
+    QRegularExpression replaceRegex(regex, QRegularExpression::MultilineOption);
     QString shadersText = ui->val_ShadersText->toPlainText();
     shadersText.replace(replaceRegex, replacement);
     setShadersText(shadersText);
@@ -203,6 +192,20 @@ void ShadersUI::displayUI() {
         move(m_UIPosition);
     }*/
     show();
+}
+
+/**
+ * @brief Hides the UI.
+ */
+void ShadersUI::hideUI() {
+    hide();
+}
+
+/**
+ * @brief Hides the UI when the user clicks the OK button.
+ */
+void ShadersUI::slotHideWindow() {
+    hideUI();
 }
 
 /**
@@ -326,8 +329,7 @@ void ShadersUI::updateShaderOrder() {
            order.append("    SHADER_").append(ui->val_ShaderOrder->item(i)->text()).append(",\n");
     }
     order.append("\nSHADERS); //");
-    QRegularExpression orderRegex("^const\\s+int\\s+SHADER_ORDER.+?^SHADERS\\);\\s+//");
-    orderRegex.setPatternOptions(QRegularExpression::DotMatchesEverythingOption | QRegularExpression::MultilineOption);
+    QRegularExpression orderRegex("^const\\s+int\\s+SHADER_ORDER.+?^SHADERS\\);\\s+//", QRegularExpression::DotMatchesEverythingOption | QRegularExpression::MultilineOption);
     shadersText = shadersText.replace(orderRegex, order);
     setShadersText(shadersText);
 }

@@ -51,6 +51,7 @@ public:
     void setShadersText(QString);
     void setEffectEnabled(bool);
     void displayUI();
+    void hideUI();
 
     bool m_autoApply = false;
 
@@ -59,7 +60,6 @@ Q_SIGNALS:
     void signalShaderSaveRequested();
     void signalSettingsSaveRequested();
     void signalEffectToggled(bool);
-    void signalWindowHidden();
 
 private:
     void parseSettingsBuffer();
@@ -69,7 +69,6 @@ private:
     void setSaveButtonText(bool);
 
     Ui::ShadersUI* ui;
-    //QPoint m_UIPosition;
 
 private Q_SLOTS:
     void slotHideWindow();
