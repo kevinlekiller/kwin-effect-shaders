@@ -26,13 +26,13 @@ Example of FakeHDR and Adaptive Sharpen in Life is Strange 2:
 `sudo pacman -Syu extra-cmake-modules kwin kf5`
 - Debian Based (untested):
 
-`sudo apt install git cmake g++ gettext extra-cmake-modules qttools5-dev libkf5globalaccel-dev libkf5kio-dev kinit-dev kwin-de`
+`sudo apt install git g++ cmake extra-cmake-modules libkf5kio-dev libkf5globalaccel-dev libkf5i18n-dev kwin-dev gettext qttools5-dev kinit-dev kwin-de`
 - Fedora Based (untested):
 
-`sudo dnf install git cmake gcc-c++ extra-cmake-modules qt5-qttools-devel qt5-qttools-static kf5-kguiaddons-devel kf5-kglobalaccel-devel kf5-kio-devel kf5-ki18n-devel kwin-devel qt5-qtbase-devel`
+`sudo dnf install git gcc-c++ cmake extra-cmake-modules kf5-kio-devel kf5-kglobalaccel-devel kf5-ki18n-devel kwin-devel qt5-qttools-devel qt5-qttools-static qt5-qtbase-devel`
 - OpenSUSE Based (tested):
 
-`sudo zypper in -t pattern devel_basis && sudo zypper in cmake extra-cmake-modules kguiaddons-devel kio-devel kwin5-devel kglobalaccel-devel ki18n-devel`
+`sudo zypper in git gcc-c++ cmake extra-cmake-modules kio-devel kglobalaccel-devel ki18n-devel kwin5-devel`
 
 ## Installing
 After installing, log out and in of the session to load the plugin.

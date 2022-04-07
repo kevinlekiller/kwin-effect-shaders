@@ -1,23 +1,10 @@
-#######################################
-# Effect
+set(QT_MIN_VERSION "5.4.0")
+set(KF5_MIN_VERSION "5.9.0")
 
 include(KDEInstallDirs)
 include(KDECMakeSettings)
 
-# required frameworks by Core
-find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS
-    GuiAddons
-    KIO
-)
-
-find_package(KWinDBusInterface CONFIG REQUIRED)
-
-find_path(EFFECTS_H kwineffects.h PATH_SUFFIXES kf5)
-
-find_package (KF5 REQUIRED COMPONENTS
-    GlobalAccel
-    I18n
-)
+find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS KIO GlobalAccel I18n)
 
 set(effect_SRCS
     plugin.cc
@@ -30,10 +17,6 @@ qt5_wrap_ui(effect_SRCS ShadersUI.ui)
 add_library(${SHADERS} SHARED ${effect_SRCS})
 
 target_link_libraries(${SHADERS}
-    PUBLIC
-        ${KWIN_EFFECTS}
-        ${KWIN_GLUTILS}
-
     PRIVATE
         KF5::GlobalAccel
         KF5::I18n

@@ -4,11 +4,6 @@ set(SHADERS kwin_effect_shaders)
 
 project(${SHADERS})
 
-set(QT_MIN_VERSION "5.4.0")
-set(KF5_MIN_VERSION "5.9.0")
-
-cmake_policy(SET CMP0054 NEW)
-
 find_package(ECM REQUIRED NO_MODULE)
 
 add_definitions (-Wall -Werror)
