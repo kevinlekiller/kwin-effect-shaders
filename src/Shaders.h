@@ -58,7 +58,7 @@ private:
     QStringList m_whitelist;
     QMap<QString, QHash<qint64, QByteArray>> m_shaderArr;
 
-    void resetWindows();
+    void resetEffect();
     void processBWList(QString, bool);
     void processShaderPath(QString);
 

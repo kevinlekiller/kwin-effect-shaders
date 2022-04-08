@@ -285,7 +285,7 @@
           <bool>true</bool>
          </property>
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You can left click on the shader name or the status (On / Off) to enable / disable a shader.&lt;/p&gt;&lt;p&gt;You can left click a value and change it, when done you can click apply.&lt;/p&gt;&lt;p&gt;To save the changes to the settings file, click save.&lt;/p&gt;&lt;p&gt;If you have made changes but not saved anything, the Save button will display a star.&lt;/p&gt;&lt;p&gt;You can find the description of values in the advanced tab.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;You can left click on the shader name or the status (On / Off) to enable / disable a shader.&lt;/p&gt;&lt;p&gt;You can left click a value and change it, when done you can click apply.&lt;/p&gt;&lt;p&gt;To save the changes to the settings file, click save.&lt;/p&gt;&lt;p&gt;If you have made changes but not saved anything, the Save button will display a star.&lt;/p&gt;&lt;p&gt;You can find the description of value by leaving your mouse over it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="editTriggers">
           <set>QAbstractItemView::AllEditTriggers</set>

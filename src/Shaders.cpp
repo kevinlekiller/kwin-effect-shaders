@@ -79,7 +79,6 @@ ShadersEffect::~ShadersEffect() {
 /**
  * @brief Process user specified white or black list.
  * The list should be the names of window names seperated by a comma.
- * The list only allows windows with specified name to be processed.
  *
  * @param list        -> The list.
  * @param isWhitelist ->
@@ -100,7 +99,6 @@ void ShadersEffect::processBWList(QString list, bool isWhitelist) {
         m_shadersUI.setBlacklist(list);
         m_blacklistEn = !list.isEmpty();
     }
-
     if (QString::compare(list, m_settings->value(listType).toString()) != 0) {
         m_settings->setValue(listType, list);
     }
@@ -119,7 +117,7 @@ void ShadersEffect::processShaderPath(QString shaderPath) {
     if (shaderPath.isEmpty()) {
         shaderPath = QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kwin-effect-shaders_shaders", QStandardPaths::LocateDirectory);
         if (shaderPath.isEmpty()) {
-            resetWindows();
+            resetEffect();
             m_shadersUI.setError("The shader path could not be found.");
             return;
         }
@@ -137,7 +135,7 @@ void ShadersEffect::processShaderPath(QString shaderPath) {
     m_shaderPath = shaderPath;
     QDir shadersDir(shaderPath);
     if (!shadersDir.isReadable()) {
-        resetWindows();
+        resetEffect();
         m_shadersUI.setError("The shader directory is not accessible.");
         return;
     }
@@ -150,8 +148,7 @@ void ShadersEffect::processShaderPath(QString shaderPath) {
         QFile exampleFile(exampleName);
         if (!exampleFile.exists() || !exampleFile.copy(m_shaderSettingsPath)) {
             exampleFile.close();
-            m_shaderSettingsPath = "";
-            resetWindows();
+            resetEffect();
             m_shadersUI.setError("The 1_settings.glsl.example in the shader directory file is missing.");
             return;
         }
@@ -168,7 +165,7 @@ void ShadersEffect::processShaderPath(QString shaderPath) {
  * @brief If any step of the shader detection / generation process fails,
  * some variables are reset to their default.
  */
-void ShadersEffect::resetWindows() {
+void ShadersEffect::resetEffect() {
     m_effectEnabled = false;
     m_shadersLoaded = false;
     effects->addRepaintFull();
@@ -242,7 +239,7 @@ void ShadersEffect::slotPopulateShaderBuffers() {
 
         QFile shaderFile(curFile);
         if (!shaderFile.open(QFile::ReadOnly)) {
-            resetWindows();
+            resetEffect();
             QString error = "Problem reading shader file inside of the shader directory: ";
             error.append(curFile);
             m_shadersUI.setError(error);
@@ -293,7 +290,7 @@ void ShadersEffect::slotGenerateShaderFromBuffers() {
 
     // Shader is invalid.
     if (!m_shader->isValid()) {
-        resetWindows();
+        resetEffect();
         m_shadersUI.setError("The shader failed to compile.");
         return;
     }

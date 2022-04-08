@@ -187,10 +187,6 @@ void ShadersUI::displayUI() {
         open();
         return;
     }
-    /* https://github.com/kevinlekiller/kwin-effect-shaders/issues/2
-    if (!m_UIPosition.isNull()) {
-        move(m_UIPosition);
-    }*/
     show();
 }
 
@@ -353,10 +349,11 @@ void ShadersUI::parseSettingsBuffer() {
     disconnect(ui->table_Shaders, &QTableWidget::itemChanged, this, &ShadersUI::slotEditShaderSetting);
     bool foundOrder = false, foundDefine = false, curShaderEnabled = false;
     QStringList shaderOrder;
-    QString curShader, enabledShaders;
+    QString curShader, enabledShaders, curTooltip;
     for (int i = 0; i < lines.size(); ++i) {
         QString curLine = lines.at(i).trimmed();
 
+        // Set the shader order on the UI.
         if (!foundOrder) {
             if (curLine.startsWith("SHADERS);")) {
                 foundOrder = true;
@@ -372,6 +369,7 @@ void ShadersUI::parseSettingsBuffer() {
             }
         }
 
+        // Find the start of shader's settings.
         if (!foundDefine) {
             QRegularExpressionMatch matches = enabledRegex.match(curLine);
             if (matches.hasMatch()) {
@@ -395,41 +393,44 @@ void ShadersUI::parseSettingsBuffer() {
             continue;
         }
 
+        // Reached the end of this shader's settings.
         if (curLine.startsWith("#endif")) {
             foundDefine = false;
             continue;
         }
 
+        // Skip adding the setting / tooltip to the UI if the shader is disabled.
         if (!curShaderEnabled) {
             continue;
         }
 
-        if (curLine.startsWith("#define")) {
-            QRegularExpressionMatch matches = setting1Regex.match(curLine);
-            if (matches.hasMatch()) {
-                ui->table_Shaders->insertRow(curTableRow);
-                QTableWidgetItem *nameItem = new QTableWidgetItem(matches.captured(1));
-                nameItem->setFlags(nameItem->flags() & ~Qt::ItemIsEditable);
-                QTableWidgetItem *settingItem = new QTableWidgetItem(matches.captured(2));
-                ui->table_Shaders->setItem(curTableRow, 0, nameItem);
-                ui->table_Shaders->setItem(curTableRow, 1, settingItem);
-                curTableRow++;
-            }
-            continue;
+        // Get the tooltip for the current setting.
+        if (curLine.startsWith("//")) {
+            curLine = curLine.remove(0, 2).trimmed();
+            curTooltip.append("<p>").append(curLine).append("</p>");
         }
 
-        if (curLine.startsWith("uniform")) {
-            // Does not work: QRegularExpressionMatch matches = isUniform ? setting2Regex.match(curLine) : setting1Regex.match(curLine);
-            QRegularExpressionMatch matches = setting2Regex.match(curLine);
+        // Put the setting onto the UI with its tooltip.
+        bool isDefine = curLine.startsWith("#define");
+        if (isDefine || curLine.startsWith("uniform")) {
+            QRegularExpressionMatch matches;
+            matches.operator=(isDefine? setting1Regex.match(curLine) : setting2Regex.match(curLine));
             if (matches.hasMatch()) {
                 ui->table_Shaders->insertRow(curTableRow);
                 QTableWidgetItem *nameItem = new QTableWidgetItem(matches.captured(1));
                 nameItem->setFlags(nameItem->flags() & ~Qt::ItemIsEditable);
                 QTableWidgetItem *settingItem = new QTableWidgetItem(matches.captured(2));
+                curTooltip = curTooltip.trimmed();
+                if (!curTooltip.isEmpty()) {
+                    curTooltip.prepend("<html><head/><body>").append("</body></html>");
+                    nameItem->setToolTip(curTooltip);
+                    settingItem->setToolTip(curTooltip);
+                }
                 ui->table_Shaders->setItem(curTableRow, 0, nameItem);
                 ui->table_Shaders->setItem(curTableRow, 1, settingItem);
                 curTableRow++;
             }
+            curTooltip.clear();
         }
     }
     connect(ui->table_Shaders, &QTableWidget::itemChanged, this, &ShadersUI::slotEditShaderSetting);
