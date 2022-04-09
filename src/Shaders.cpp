@@ -19,6 +19,7 @@
 #include <QAction>
 #include <QDir>
 #include <QFile>
+#include <kwinglplatform.h>
 #include <kwinglutils.h>
 #include <KGlobalAccel>
 #include <KLocalizedString>
@@ -305,12 +306,10 @@ void ShadersEffect::slotGenerateShaderFromBuffers() {
  * @return bool -> User has support for GLSL version 140.
  */
 bool ShadersEffect::supported() {
-#ifdef KWIN_HAVE_OPENGLES
-    return false;
-#else
-    // GLSL 1.4 needs GL >= 3.1
-    return effects->compositingType() == OpenGLCompositing && hasGLVersion(3, 1);
-#endif
+    if (effects->compositingType() != OpenGLCompositing || GLPlatform::instance()->glslVersion() < 140 || GLPlatform::instance()->isGLES()) {
+        return false;
+    }
+    return true;
 }
 
 /**
