@@ -303,10 +303,13 @@ void ShadersEffect::slotGenerateShaderFromBuffers() {
 /**
  * @brief Tells KWin if the plugin should be loaded or not.
  *
- * @return bool -> User has support for GLSL version 140.
+ * @return bool -> User has support for GLSL version 140 (or 300 if GLES).
  */
 bool ShadersEffect::supported() {
-    if (effects->compositingType() != OpenGLCompositing || GLPlatform::instance()->glslVersion() < 140 || GLPlatform::instance()->isGLES()) {
+    if (effects->compositingType() != OpenGLCompositing ||
+        (GLPlatform::instance()->isGLES() && GLPlatform::instance()->glslVersion() < 300) ||
+        GLPlatform::instance()->glslVersion() < 140
+    ) {
         return false;
     }
     return true;
