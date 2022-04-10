@@ -1,4 +1,4 @@
-# KWin Shader Effects
+# KWin Effect Shaders
 KDE Plasma plugin aimed at adding post processing effects to video games using GLSL shaders.
 
 Example of FakeHDR and Adaptive Sharpen in Life is Strange 2:
@@ -16,7 +16,7 @@ Example of FakeHDR and Adaptive Sharpen in Life is Strange 2:
 - [Whitelisting Applications](#whitelisting-applications)
 - [Finding Application Names](#finding-application-names)
 - [Enabling On Login](#enabling-on-login)
-- [Disabling The Plugin](#disabling-the-plugin)
+- [Enabling or Disabling The Plugin](#enabling-or-disabling-the-plugin)
 - [Notes](#notes)
 - [TODO](#todo)
 - [Screenshots](#screenshots)
@@ -35,7 +35,7 @@ Example of FakeHDR and Adaptive Sharpen in Life is Strange 2:
 `sudo zypper in git gcc-c++ cmake extra-cmake-modules kio-devel kglobalaccel-devel ki18n-devel kwin5-devel`
 
 ## Installing
-After installing, log out and in of the session to load the plugin.
+NOTE: After installing, log out and in of the session to load the plugin. If the plugin does not load, see [Enabling or Disabling The Plugin](#enabling-or-disabling-the-plugin).
 ### From Source:
     git clone https://github.com/kevinlekiller/kwin-effect-shaders
     cd kwin-effect-shader
@@ -129,14 +129,14 @@ This will process all applications on login.
 
 You can exclude applications by using the `Blacklist` and/or `Whitelist`.
 
-## Disabling The Plugin
-To completely disable the plugin:
+## Enabling or Disabling The Plugin
+To enable or disable the plugin:
 
 `System Settings -> Workspace -> Workspace Behavior -> Desktop Effects -> Appearance -> Shaders`
 
-Remove the checkmark in the box and click `Apply`.
+Toggle the checkmark in the box and click `Apply`.
 
-![Disable the plugin](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/disable_plugin.png)
+![Toggling the plugin](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/toggle_plugin.png)
 
 ## Notes
 Note that X11 disables compositing in full screen applications, use Wayland if possible.
@@ -154,7 +154,7 @@ If you have a AMD  gpu, see https://docs.mesa3d.org/gallium/postprocess.html#cur
 ex. on Steam game: `pp_jimenezmlaa_color=32 %command%`
 
 ## TODO
-Try to have each shader run on its own, which would solve some issues. -> Currently my knowledge of OpenGL is limit, from what I can understand, this requires creating / using frame and vertex buffer objects.
+Try to have each shader run on its own, which would solve some issues. -> Currently my knowledge of OpenGL is limited, from what I can understand, this requires creating / using frame and vertex buffer objects. See [issue #3](https://github.com/kevinlekiller/kwin-effect-shaders/issues/3).
 
 Add some kind of profile system, where a user could have different settings for different games.
 

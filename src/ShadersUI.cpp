@@ -40,6 +40,8 @@ ShadersUI::ShadersUI(QWidget *parent) : QDialog(parent), ui(new Ui::ShadersUI) {
     connect(ui->button_MoveShaderDown, &QPushButton::clicked, this, &ShadersUI::slotMoveShaderDown);
     connect(ui->table_Shaders, &QTableWidget::cellClicked, this, &ShadersUI::slotToggleShader);
     connect(ui->table_Shaders, &QTableWidget::itemChanged, this, &ShadersUI::slotEditShaderSetting);
+    ui->table_Shaders->setHorizontalHeaderItem(0, new QTableWidgetItem("Name"));
+    ui->table_Shaders->setHorizontalHeaderItem(1, new QTableWidgetItem("Value"));
 }
 
 /**
