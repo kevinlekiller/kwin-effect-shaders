@@ -24,7 +24,7 @@ Example of FakeHDR and Adaptive Sharpen in Life is Strange 2:
 ## Requirements
 KWin compositing with GLSL 1.40 or higher for OpenGL or GLSL 3.0 or higher for OpenGL ES.
 
-Currently, for the GUI, Wayland is required. See [https://github.com/kevinlekiller/kwin-effect-shaders/issues/4](issue #4).
+Currently, for the GUI, Wayland is required. See [issue #4](https://github.com/kevinlekiller/kwin-effect-shaders/issues/4).
 ## Dependencies
 - Arch Based (untested):
 
