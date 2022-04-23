@@ -9,10 +9,7 @@ find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS KIO GlobalAccel I18n)
 set(effect_SRCS
     plugin.cc
     Shaders.cpp
-    ShadersUI.cpp
 )
-
-qt5_wrap_ui(effect_SRCS ShadersUI.ui)
 
 add_library(${SHADERS} SHARED ${effect_SRCS})
 

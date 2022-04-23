@@ -34,11 +34,22 @@ namespace KWin {
 ShadersEffect::ShadersEffect() : m_shader(nullptr), m_effectEnabled(false) {
     // Initialize settings.
     m_settings = new QSettings("kevinlekiller", "kwin_effect_shaders");
+    if (m_settings->value("Blacklist") == QVariant()) {
+        m_settings->setValue("Blacklist", "");
+    }
+    if (m_settings->value("Whitelist") == QVariant()) {
+        m_settings->setValue("Whitelist", "");
+    }
+    if (m_settings->value("AutoEnable") == QVariant()) {
+        m_settings->setValue("AutoEnable", false);
+    }
+    m_settings->sync();
+    if (m_settingsWatcher.addPath(m_settings->fileName())) {
+        connect(&m_settingsWatcher, &QFileSystemWatcher::fileChanged, this, &ShadersEffect::slotSettingsFileChanged);
+    }
 
     // Fetch settings.
-    processBWList(m_settings->value("Blacklist").toString(), false);
-    processBWList(m_settings->value("Whitelist").toString(), true);
-    processShaderPath(m_settings->value("ShaderPath").toString());
+    slotSettingsFileChanged();
 
     // Setup keyboard shortcuts.
     QAction* toggleEffectShortcut = new QAction(this);
@@ -48,23 +59,11 @@ ShadersEffect::ShadersEffect() : m_shader(nullptr), m_effectEnabled(false) {
     KGlobalAccel::self()->setShortcut(toggleEffectShortcut, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_Z);
     effects->registerGlobalShortcut(Qt::CTRL + Qt::META + Qt::Key_Z, toggleEffectShortcut);
 
-    QAction* shadersUIShortcut = new QAction(this);
-    shadersUIShortcut->setObjectName(QStringLiteral("ShadersUI"));
-    shadersUIShortcut->setText(i18n("Shaders Effect: Opens the configuration UI"));
-    KGlobalAccel::self()->setDefaultShortcut(shadersUIShortcut, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_X);
-    KGlobalAccel::self()->setShortcut(shadersUIShortcut, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_X);
-    effects->registerGlobalShortcut(Qt::CTRL + Qt::META + Qt::Key_X, shadersUIShortcut);
-
     // Setup connections.
     connect(toggleEffectShortcut, &QAction::triggered, this, &ShadersEffect::slotShortcutToggleEffect);
-    connect(shadersUIShortcut, &QAction::triggered, this, &ShadersEffect::slotUILaunch);
-    connect(&m_shadersUI, &ShadersUI::signalShaderTestRequested, this, &ShadersEffect::slotGenerateShaderFromBuffers);
-    connect(&m_shadersUI, &ShadersUI::signalShaderSaveRequested, this, &ShadersEffect::slotUIShaderSaveRequested);
-    connect(&m_shadersUI, &ShadersUI::signalSettingsSaveRequested, this, &ShadersEffect::slotUISettingsSaveRequested);
-    connect(&m_shadersUI, &ShadersUI::signalEffectToggled, this, &ShadersEffect::slotToggleEffect);
 
-    // If the setting "Enable by default" is enabled, trigger the effect on first run.
-    if (m_settings->value("DefaultEnabled").toBool()) {
+    // If the setting "Auto Enable" is enabled, trigger the effect on first run.
+    if (m_settings->value("AutoEnable").toBool()) {
         toggleEffectShortcut->trigger();
     }
 }
@@ -92,16 +91,15 @@ void ShadersEffect::processBWList(QString list, bool isWhitelist) {
     if (isWhitelist) {
         listType = "Whitelist";
         m_whitelist = llist;
-        m_shadersUI.setWhitelist(list);
         m_whitelistEn = !list.isEmpty();
     } else {
         listType = "Blacklist";
         m_blacklist = llist;
-        m_shadersUI.setBlacklist(list);
         m_blacklistEn = !list.isEmpty();
     }
     if (QString::compare(list, m_settings->value(listType).toString()) != 0) {
         m_settings->setValue(listType, list);
+        m_settings->sync();
     }
 }
 
@@ -119,7 +117,6 @@ void ShadersEffect::processShaderPath(QString shaderPath) {
         shaderPath = QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kwin-effect-shaders_shaders", QStandardPaths::LocateDirectory);
         if (shaderPath.isEmpty()) {
             resetEffect();
-            m_shadersUI.setError("The shader path could not be found.");
             return;
         }
     }
@@ -129,18 +126,16 @@ void ShadersEffect::processShaderPath(QString shaderPath) {
     if (QString::compare(m_shaderPath, shaderPath) == 0) {
         return;
     }
-    if (m_shaderPathWatcher.directories().contains(m_shaderPath)) {
-        m_shaderPathWatcher.removePath(m_shaderPath);
-        disconnect(&m_shaderPathWatcher, &QFileSystemWatcher::directoryChanged, this, &ShadersEffect::slotPopulateShaderBuffers);
-    }
     m_shaderPath = shaderPath;
     QDir shadersDir(shaderPath);
     if (!shadersDir.isReadable()) {
         resetEffect();
-        m_shadersUI.setError("The shader directory is not accessible.");
         return;
     }
-    m_shadersUI.setShaderPath(m_shaderPath);
+    if (m_shaderSettingsWatcher.files().contains(m_shaderSettingsPath)) {
+        m_shaderSettingsWatcher.removePath(m_shaderSettingsPath);
+        disconnect(&m_shaderSettingsWatcher, &QFileSystemWatcher::fileChanged, this, &ShadersEffect::slotPopulateShaderBuffers);
+    }
     m_shaderSettingsPath = m_shaderPath;
     m_shaderSettingsPath.append(m_shaderSettingsName);
     if (!shadersDir.exists(m_shaderSettingsName)) {
@@ -150,14 +145,13 @@ void ShadersEffect::processShaderPath(QString shaderPath) {
         if (!exampleFile.exists() || !exampleFile.copy(m_shaderSettingsPath)) {
             exampleFile.close();
             resetEffect();
-            m_shadersUI.setError("The 1_settings.glsl.example in the shader directory file is missing.");
             return;
         }
         exampleFile.close();
     }
     m_settings->setValue("ShaderPath", m_shaderPath);
-    if (m_shaderPathWatcher.addPath(m_shaderPath)) {
-        connect(&m_shaderPathWatcher, &QFileSystemWatcher::directoryChanged, this, &ShadersEffect::slotPopulateShaderBuffers);
+    if (m_shaderSettingsWatcher.addPath(m_shaderSettingsPath)) {
+        connect(&m_shaderSettingsWatcher, &QFileSystemWatcher::fileChanged, this, &ShadersEffect::slotPopulateShaderBuffers);
     }
     slotPopulateShaderBuffers();
 }
@@ -170,48 +164,6 @@ void ShadersEffect::resetEffect() {
     m_effectEnabled = false;
     m_shadersLoaded = false;
     effects->addRepaintFull();
-}
-
-/**
- * @brief The user wants to save their modifications to the shader settings file.
- */
-void ShadersEffect::slotUIShaderSaveRequested() {
-    QFile settingsFile(m_shaderSettingsPath);
-    if (!settingsFile.open(QFile::WriteOnly | QFile::Truncate)) {
-        m_shadersUI.setError("The 1_settings.glsl file in the shader directory could not be opened.");
-        return;
-    }
-    settingsFile.write(m_shadersUI.getShadersText());
-    settingsFile.close();
-    slotPopulateShaderBuffers();
-}
-
-/**
- * @brief The user wants to save main program settings.
- */
-void ShadersEffect::slotUISettingsSaveRequested() {
-    processShaderPath(m_shadersUI.getShaderPath());
-    processBWList(m_shadersUI.getBlacklist(), false);
-    processBWList(m_shadersUI.getWhitelist(), true);
-    m_settings->setValue("DefaultEnabled", m_shadersUI.getDefaultEnabled());
-    m_settings->setValue("AutoApply", m_shadersUI.getAutoApply());
-    m_settings->sync();
-}
-
-/**
- * @brief Passes some variables to the UI instance, then opens the UI.
- */
-void ShadersEffect::slotUILaunch() {
-    if (m_shadersUI.isVisible()) {
-        m_shadersUI.hideUI();
-        return;
-    }
-    m_shadersUI.setShaderPath(m_shaderPath);
-    m_shadersUI.setDefaultEnabled(m_settings->value("DefaultEnabled").toBool());
-    m_shadersUI.setAutoApply(m_settings->value("AutoApply").toBool());
-    m_shadersUI.setShaderCompiled(m_shadersLoaded);
-    m_shadersUI.setEffectEnabled(m_effectEnabled);
-    m_shadersUI.displayUI();
 }
 
 /**
@@ -241,9 +193,6 @@ void ShadersEffect::slotPopulateShaderBuffers() {
         QFile shaderFile(curFile);
         if (!shaderFile.open(QFile::ReadOnly)) {
             resetEffect();
-            QString error = "Problem reading shader file inside of the shader directory: ";
-            error.append(curFile);
-            m_shadersUI.setError(error);
             return;
         }
         QByteArray shaderBuf = shaderFile.readAll();
@@ -252,11 +201,6 @@ void ShadersEffect::slotPopulateShaderBuffers() {
         QHash <qint64, QByteArray> shaderHash;
         shaderHash.insert(lastModified, shaderBuf);
         m_shaderArr.insert(curFile, shaderHash);
-
-        if (curFile.endsWith(m_shaderSettingsName)) {
-            m_shadersUI.setShadersText(shaderBuf);
-            continue;
-        }
     }
     slotGenerateShaderFromBuffers();
 }
@@ -273,18 +217,18 @@ void ShadersEffect::slotGenerateShaderFromBuffers() {
     while (shaders.hasNext()) {
         shaders.next();
         QString curFile = shaders.key();
+        QByteArray value = shaders.value().values().first();
         if (curFile.endsWith(m_shaderSettingsName)) {
-            QByteArray settingsBuf = m_shadersUI.getShadersText();
-            fragmentBuf.prepend(settingsBuf);
-            vertexBuf.prepend(settingsBuf);
+            fragmentBuf.prepend(value);
+            vertexBuf.prepend(value);
             continue;
         }
         bool isGlsl = curFile.endsWith(".glsl");
         if (isGlsl || curFile.endsWith(".frag")) {
-            fragmentBuf.append(shaders.value().values().first());
+            fragmentBuf.append(value);
         }
         if (isGlsl || curFile.endsWith(".vert")) {
-            vertexBuf.append(shaders.value().values().first());
+            vertexBuf.append(value);
         }
     }
     m_shader = ShaderManager::instance()->generateCustomShader(ShaderTrait::MapTexture, vertexBuf, fragmentBuf);
@@ -292,12 +236,17 @@ void ShadersEffect::slotGenerateShaderFromBuffers() {
     // Shader is invalid.
     if (!m_shader->isValid()) {
         resetEffect();
-        m_shadersUI.setError("The shader failed to compile.");
         return;
     }
     m_shadersLoaded = true;
-    m_shadersUI.setError("None.");
     effects->addRepaintFull();
+}
+
+void ShadersEffect::slotSettingsFileChanged() {
+    m_settings->sync();
+    processBWList(m_settings->value("Blacklist").toString(), false);
+    processBWList(m_settings->value("Whitelist").toString(), true);
+    processShaderPath(m_settings->value("ShaderPath").toString());
 }
 
 /**
@@ -376,7 +325,6 @@ void ShadersEffect::slotToggleEffect(bool status) {
         return;
     }
     m_effectEnabled = status;
-    m_shadersUI.setEffectEnabled(m_effectEnabled);
     effects->addRepaintFull();
 }
 

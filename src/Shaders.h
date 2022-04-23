@@ -21,7 +21,6 @@
 #include <kwineffects.h>
 #include <QFileSystemWatcher>
 #include <QSettings>
-#include "ShadersUI.h"
 
 namespace KWin {
 
@@ -44,16 +43,15 @@ public:
 private:
     GLShader* m_shader;
     QSettings *m_settings;
-    ShadersUI m_shadersUI;
     bool m_effectEnabled;
     bool m_shadersLoaded = false;
     bool m_blacklistEn = false;
     bool m_whitelistEn = false;
-    bool m_autoApply = false;
     const QString m_shaderSettingsName = "1_settings.glsl";
     QString m_shaderSettingsPath;
     QString m_shaderPath;
-    QFileSystemWatcher m_shaderPathWatcher;
+    QFileSystemWatcher m_shaderSettingsWatcher;
+    QFileSystemWatcher m_settingsWatcher;
     QStringList m_blacklist;
     QStringList m_whitelist;
     QMap<QString, QHash<qint64, QByteArray>> m_shaderArr;
@@ -63,13 +61,11 @@ private:
     void processShaderPath(QString);
 
 private Q_SLOTS:
-    void slotUILaunch();
-    void slotUIShaderSaveRequested();
-    void slotUISettingsSaveRequested();
     void slotToggleEffect(bool);
     void slotPopulateShaderBuffers();
     void slotGenerateShaderFromBuffers();
     void slotShortcutToggleEffect();
+    void slotSettingsFileChanged();
 };
 
 inline int ShadersEffect::requestedEffectChainPosition() const {

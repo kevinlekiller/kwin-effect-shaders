@@ -11,12 +11,8 @@ Example of FakeHDR and Adaptive Sharpen in Life is Strange 2:
 - [Installing](#installing)
 - [Uninstalling](#uninstalling)
 - [Acquiring The Shader Files](#acquiring-the-shader-files)
-- [Keyboard Shortcuts](#keyboard-shortcuts)
+- [Keyboard Shortcut](#keyboard-shortcut)
 - [Modifying The Shader Settings](#modifying-the-shader-settings)
-- [Blacklisting Applications](#blacklisting-applications)
-- [Whitelisting Applications](#whitelisting-applications)
-- [Finding Application Names](#finding-application-names)
-- [Enabling On Login](#enabling-on-login)
 - [Enabling or Disabling The Plugin](#enabling-or-disabling-the-plugin)
 - [Notes](#notes)
 - [TODO](#todo)
@@ -24,7 +20,6 @@ Example of FakeHDR and Adaptive Sharpen in Life is Strange 2:
 ## Requirements
 KWin compositing with GLSL 1.40 or higher for OpenGL or GLSL 3.0 or higher for OpenGL ES.
 
-Currently, for the GUI, Wayland is required. See [issue #4](https://github.com/kevinlekiller/kwin-effect-shaders/issues/4).
 ## Dependencies
 - Arch Based (untested):
 
@@ -62,77 +57,31 @@ Clone the shader files to somewhere in your home directory:
 
 If you use the aforementioned default location for the shaders, it will be automatically detected.
 
-If you use a custom location, set the `Shader Path` by opening the configuration UI (see [Keyboard Shortcuts](#keyboard-shortcuts)).
+If you use a custom location, set the `Shader Path`:
 
-![Set a custom shader path](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shader_path.png)
+By modifying the configuration file at `~/.config/kevinlekiller//kwin_effect_shaders.conf`
 
-## Keyboard Shortcuts
-NOTE: The keyboard shortcuts might be disabled by default.
+Or by setting it in the configuration UI (see [GUI](#gui)):
 
-"Shaders Effect: Opens the configuration UI" ; This is set to `CTRL + META + X` by default.
+## Keyboard Shortcut
+NOTE: The keyboard shortcut might be disabled by default.
 
 "Shaders Effect: Toggle On or Off the effect" ; This is set to `CTRL + META + Z` by default.
 
-To change these:
+To change it:
 
 `System Settings -> Workspace -> Shortcuts -> Shortcuts -> System Services -> Kwin`
 
-![Modifying keyboard shortcuts](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/keyboard_shortcuts.png)
+![Modifying keyboard shortcuts](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/keyboard_shortcut.png)
 
 ## Modifying The Shader Settings
-Open the configuration UI (see [Keyboard Shortcuts](#keyboard-shortcuts)), go to the `Shaders` tab.
+### GUI
+https://github.com/kevinlekiller/kwin-effect-shaders_gui
 
-Click on the shader you want to enable, click `Apply`. Click `Save` if you want to write the changes to the settings file.
+### Manually
+Open the `1_settings.glsl` file in a text editor. By default `1_settings.glsl` is in `~/.local/share/kwin-effect-shaders_shaders`
 
-You can also enable `Auto Apply` in the `Settings` tab, which will automatically apply the settings.
-
-![Shaders tab](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shader_configuration.png)
-
-## Blacklisting Applications
-In the configuration UI, in the `Settings` tab, you can add application(s), if more than 1, seperate them with a comma.
-
-For example: `plasmashell,Firefox`
-
-This will block the Plasma desktop and Firefox from being processed.
-
-The list is not case sensitive.
-
-## Whitelisting Applications
-In the configuration UI, in the `Settings` tab, you can add application(s), if more than 1, seperate them with a comma.
-
-For example: `kate,kcalc`
-
-Only Kcalc and Kate will be processed.
-
-The list is not case sensitive.
-
-This is useful if you use the `Enabled by Default` option.
-
-You can use the `Blacklist` at the same time as the `Whitelist`.
-
-## Finding Application Names
-To find an application name to use in the blacklist or whitelist, follow these steps:
-
-`System Settings -> Window Management -> Window Rules -> Add New...`
-
-If you're in a game, set it to windowed mode.
-
-Click `Detect Window Properties`, click the application.
-
-The application name is first string in the `Whole window class` (delimited by the space character).
-
-For example, with kate, the "Whole window class" is `kate org.kde.kate`, so the name to put in the `Blacklist` or `Whitelist` would be kate.
-
-Another example, lutris, the whole window class is `lutris` so the name would be lutris.
-
-![Find the application name](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/find_application_name.png)
-
-## Enabling On Login
-In the configuration UI, in the `Settings` tab, you can set the `Enabled By Default` option.
-
-This will process all applications on login.
-
-You can exclude applications by using the `Blacklist` and/or `Whitelist`.
+![Shader Settings](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shader_settings.png)
 
 ## Enabling or Disabling The Plugin
 To enable or disable the plugin:
@@ -154,7 +103,7 @@ I'm not an expert on OpenGL or glsl, if you are, PR's are welcome.
 
 Antialiasing alternatives:
 
-If you have a AMD  gpu, see https://docs.mesa3d.org/gallium/postprocess.html#current-filters
+If you have a AMD gpu, see https://docs.mesa3d.org/gallium/postprocess.html#current-filters
 
 ex. on Steam game: `pp_jimenezmlaa_color=32 %command%`
 
