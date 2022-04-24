@@ -11,7 +11,7 @@ Example of FakeHDR and Adaptive Sharpen in Life is Strange 2:
 - [Installing](#installing)
 - [Uninstalling](#uninstalling)
 - [Acquiring The Shader Files](#acquiring-the-shader-files)
-- [Keyboard Shortcut](#keyboard-shortcut)
+- [Keyboard Shortcuts](#keyboard-shortcuts)
 - [Modifying The Shader Settings](#modifying-the-shader-settings)
 - [Enabling or Disabling The Plugin](#enabling-or-disabling-the-plugin)
 - [Notes](#notes)
@@ -63,16 +63,14 @@ By modifying the configuration file at `~/.config/kevinlekiller//kwin_effect_sha
 
 Or by setting it in the configuration UI (see [GUI](#gui)):
 
-## Keyboard Shortcut
-NOTE: The keyboard shortcut might be disabled by default.
+## Keyboard Shortcuts
+NOTE: The keyboard shortcuts might be disabled by default.
 
-"Shaders Effect: Toggle On or Off the effect" ; This is set to `CTRL + META + Z` by default.
-
-To change it:
+To change them:
 
 `System Settings -> Workspace -> Shortcuts -> Shortcuts -> System Services -> Kwin`
 
-![Modifying keyboard shortcuts](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/keyboard_shortcut.png)
+![Modifying keyboard shortcuts](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/keyboard_shortcuts.png)
 
 ## Modifying The Shader Settings
 ### GUI

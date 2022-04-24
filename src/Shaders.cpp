@@ -59,8 +59,16 @@ ShadersEffect::ShadersEffect() : m_shader(nullptr), m_effectEnabled(false) {
     KGlobalAccel::self()->setShortcut(toggleEffectShortcut, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_Z);
     effects->registerGlobalShortcut(Qt::CTRL + Qt::META + Qt::Key_Z, toggleEffectShortcut);
 
+    QAction* reloadShadersShortcut = new QAction(this);
+    reloadShadersShortcut->setObjectName(QStringLiteral("ShadersReload"));
+    reloadShadersShortcut->setText(i18n("Shaders Effect: Forces a reload of the shader files"));
+    KGlobalAccel::self()->setDefaultShortcut(reloadShadersShortcut, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_A);
+    KGlobalAccel::self()->setShortcut(reloadShadersShortcut, QList<QKeySequence>() << Qt::CTRL + Qt::META + Qt::Key_A);
+    effects->registerGlobalShortcut(Qt::CTRL + Qt::META + Qt::Key_A, reloadShadersShortcut);
+
     // Setup connections.
     connect(toggleEffectShortcut, &QAction::triggered, this, &ShadersEffect::slotShortcutToggleEffect);
+    connect(reloadShadersShortcut, &QAction::triggered, this, &ShadersEffect::slotPopulateShaderBuffers);
 
     // If the setting "Auto Enable" is enabled, trigger the effect on first run.
     if (m_settings->value("AutoEnable").toBool()) {
