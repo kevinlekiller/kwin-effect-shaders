@@ -12,14 +12,18 @@ Example of FakeHDR and Adaptive Sharpen in Life is Strange 2:
 ## Requirements
 KWin compositing with GLSL 1.40 or higher for OpenGL or GLSL 3.0 or higher for OpenGL ES.
 ## Dependencies
-- Arch Based (untested):\
-`sudo pacman -Syu extra-cmake-modules kwin kf5`
-- Debian Based (untested):\
-`sudo apt install git g++ cmake extra-cmake-modules libkf5kio-dev libkf5globalaccel-dev libkf5i18n-dev kwin-dev gettext qttools5-dev kinit-dev kwin-de`
-- Fedora Based (untested):\
-`sudo dnf install git gcc-c++ cmake extra-cmake-modules kf5-kio-devel kf5-kglobalaccel-devel kf5-ki18n-devel kwin-devel qt5-qttools-devel qt5-qttools-static qt5-qtbase-devel`
-- OpenSUSE Based (tested):\
-`sudo zypper in git gcc-c++ cmake extra-cmake-modules kio-devel kglobalaccel-devel ki18n-devel kwin5-devel`
+- Arch Based (untested):
+
+      sudo pacman -Syu extra-cmake-modules kwin kf5
+- Debian Based (untested):
+
+      sudo apt install git g++ cmake extra-cmake-modules libkf5kio-dev libkf5globalaccel-dev libkf5i18n-dev kwin-dev gettext qttools5-dev kinit-dev kwin-de
+- Fedora Based (untested):
+
+      sudo dnf install git gcc-c++ cmake extra-cmake-modules kf5-kio-devel kf5-kglobalaccel-devel kf5-ki18n-devel kwin-devel qt5-qttools-devel qt5-qttools-static qt5-qtbase-devel
+- OpenSUSE Based (tested):
+
+      sudo zypper in git gcc-c++ cmake extra-cmake-modules kio-devel kglobalaccel-devel ki18n-devel kwin5-devel
 ## Installing
 NOTE: After installing, log out and in of the session to load the plugin.\
 If the plugin does not load, see [Enabling or Disabling The Plugin](#enabling-or-disabling-the-plugin).
@@ -35,8 +39,9 @@ https://aur.archlinux.org/packages/kwin-effect-shaders-git
 ## Acquiring The Shader Files
 NOTE: If you have ran the `install.sh` script, everything within this section is done automatically.
 
-Clone the shader files to somewhere in your home directory:\
-`git clone https://github.com/kevinlekiller/kwin-effect-shaders_shaders ~/.local/share/kwin-effect-shaders_shaders`
+Clone the shader files to somewhere in your home directory:
+
+    git clone https://github.com/kevinlekiller/kwin-effect-shaders_shaders ~/.local/share/kwin-effect-shaders_shaders
 
 If you use the aforementioned default location for the shaders, it will be automatically detected.\
 If you use a custom location, set the `Shader Path`:\
