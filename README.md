@@ -29,7 +29,7 @@ NOTE: After installing, log out and in of the session to load the plugin.\
 If the plugin does not load, see [Enabling or Disabling The Plugin](#enabling-or-disabling-the-plugin).
 ### From Source:
     git clone https://github.com/kevinlekiller/kwin-effect-shaders
-    cd kwin-effect-shader
+    cd kwin-effect-shaders
     # Use the install.sh script:
     ./install.sh
 ### Arch (AUR):
