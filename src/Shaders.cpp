@@ -44,8 +44,9 @@ ShadersEffect::ShadersEffect() : m_shader(nullptr), m_effectEnabled(false) {
         m_settings->setValue("AutoEnable", false);
     }
     m_settings->sync();
-    if (m_settingsWatcher.addPath(m_settings->fileName())) {
-        connect(&m_settingsWatcher, &QFileSystemWatcher::fileChanged, this, &ShadersEffect::slotSettingsFileChanged);
+    QFileInfo fileInfo(m_settings->fileName());
+    if (m_settingsWatcher.addPath(fileInfo.absolutePath())) {
+        connect(&m_settingsWatcher, &QFileSystemWatcher::directoryChanged, this, &ShadersEffect::slotSettingsFileChanged);
     }
 
     // Fetch settings.
