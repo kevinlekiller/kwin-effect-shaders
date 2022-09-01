@@ -179,6 +179,7 @@ void ShadersEffect::slotPopulateShaderBuffers() {
     shadersDir.setFilter(QDir::Files | QDir::NoDotAndDotDot);
     shadersDir.setSorting(QDir::Name | QDir::IgnoreCase);
 
+    bool shaderChanged = false;
     QFileInfoList shadersList = shadersDir.entryInfoList();
     for (int i = 0; i < shadersList.size(); ++i) {
         QString curFile = shadersList.at(i).absoluteFilePath();
@@ -206,8 +207,11 @@ void ShadersEffect::slotPopulateShaderBuffers() {
         QHash <qint64, QByteArray> shaderHash;
         shaderHash.insert(lastModified, shaderBuf);
         m_shaderArr.insert(curFile, shaderHash);
+        shaderChanged = true;
     }
-    slotGenerateShaderFromBuffers();
+    if (shaderChanged) {
+        slotGenerateShaderFromBuffers();
+    }
 }
 
 /**
