@@ -19,6 +19,8 @@
 #include <QAction>
 #include <QDir>
 #include <QFile>
+#include <QLocalServer>
+#include <QLocalSocket>
 #include <kwinglplatform.h>
 #include <kwinglutils.h>
 #include <KGlobalAccel>
@@ -34,9 +36,6 @@ namespace KWin {
 ShadersEffect::ShadersEffect() : m_shader(nullptr), m_effectEnabled(false) {
     // Initialize settings.
     m_settings = new QSettings("kevinlekiller", "kwin_effect_shaders");
-    if (m_settings->value("Blacklist") == QVariant()) {
-        m_settings->setValue("Blacklist", "");
-    }
     if (m_settings->value("Whitelist") == QVariant()) {
         m_settings->setValue("Whitelist", "");
     }
@@ -75,6 +74,11 @@ ShadersEffect::ShadersEffect() : m_shader(nullptr), m_effectEnabled(false) {
     if (m_settings->value("AutoEnable").toBool()) {
         toggleEffectShortcut->trigger();
     }
+
+    // Start up server.
+    m_server = new QLocalServer();
+    m_server->listen("kwin_effect_shaders");
+    connect(m_server, &QLocalServer::newConnection, this, &ShadersEffect::slotHandleConnection);
 }
 
 /**
@@ -83,33 +87,32 @@ ShadersEffect::ShadersEffect() : m_shader(nullptr), m_effectEnabled(false) {
 ShadersEffect::~ShadersEffect() {
     delete m_settings;
     delete m_shader;
+    delete m_server;
 }
 
 /**
- * @brief Process user specified white or black list.
+ * @brief If an incoming connection comes in, reload the shader.
+ */
+void ShadersEffect::slotHandleConnection() {
+    QLocalSocket *client = m_server->nextPendingConnection();
+    connect(client, &QLocalSocket::disconnected, client, &QLocalSocket::deleteLater);
+    client->disconnectFromServer();
+    slotPopulateShaderBuffers();
+}
+
+/**
+ * @brief Process user specified whitelist.
  * The list should be the names of window names seperated by a comma.
  *
- * @param list        -> The list.
- * @param isWhitelist ->
- *             true : Whitelist
- *            false : Blacklist
+ * @param list -> The whitelist.
  */
-void ShadersEffect::processBWList(QString list, bool isWhitelist) {
-    QStringList llist = list.trimmed().toLower().split(",");
-    QString listType;
-    if (isWhitelist) {
-        listType = "Whitelist";
-        m_whitelist = llist;
-        m_whitelistEn = !list.isEmpty();
-    } else {
-        listType = "Blacklist";
-        m_blacklist = llist;
-        m_blacklistEn = !list.isEmpty();
-    }
-    if (QString::compare(list, m_settings->value(listType).toString()) != 0) {
-        m_settings->setValue(listType, list);
+void ShadersEffect::processWhiteList(QString whitelist) {
+    m_whitelistEn = !whitelist.isEmpty();
+    if (QString::compare(whitelist, m_settings->value("Whitelist").toString()) != 0) {
+        m_settings->setValue("Whitelist", whitelist);
         m_settings->sync();
     }
+    m_whitelist = whitelist.trimmed().toLower().split(",");
 }
 
 /**
@@ -141,10 +144,6 @@ void ShadersEffect::processShaderPath(QString shaderPath) {
         resetEffect();
         return;
     }
-    if (m_shaderSettingsWatcher.files().contains(m_shaderSettingsPath)) {
-        m_shaderSettingsWatcher.removePath(m_shaderSettingsPath);
-        disconnect(&m_shaderSettingsWatcher, &QFileSystemWatcher::fileChanged, this, &ShadersEffect::slotPopulateShaderBuffers);
-    }
     m_shaderSettingsPath = m_shaderPath;
     m_shaderSettingsPath.append(m_shaderSettingsName);
     if (!shadersDir.exists(m_shaderSettingsName)) {
@@ -159,9 +158,6 @@ void ShadersEffect::processShaderPath(QString shaderPath) {
         exampleFile.close();
     }
     m_settings->setValue("ShaderPath", m_shaderPath);
-    if (m_shaderSettingsWatcher.addPath(m_shaderSettingsPath)) {
-        connect(&m_shaderSettingsWatcher, &QFileSystemWatcher::fileChanged, this, &ShadersEffect::slotPopulateShaderBuffers);
-    }
     slotPopulateShaderBuffers();
 }
 
@@ -253,8 +249,7 @@ void ShadersEffect::slotGenerateShaderFromBuffers() {
 
 void ShadersEffect::slotSettingsFileChanged() {
     m_settings->sync();
-    processBWList(m_settings->value("Blacklist").toString(), false);
-    processBWList(m_settings->value("Whitelist").toString(), true);
+    processWhiteList(m_settings->value("Whitelist").toString());
     processShaderPath(m_settings->value("ShaderPath").toString());
 }
 
@@ -293,13 +288,10 @@ void ShadersEffect::prePaintWindow(EffectWindow* w, WindowPrePaintData& data, st
  * @param data
  */
 void ShadersEffect::paintWindow(EffectWindow* w, int mask, const QRegion region, WindowPaintData& data) {
-    // Check if window is blacklisted or whitelisted.
-    if (m_blacklistEn || m_whitelistEn) {
-        QString windowName = w->windowClass().trimmed().split(" ")[0];
-        if ((m_blacklistEn && m_blacklist.contains(windowName, Qt::CaseInsensitive)) || (m_whitelistEn && !m_whitelist.contains(windowName, Qt::CaseInsensitive))) {
-            effects->paintWindow(w, mask, region, data);
-            return;
-        }
+    // Check if window is whitelisted.
+    if (m_whitelistEn && !m_whitelist.contains(w->windowClass().trimmed().split(" ")[0], Qt::CaseInsensitive)) {
+        effects->paintWindow(w, mask, region, data);
+        return;
     }
     ShaderBinder bind(m_shader);
     m_shader->setUniform("g_Random", (float) drand48());

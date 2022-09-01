@@ -20,6 +20,7 @@
 
 #include <kwineffects.h>
 #include <QFileSystemWatcher>
+#include <QLocalServer>
 #include <QSettings>
 
 namespace KWin {
@@ -41,26 +42,25 @@ public:
     static bool supported();
 
 private:
-    GLShader* m_shader;
+    GLShader *m_shader;
+    QLocalServer *m_server;
     QSettings *m_settings;
     bool m_effectEnabled;
     bool m_shadersLoaded = false;
-    bool m_blacklistEn = false;
     bool m_whitelistEn = false;
     const QString m_shaderSettingsName = "1_settings.glsl";
     QString m_shaderSettingsPath;
     QString m_shaderPath;
-    QFileSystemWatcher m_shaderSettingsWatcher;
     QFileSystemWatcher m_settingsWatcher;
-    QStringList m_blacklist;
     QStringList m_whitelist;
     QMap<QString, QHash<qint64, QByteArray>> m_shaderArr;
 
     void resetEffect();
-    void processBWList(QString, bool);
+    void processWhiteList(QString);
     void processShaderPath(QString);
 
 private Q_SLOTS:
+    void slotHandleConnection();
     void slotToggleEffect(bool);
     void slotPopulateShaderBuffers();
     void slotGenerateShaderFromBuffers();

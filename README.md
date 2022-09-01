@@ -56,9 +56,11 @@ To change them:\
 ![Modifying keyboard shortcuts](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/keyboard_shortcuts.png)
 ## Modifying The Shader Settings
 ### GUI
-https://github.com/kevinlekiller/kwin-effect-shaders_gui
+Using the GUI is recommended. https://github.com/kevinlekiller/kwin-effect-shaders_gui
 ### Manually
-Open the `1_settings.glsl` file in a text editor. By default `1_settings.glsl` is in `~/.local/share/kwin-effect-shaders_shaders`
+Open the `1_settings.glsl` file in a text editor. By default `1_settings.glsl` is in `~/.local/share/kwin-effect-shaders_shaders`\
+If it does not exist, copy `1_settings.glsl.example` to `1_settings.glsl`\
+You can force the new shader settings using the [keyboard shortcut](#keyboard-shortcuts).
 
 ![Shader Settings](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/shader_settings.png)
 ## Enabling or Disabling The Plugin
@@ -82,7 +84,6 @@ ex. on Steam game: `pp_jimenezmlaa_color=32 %command%`
 ## TODO
 Try to have each shader run on its own, which would solve some issues. -> Currently my knowledge of OpenGL is limited, from what I can understand, this requires creating / using frame and vertex buffer objects. See [issue #3](https://github.com/kevinlekiller/kwin-effect-shaders/issues/3).
 
-Add some kind of profile system, where a user could have different settings for different games.
 ## Screenshots
 - [CAS + Tonemap](https://cdn.knightlab.com/libs/juxtapose/latest/embed/index.html?uid=9f8f759e-b2e4-11ec-b5bb-6595d9b17862)
 - [Debanding](https://cdn.knightlab.com/libs/juxtapose/latest/embed/index.html?uid=ae7aca12-941d-11ec-a554-13fc6baea232)

@@ -22,10 +22,15 @@ LICENSE
 
 [[ $EUID == 0 ]] && echo "This script must not be run as root. Exiting." && exit 1
 
+# Where to build the project.
 BUILD_DIRECTORY=${BUILD_DIRECTORY:-build}
+# Type of release - Release or Debug
 RELEASE_TYPE=${RELEASE_TYPE:-Release}
 MAKEFLAGS=${MAKEFLAGS:--j$(nproc)}
+# Path to clone shaders to.
 SHADERSPATH="$HOME/.local/share/kwin-effect-shaders_shaders"
+# 1 = Update shader repository ; Other values doesn't.
+UPDATESHADERS=${UPDATESHADERS:-1}
 export MAKEFLAGS=$MAKEFLAGS
 CXXFLAGS=${CXXFLAGS:--march=native -mtune=native -O2 -pipe -fstack-protector-strong -fno-plt}
 export CXXFLAGS=$CXXFLAGS
@@ -48,5 +53,8 @@ sudo make install
 
 if [[ ! -d ${SHADERSPATH} ]]; then
     git clone https://github.com/kevinlekiller/kwin-effect-shaders_shaders "$SHADERSPATH" || exit $?
+elif [[ $UPDATESHADERS == 1 ]]; then
+    cd "$SHADERSPATH" || exit $?
+    git pull || exit $?
 fi
 

@@ -19,6 +19,7 @@ target_link_libraries(${SHADERS}
         KF5::I18n
         KF5::XmlGui
         KF5::WindowSystem
+        Qt::Network
 )
 
 execute_process(COMMAND kf5-config --install data OUTPUT_VARIABLE DATAPATH OUTPUT_STRIP_TRAILING_WHITESPACE)
