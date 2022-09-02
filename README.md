@@ -57,6 +57,8 @@ To change them:\
 ## Modifying The Shader Settings
 ### GUI
 Using the GUI is recommended. https://github.com/kevinlekiller/kwin-effect-shaders_gui
+
+![GUI](https://github.com/kevinlekiller/kwin-effect-shaders/raw/main/images/GUI.png)
 ### Manually
 Open the `1_settings.glsl` file in a text editor. By default `1_settings.glsl` is in `~/.local/share/kwin-effect-shaders_shaders`\
 If it does not exist, copy `1_settings.glsl.example` to `1_settings.glsl`\
