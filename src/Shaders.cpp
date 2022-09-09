@@ -96,8 +96,10 @@ ShadersEffect::~ShadersEffect() {
 void ShadersEffect::slotHandleConnection() {
     QLocalSocket *client = m_server->nextPendingConnection();
     connect(client, &QLocalSocket::disconnected, client, &QLocalSocket::deleteLater);
+    // Tell client shader if success or failure.
+    client->write(slotPopulateShaderBuffers() ? "success\n" : "failure\n");
+    client->waitForBytesWritten(250);
     client->disconnectFromServer();
-    slotPopulateShaderBuffers();
 }
 
 /**
@@ -173,8 +175,9 @@ void ShadersEffect::resetEffect() {
 
 /**
  * @brief Reads shader files from m_shaderPath and stores in them in buffer.
+ * @return If the shader was modified.
  */
-void ShadersEffect::slotPopulateShaderBuffers() {
+bool ShadersEffect::slotPopulateShaderBuffers() {
     QDir shadersDir(m_shaderPath);
     shadersDir.setFilter(QDir::Files | QDir::NoDotAndDotDot);
     shadersDir.setSorting(QDir::Name | QDir::IgnoreCase);
@@ -199,7 +202,7 @@ void ShadersEffect::slotPopulateShaderBuffers() {
         QFile shaderFile(curFile);
         if (!shaderFile.open(QFile::ReadOnly)) {
             resetEffect();
-            return;
+            return shaderChanged;
         }
         QByteArray shaderBuf = shaderFile.readAll();
         shaderFile.close();
@@ -212,6 +215,7 @@ void ShadersEffect::slotPopulateShaderBuffers() {
     if (shaderChanged) {
         slotGenerateShaderFromBuffers();
     }
+    return shaderChanged;
 }
 
 /**

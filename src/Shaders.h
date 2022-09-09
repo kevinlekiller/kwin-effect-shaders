@@ -62,7 +62,7 @@ private:
 private Q_SLOTS:
     void slotHandleConnection();
     void slotToggleEffect(bool);
-    void slotPopulateShaderBuffers();
+    bool slotPopulateShaderBuffers();
     void slotGenerateShaderFromBuffers();
     void slotShortcutToggleEffect();
     void slotSettingsFileChanged();
