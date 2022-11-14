@@ -42,7 +42,11 @@ public:
     static bool supported();
 
 private:
+#if KWIN_EFFECT_API_VERSION >= 234
     std::unique_ptr<GLShader> m_shader;
+#else
+    GLShader *m_shader;
+#endif
     QLocalServer *m_server;
     QSettings *m_settings;
     bool m_effectEnabled;

@@ -300,11 +300,19 @@ void ShadersEffect::paintWindow(EffectWindow* w, int mask, const QRegion region,
         effects->paintWindow(w, mask, region, data);
         return;
     }
+#if KWIN_EFFECT_API_VERSION >= 234
     ShaderBinder bind(m_shader.get());
+#else
+    ShaderBinder bind(m_shader);
+#endif
     m_shader->setUniform("g_Random", (float) drand48());
     m_shader->setUniform("g_TextureSize", QVector2D(effects->virtualScreenSize().width(), effects->virtualScreenSize().height()));
     m_shader->setUniform("modelViewProjectionMatrix", data.projectionMatrix());
+#if KWIN_EFFECT_API_VERSION >= 234
     data.shader = m_shader.get();
+#else
+    data.shader = m_shader;
+#endif
     effects->paintWindow(w, mask, region, data);
 }
 
