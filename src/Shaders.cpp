@@ -86,7 +86,6 @@ ShadersEffect::ShadersEffect() : m_shader(nullptr), m_effectEnabled(false) {
  */
 ShadersEffect::~ShadersEffect() {
     delete m_settings;
-    delete m_shader;
     delete m_server;
 }
 
@@ -301,11 +300,11 @@ void ShadersEffect::paintWindow(EffectWindow* w, int mask, const QRegion region,
         effects->paintWindow(w, mask, region, data);
         return;
     }
-    ShaderBinder bind(m_shader);
+    ShaderBinder bind(m_shader.get());
     m_shader->setUniform("g_Random", (float) drand48());
     m_shader->setUniform("g_TextureSize", QVector2D(effects->virtualScreenSize().width(), effects->virtualScreenSize().height()));
     m_shader->setUniform("modelViewProjectionMatrix", data.projectionMatrix());
-    data.shader = m_shader;
+    data.shader = m_shader.get();
     effects->paintWindow(w, mask, region, data);
 }
 

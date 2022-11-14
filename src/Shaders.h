@@ -42,7 +42,7 @@ public:
     static bool supported();
 
 private:
-    GLShader *m_shader;
+    std::unique_ptr<GLShader> m_shader;
     QLocalServer *m_server;
     QSettings *m_settings;
     bool m_effectEnabled;
